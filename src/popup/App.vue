@@ -120,7 +120,7 @@ export default {
   },
   watch: {
     isLiveUpdate(val) {
-      chrome.runtime.sendMessage({ type: "DuringDate" }, (response) => {
+      chrome.runtime.sendMessage({ type: "DuringDate" }, response => {
         this.isDuringDate = response.farewell;
         if (val && this.isDuringDate) {
           this.myVar = setInterval(() => {
@@ -138,7 +138,7 @@ export default {
   },
   methods: {
     reward() {
-      this.rewardShadow = true;
+       this.rewardShadow = true;
     },
     ajaxPromise(stock) {
       return new Promise((resovle, reject) => {
