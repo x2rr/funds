@@ -1,6 +1,6 @@
 {
   "name": "choose-funds",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "A Vue.js web extension",
   "author": "Liu Rabt",
   "license": "GPL",
@@ -18,8 +18,7 @@
   },
   "dependencies": {
     "axios": "^0.19.0",
-    "vue": "^2.6.10",
-    "vuex": "^3.0.1"
+    "vue": "^2.6.10"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",

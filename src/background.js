@@ -1,5 +1,5 @@
 
-import store from './store'
+import axios from 'axios';
 
 
 var Interval;
@@ -14,9 +14,9 @@ var isDuringDate = () => {
 	endDateAM.setHours(11, 30, 0);
 	beginDatePM.setHours(13, 0, 0);
 	endDatePM.setHours(15, 0, 0);
-	if(curDate.getDay() == '6' || curDate.getDay() == '0'){
+	if (curDate.getDay() == '6' || curDate.getDay() == '0') {
 		return false;
-	}else if (curDate >= beginDateAM && curDate <= endDateAM) {
+	} else if (curDate >= beginDateAM && curDate <= endDateAM) {
 		return true;
 	} else if (curDate >= beginDatePM && curDate <= endDatePM) {
 		return true;
@@ -26,43 +26,37 @@ var isDuringDate = () => {
 }
 
 var setBadge = fundcode => {
-	let xhr = new XMLHttpRequest();
-	let url = 'http://fundgz.1234567.com.cn/js/' + fundcode + '.js?rt=' + new Date().getTime();
-	xhr.open("GET", url, true);
-	xhr.send();
 
-	xhr.onreadystatechange = () => {
-		let DONE = 4;
-		let OK = 200;
-		if (xhr.readyState === DONE) {
-			if (xhr.status === OK) {
-				let res = xhr.responseText.match(/\{(.+?)\}/);
-				let ress = JSON.parse(res[0]);
-				chrome.browserAction.setBadgeText({
-					text: ress.gszzl
-				});
-				let color = ress.gszzl > 0 ? '#ff0000' : '#008000'
-				chrome.browserAction.setBadgeBackgroundColor({
-					color: color
-				});
-
-			} else {
-				chrome.browserAction.setBadgeText({
-					text: ''
-				});
-			}
-		} else {
+	let url =
+		"http://fundgz.1234567.com.cn/js/" +
+		fundcode +
+		".js?rt=" +
+		new Date().getTime();
+	axios
+		.get(url)
+		.then(res => {
+			let val = res.data.match(/\{(.+?)\}/);
+			let ress = JSON.parse(val[0]);
+			chrome.browserAction.setBadgeText({
+				text: ress.gszzl
+			});
+			let color = ress.gszzl > 0 ? '#ff0000' : '#008000'
+			chrome.browserAction.setBadgeBackgroundColor({
+				color: color
+			});
+		})
+		.catch(error => {
 			chrome.browserAction.setBadgeText({
 				text: ''
 			});
-		}
-		if (!isDuringDate()) {
-			chrome.browserAction.setBadgeBackgroundColor({
-				color: [0, 0, 0, 0]
-			});
-		}
-		
+		});
+
+	if (!isDuringDate()) {
+		chrome.browserAction.setBadgeBackgroundColor({
+			color: [0, 0, 0, 0]
+		});
 	}
+
 }
 
 var startInterval = RealtimeFundcode => {
@@ -71,12 +65,12 @@ var startInterval = RealtimeFundcode => {
 	Interval = setInterval(() => {
 		if (isDuringDate()) {
 			setBadge(RealtimeFundcode);
-		}else{
+		} else {
 			chrome.browserAction.setBadgeBackgroundColor({
 				color: [0, 0, 0, 0]
 			});
 		}
-	}, 3*60*1000)
+	}, 3 * 60 * 1000)
 
 }
 
@@ -100,18 +94,18 @@ chrome.storage.sync.get('RealtimeFundcode', (res) => {
 
 
 chrome.runtime.onMessage.addListener(
-  function(request, sender, sendResponse) {
-    if (request.type == "DuringDate"){
-      let DuringDate = isDuringDate();
-      sendResponse({farewell: DuringDate});
-    }
-    if (request.type == "endInterval"){
-      endInterval()
-    }
-    if (request.type == "startInterval"){
-      startInterval(request.id)
-    }
-      
-  });
+	function (request, sender, sendResponse) {
+		if (request.type == "DuringDate") {
+			let DuringDate = isDuringDate();
+			sendResponse({
+				farewell: DuringDate
+			});
+		}
+		if (request.type == "endInterval") {
+			endInterval()
+		}
+		if (request.type == "startInterval") {
+			startInterval(request.id)
+		}
 
-
+	});
