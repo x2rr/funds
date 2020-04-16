@@ -6,4 +6,4 @@
 
 若因网络问题，可以下载CRX文件手动安装（非常不建议）：[下载地址1](https://github.com/x2rr/funds/releases)　　[下载地址2](https://gitee.com/rabt/funds/releases)
 
-
+隐私协议：[点击跳转](https://x2rr.github.io/funds/privacy.html)
