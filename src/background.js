@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 
 
@@ -25,7 +24,7 @@ var isDuringDate = () => {
 	}
 }
 
-var setBadge = fundcode => {
+var setBadge = (fundcode, Realtime) => {
 
 	let url =
 		"http://fundgz.1234567.com.cn/js/" +
@@ -40,7 +39,7 @@ var setBadge = fundcode => {
 			chrome.browserAction.setBadgeText({
 				text: ress.gszzl
 			});
-			let color = ress.gszzl > 0 ? '#F56C6C' : '#4eb61b'
+			let color = Realtime ? ress.gszzl > 0 ? '#F56C6C' : '#4eb61b' : [0, 0, 0, 0];
 			chrome.browserAction.setBadgeBackgroundColor({
 				color: color
 			});
@@ -51,20 +50,16 @@ var setBadge = fundcode => {
 			});
 		});
 
-	if (!isDuringDate()) {
-		chrome.browserAction.setBadgeBackgroundColor({
-			color: [0, 0, 0, 0]
-		});
-	}
 
 }
 
 var startInterval = RealtimeFundcode => {
 	endInterval(Interval);
-	setBadge(RealtimeFundcode);
+	let Realtime = isDuringDate();
+	setBadge(RealtimeFundcode, Realtime);
 	Interval = setInterval(() => {
 		if (isDuringDate()) {
-			setBadge(RealtimeFundcode);
+			setBadge(RealtimeFundcode, true);
 		} else {
 			chrome.browserAction.setBadgeBackgroundColor({
 				color: [0, 0, 0, 0]
@@ -111,7 +106,7 @@ chrome.runtime.onMessage.addListener(
 			chrome.browserAction.setBadgeText({
 				text: request.data.gszzl
 			});
-			let color = request.data.gszzl > 0 ? '#F56C6C' : '#4eb61b'
+			let color = isDuringDate() ? request.data.gszzl > 0 ? '#F56C6C' : '#4eb61b' : [0, 0, 0, 0];
 			chrome.browserAction.setBadgeBackgroundColor({
 				color: color
 			});
