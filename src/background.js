@@ -40,7 +40,7 @@ var setBadge = fundcode => {
 			chrome.browserAction.setBadgeText({
 				text: ress.gszzl
 			});
-			let color = ress.gszzl > 0 ? '#ff0000' : '#008000'
+			let color = ress.gszzl > 0 ? '#F56C6C' : '#4eb61b'
 			chrome.browserAction.setBadgeBackgroundColor({
 				color: color
 			});
@@ -106,6 +106,15 @@ chrome.runtime.onMessage.addListener(
 		}
 		if (request.type == "startInterval") {
 			startInterval(request.id)
+		}
+		if (request.type == "refreshBadge") {
+			chrome.browserAction.setBadgeText({
+				text: request.data.gszzl
+			});
+			let color = request.data.gszzl > 0 ? '#F56C6C' : '#4eb61b'
+			chrome.browserAction.setBadgeBackgroundColor({
+				color: color
+			});
 		}
 
 	});

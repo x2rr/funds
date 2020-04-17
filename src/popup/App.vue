@@ -113,9 +113,6 @@ export default {
       this.fundList = res.fundList ? res.fundList : this.fundList;
       this.RealtimeFundcode = res.RealtimeFundcode;
       this.getData();
-      if (this.RealtimeFundcode) {
-        // bg.setBadge(this.RealtimeFundcode);
-      }
     });
   },
   watch: {
@@ -138,7 +135,7 @@ export default {
   },
   methods: {
     reward() {
-       this.rewardShadow = true;
+      this.rewardShadow = true;
     },
     ajaxPromise(stock) {
       return new Promise((resovle, reject) => {
@@ -203,6 +200,12 @@ export default {
               let val = res.data.match(/\{(.+?)\}/);
               let data = JSON.parse(val[0]);
               this.dataList.push(data);
+              if (data.fundcode == this.RealtimeFundcode) {
+                chrome.runtime.sendMessage({
+                  type: "refreshBadge",
+                  data: data
+                });
+              }
             });
           })
         )
@@ -212,6 +215,10 @@ export default {
     },
     save() {
       //验证
+      if (this.fundList.indexOf(this.fundcode) > -1) {
+        alert("该基金已添加！");
+        return false;
+      }
       let url =
         "http://fundgz.1234567.com.cn/js/" +
         this.fundcode +
@@ -304,12 +311,12 @@ table td {
 }
 
 .up {
-  color: #ff0000;
+  color: #f56c6c;
   font-weight: bold;
 }
 
 .down {
-  color: #008000;
+  color: #4eb61b;
   font-weight: bold;
 }
 
@@ -445,8 +452,8 @@ tbody tr:hover {
 }
 
 .success {
-  color: #67c23a;
-  border-color: #67c23a;
+  color: #4eb61b;
+  border-color: #4eb61b;
 }
 
 .primary {
