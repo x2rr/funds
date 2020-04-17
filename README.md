@@ -7,6 +7,8 @@
 
 若因网络问题，可以下载CRX文件手动安装（非常不建议）：[下载地址1](https://github.com/x2rr/funds/releases)　　[下载地址2](https://gitee.com/rabt/funds/releases)
 
+插件已上架Microsoft Edge扩展商店：[点击跳转至Microsoft Edge扩展商店](https://microsoftedge.microsoft.com/addons/detail/kophadiajpobbfoobhclbobddkoindoi)
+
 ![主界面1](./image/1111.png)
 
 ![主界面2](./image/2222.png)
