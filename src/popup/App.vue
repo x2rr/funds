@@ -210,7 +210,7 @@ export default {
           })
         )
         .catch(error => {
-          this.dataList = [];
+          console.log("数据请求出现错误！");
         });
     },
     save() {
@@ -227,15 +227,20 @@ export default {
       this.$axios
         .get(url)
         .then(res => {
-          this.fundList.push(this.fundcode);
-          chrome.storage.sync.set(
-            {
-              fundList: this.fundList
-            },
-            () => {
-              this.getData();
-            }
-          );
+          let val = res.data.match(/\{(.+?)\}/);
+          if (val) {
+            this.fundList.push(this.fundcode);
+            chrome.storage.sync.set(
+              {
+                fundList: this.fundList
+              },
+              () => {
+                this.getData();
+              }
+            );
+          }else {
+            alert("该基金可能为新发基金，暂无详细数据！");
+          }
         })
         .catch(error => {
           alert("无法获取该基金信息！");
