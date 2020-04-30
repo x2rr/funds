@@ -1,234 +1,137 @@
 {
-    "2020": {
-        "01-01": {
-            "holiday": true,
-            "name": "元旦",
-            "wage": 3,
-            "date": "2020-01-01"
-        },
-        "01-19": {
-            "holiday": false,
-            "name": "春节前调休",
-            "after": false,
-            "wage": 1,
-            "target": "春节",
-            "date": "2020-01-19"
-        },
-        "01-24": {
-            "holiday": true,
-            "name": "除夕",
-            "wage": 2,
-            "date": "2020-01-24"
-        },
-        "01-25": {
-            "holiday": true,
-            "name": "初一",
-            "wage": 3,
-            "date": "2020-01-25"
-        },
-        "01-26": {
-            "holiday": true,
-            "name": "初二",
-            "wage": 3,
-            "date": "2020-01-26"
-        },
-        "01-27": {
-            "holiday": true,
-            "name": "初三",
-            "wage": 3,
-            "date": "2020-01-27"
-        },
-        "01-28": {
-            "holiday": true,
-            "name": "初四",
-            "wage": 2,
-            "date": "2020-01-28"
-        },
-        "01-29": {
-            "holiday": true,
-            "name": "初五",
-            "wage": 2,
-            "date": "2020-01-29"
-        },
-        "01-30": {
-            "holiday": true,
-            "name": "初六",
-            "wage": 2,
-            "date": "2020-01-30"
-        },
-        "01-31": {
-            "holiday": true,
-            "name": "初七",
-            "wage": 2,
-            "date": "2020-01-31"
-        },
-        "02-01": {
-            "holiday": true,
-            "name": "初八",
-            "wage": 2,
-            "date": "2020-02-01"
-        },
-        "02-02": {
-            "holiday": true,
-            "name": "初九",
-            "wage": 2,
-            "date": "2020-02-02"
-        },
-        "04-04": {
-            "holiday": true,
-            "name": "清明节",
-            "wage": 3,
-            "date": "2020-04-04"
-        },
-        "04-05": {
-            "holiday": true,
-            "name": "清明节",
-            "wage": 2,
-            "date": "2020-04-05"
-        },
-        "04-06": {
-            "holiday": true,
-            "name": "清明节",
-            "wage": 2,
-            "date": "2020-04-06"
-        },
-        "04-26": {
-            "holiday": false,
-            "name": "劳动节前调休",
-            "after": false,
-            "wage": 1,
-            "target": "劳动节",
-            "date": "2020-04-26",
-            "rest": 1
-        },
-        "05-01": {
-            "holiday": true,
-            "name": "劳动节",
-            "wage": 3,
-            "date": "2020-05-01",
-            "rest": 5
-        },
-        "05-02": {
-            "holiday": true,
-            "name": "劳动节",
-            "wage": 2,
-            "date": "2020-05-02"
-        },
-        "05-03": {
-            "holiday": true,
-            "name": "劳动节",
-            "wage": 2,
-            "date": "2020-05-03"
-        },
-        "05-04": {
-            "holiday": true,
-            "name": "劳动节",
-            "wage": 2,
-            "date": "2020-05-04"
-        },
-        "05-05": {
-            "holiday": true,
-            "name": "劳动节",
-            "wage": 2,
-            "date": "2020-05-05"
-        },
-        "05-09": {
-            "holiday": false,
-            "name": "劳动节后调休",
-            "after": true,
-            "wage": 1,
-            "target": "劳动节",
-            "date": "2020-05-09"
-        },
-        "06-25": {
-            "holiday": true,
-            "name": "端午节",
-            "wage": 3,
-            "date": "2020-06-25"
-        },
-        "06-26": {
-            "holiday": true,
-            "name": "端午节",
-            "wage": 2,
-            "date": "2020-06-26"
-        },
-        "06-27": {
-            "holiday": true,
-            "name": "端午节",
-            "wage": 2,
-            "date": "2020-06-27"
-        },
-        "06-28": {
-            "holiday": false,
-            "after": true,
-            "name": "端午节后调休",
-            "wage": 1,
-            "target": "端午节",
-            "date": "2020-06-28"
-        },
-        "09-27": {
-            "holiday": false,
-            "after": false,
-            "name": "国庆节前调休",
-            "wage": 1,
-            "target": "国庆节",
-            "date": "2020-09-27"
-        },
-        "10-01": {
-            "holiday": true,
-            "name": "中秋节",
-            "wage": 3,
-            "date": "2020-10-01"
-        },
-        "10-02": {
-            "holiday": true,
-            "name": "国庆节",
-            "wage": 3,
-            "date": "2020-10-02"
-        },
-        "10-03": {
-            "holiday": true,
-            "name": "国庆节",
-            "wage": 3,
-            "date": "2020-10-03"
-        },
-        "10-04": {
-            "holiday": true,
-            "name": "国庆节",
-            "wage": 2,
-            "date": "2020-10-04"
-        },
-        "10-05": {
-            "holiday": true,
-            "name": "国庆节",
-            "wage": 2,
-            "date": "2020-10-05"
-        },
-        "10-06": {
-            "holiday": true,
-            "name": "国庆节",
-            "wage": 2,
-            "date": "2020-10-06"
-        },
-        "10-07": {
-            "holiday": true,
-            "name": "国庆节",
-            "wage": 2,
-            "date": "2020-10-07"
-        },
-        "10-08": {
-            "holiday": true,
-            "name": "国庆节",
-            "wage": 2,
-            "date": "2020-10-08"
-        },
-        "10-10": {
-            "holiday": false,
-            "name": "国庆节后调休",
-            "after": true,
-            "wage": 1,
-            "target": "国庆节",
-            "date": "2020-10-10"
+    "version": "1.0",
+    "lastDate":"2020-10-08",
+    "data": {
+        "2020": {
+            "05-01": {
+                "holiday": true,
+                "name": "劳动节",
+                "wage": 3,
+                "date": "2020-05-01",
+                "rest": 5
+            },
+            "05-02": {
+                "holiday": true,
+                "name": "劳动节",
+                "wage": 2,
+                "date": "2020-05-02"
+            },
+            "05-03": {
+                "holiday": true,
+                "name": "劳动节",
+                "wage": 2,
+                "date": "2020-05-03"
+            },
+            "05-04": {
+                "holiday": true,
+                "name": "劳动节",
+                "wage": 2,
+                "date": "2020-05-04"
+            },
+            "05-05": {
+                "holiday": true,
+                "name": "劳动节",
+                "wage": 2,
+                "date": "2020-05-05"
+            },
+            "05-09": {
+                "holiday": false,
+                "name": "劳动节后调休",
+                "after": true,
+                "wage": 1,
+                "target": "劳动节",
+                "date": "2020-05-09"
+            },
+            "06-25": {
+                "holiday": true,
+                "name": "端午节",
+                "wage": 3,
+                "date": "2020-06-25"
+            },
+            "06-26": {
+                "holiday": true,
+                "name": "端午节",
+                "wage": 2,
+                "date": "2020-06-26"
+            },
+            "06-27": {
+                "holiday": true,
+                "name": "端午节",
+                "wage": 2,
+                "date": "2020-06-27"
+            },
+            "06-28": {
+                "holiday": false,
+                "after": true,
+                "name": "端午节后调休",
+                "wage": 1,
+                "target": "端午节",
+                "date": "2020-06-28"
+            },
+            "09-27": {
+                "holiday": false,
+                "after": false,
+                "name": "国庆节前调休",
+                "wage": 1,
+                "target": "国庆节",
+                "date": "2020-09-27"
+            },
+            "10-01": {
+                "holiday": true,
+                "name": "中秋节",
+                "wage": 3,
+                "date": "2020-10-01"
+            },
+            "10-02": {
+                "holiday": true,
+                "name": "国庆节",
+                "wage": 3,
+                "date": "2020-10-02"
+            },
+            "10-03": {
+                "holiday": true,
+                "name": "国庆节",
+                "wage": 3,
+                "date": "2020-10-03"
+            },
+            "10-04": {
+                "holiday": true,
+                "name": "国庆节",
+                "wage": 2,
+                "date": "2020-10-04"
+            },
+            "10-05": {
+                "holiday": true,
+                "name": "国庆节",
+                "wage": 2,
+                "date": "2020-10-05"
+            },
+            "10-06": {
+                "holiday": true,
+                "name": "国庆节",
+                "wage": 2,
+                "date": "2020-10-06"
+            },
+            "10-07": {
+                "holiday": true,
+                "name": "国庆节",
+                "wage": 2,
+                "date": "2020-10-07"
+            },
+            "10-08": {
+                "holiday": true,
+                "name": "国庆节",
+                "wage": 2,
+                "date": "2020-10-08"
+            },
+            "10-10": {
+                "holiday": false,
+                "name": "国庆节后调休",
+                "after": true,
+                "wage": 1,
+                "target": "国庆节",
+                "date": "2020-10-10"
+            }
         }
     }
 }
