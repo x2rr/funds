@@ -3,8 +3,12 @@ const ejs = require('ejs');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const ExtensionReloader = require('webpack-extension-reloader');
-const { VueLoaderPlugin } = require('vue-loader');
-const { version } = require('./package.json');
+const {
+  VueLoaderPlugin
+} = require('vue-loader');
+const {
+  version
+} = require('./package.json');
 
 const config = {
   mode: process.env.NODE_ENV,
@@ -12,6 +16,7 @@ const config = {
   entry: {
     'background': './background.js',
     'popup/popup': './popup/popup.js',
+    'options/options': './options/options.js',
   },
   output: {
     path: __dirname + '/dist',
@@ -21,8 +26,7 @@ const config = {
     extensions: ['.js', '.vue'],
   },
   module: {
-    rules: [
-      {
+    rules: [{
         test: /\.vue$/,
         loaders: 'vue-loader',
       },
@@ -71,9 +75,21 @@ const config = {
     new MiniCssExtractPlugin({
       filename: '[name].css',
     }),
-    new CopyPlugin([
-      { from: 'icons', to: 'icons', ignore: ['icon.xcf'] },
-      { from: 'popup/popup.html', to: 'popup/popup.html', transform: transformHtml },
+    new CopyPlugin([{
+        from: 'icons',
+        to: 'icons',
+        ignore: ['icon.xcf']
+      },
+      {
+        from: 'popup/popup.html',
+        to: 'popup/popup.html',
+        transform: transformHtml
+      },
+      {
+        from: 'options/options.html',
+        to: 'options/options.html',
+        transform: transformHtml
+      },
       {
         from: 'manifest.json',
         to: 'manifest.json',

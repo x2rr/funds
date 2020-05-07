@@ -1,4 +1,5 @@
 {
+  "author": "Liu Rabt",
   "name": "自选基金 - 实时查看基金涨跌幅",
   "description": "自选基金，实时查看您关注的基金，助您快速获取实时数据",
   "version": null,
@@ -16,6 +17,11 @@
     },
     "default_title": "自选基金",
     "default_popup": "popup/popup.html"
+  },
+  "options_page": "options/options.html",
+  "options_ui": {
+    "page": "options/options.html",
+    "chrome_style": false
   },
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "background": {

@@ -1,6 +1,6 @@
 
 <template>
-  <div id="app" class="container" :class="rewardShadow ? 'more-height' : ''">
+  <div id="app" class="container" :class="containerWidth">
     <div>
       <div class="tab-row">
         <div v-for="el in seciData" class="tab-col" :key="el.f12">
@@ -16,18 +16,36 @@
             <th v-if="isEdit">基金代码</th>
             <th v-if="!isEdit">估算净值</th>
             <th>涨跌幅</th>
+            <th v-if="showNum">持有额</th>
+            <th v-if="showNum">收益额</th>
             <th v-if="!isEdit">更新时间</th>
+            <th v-if="isEdit&&showNum">持有份额</th>
+            <th v-if="isEdit">排序</th>
             <th v-if="isEdit">特别关注</th>
             <th v-if="isEdit">删除</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="el in dataList" :key="el.fundcode">
+          <tr v-for="(el,index) in dataList" :key="el.fundcode">
             <td>{{ el.name }}</td>
             <td v-if="isEdit">{{ el.fundcode }}</td>
             <td v-if="!isEdit">{{ el.gsz }}</td>
             <td :class="el.gszzl > 0 ? 'up' : 'down'">{{ el.gszzl }}%</td>
+            <td v-if="showNum">{{calculateMoney(el)}}</td>
+            <td v-if="showNum" :class="el.gszzl > 0 ? 'up' : 'down'">{{calculate(el)}}</td>
             <td v-if="!isEdit">{{ el.gztime.substr(5) }}</td>
+            <th v-if="isEdit&&showNum">
+              <input
+                class="btn num"
+                placeholder="输入持有份额"
+                v-model="el.num"
+                @input="changeNum(el,index)"
+                type="text"
+              />
+            </th>
+            <td v-if="isEdit">
+              <input @click="sortUp(index)" class="btn edit" value="▲" type="button" />
+            </td>
             <td v-if="isEdit">
               <input
                 @click="slt(el.fundcode)"
@@ -103,17 +121,45 @@ export default {
       myVar1: null,
       rewardShadow: false,
       checked: "wepay",
-      fundList: ["001618"]
+      showNum: false,
+      fundList: ["001618"],
+      fundListM: []
     };
   },
   mounted() {
     this.isLiveUpdate = true;
     this.getSeciData();
-    chrome.storage.sync.get(["fundList", "RealtimeFundcode"], res => {
-      this.fundList = res.fundList ? res.fundList : this.fundList;
-      this.RealtimeFundcode = res.RealtimeFundcode;
-      this.getData();
-    });
+    chrome.storage.sync.get(
+      ["RealtimeFundcode", "fundListM", "showNum", "fundList"],
+      res => {
+        this.fundList = res.fundList ? res.fundList : this.fundList;
+        if (res.fundListM) {
+          this.fundListM = res.fundListM;
+        } else {
+          for (const fund of this.fundList) {
+            let val = {
+              code: fund,
+              num: null
+            };
+            this.fundListM.push(val);
+          }
+        }
+        this.showNum = res.showNum ? res.showNum : false;
+        this.RealtimeFundcode = res.RealtimeFundcode;
+        this.getData();
+      }
+    );
+  },
+  computed: {
+    containerWidth() {
+      if (this.rewardShadow) {
+        return "more-height";
+      } else if (this.isEdit) {
+        return "more-width";
+      } else if (this.showNum) {
+        return "num-width";
+      }
+    }
   },
   watch: {
     isLiveUpdate(val) {
@@ -137,32 +183,6 @@ export default {
     reward() {
       this.rewardShadow = true;
     },
-    ajaxPromise(stock) {
-      return new Promise((resovle, reject) => {
-        let xhr = new XMLHttpRequest();
-        let url =
-          "http://fundgz.1234567.com.cn/js/" +
-          stock +
-          ".js?rt=" +
-          new Date().getTime();
-        xhr.open("GET", url, true);
-        xhr.send();
-
-        xhr.onreadystatechange = () => {
-          let DONE = 4;
-          let OK = 200;
-          if (xhr.readyState === DONE) {
-            if (xhr.status === OK) {
-              let res = xhr.responseText.match(/\{(.+?)\}/);
-              let ress = JSON.parse(res[0]);
-              resovle(ress);
-            } else {
-              reject("无法获取该基金信息！");
-            }
-          }
-        };
-      });
-    },
     getSeciData() {
       let url =
         "https://push2.eastmoney.com/api/qt/ulist.np/get?fltt=2&fields=f2,f3,f4,f12,f14&secids=1.000001,1.000300,0.399001,0.399006&_=" +
@@ -181,10 +201,10 @@ export default {
       // 	  ["gztime"]=>"2018-09-25 15:00"   //估值时间
 
       let axiosArray = [];
-      for (const fund of this.fundList) {
+      for (const fund of this.fundListM) {
         let url =
           "http://fundgz.1234567.com.cn/js/" +
-          fund +
+          fund.code +
           ".js?rt=" +
           new Date().getTime();
         let newPromise = this.$axios.get(url);
@@ -199,6 +219,13 @@ export default {
             responses.forEach(res => {
               let val = res.data.match(/\{(.+?)\}/);
               let data = JSON.parse(val[0]);
+              if (this.showNum) {
+                let slt = this.fundListM.filter(
+                  item => item.code == data.fundcode
+                );
+                data.num = slt[0].num;
+              }
+
               this.dataList.push(data);
               if (data.fundcode == this.RealtimeFundcode) {
                 chrome.runtime.sendMessage({
@@ -213,12 +240,35 @@ export default {
           console.log("数据请求出现错误！");
         });
     },
+    changeNum(item, ind) {
+      for (let fund of this.fundListM) {
+        if (fund.code == item.fundcode) {
+          fund.num = item.num;
+        }
+      }
+      chrome.storage.sync.set({
+        fundListM: this.fundListM
+      });
+    },
+    calculateMoney(val) {
+      let sum = ((val.gsz) * val.num).toFixed(1);
+      return sum;
+    },
+    calculate(val) {
+      let sum = ((val.gsz - val.dwjz) * val.num).toFixed(1);
+      return sum;
+    },
     save() {
       //验证
-      if (this.fundList.indexOf(this.fundcode) > -1) {
+      let hasCode = this.fundListM.some((currentValue, index, array) => {
+        return currentValue.code == this.fundcode;
+      });
+
+      if (hasCode) {
         alert("该基金已添加！");
         return false;
       }
+
       let url =
         "http://fundgz.1234567.com.cn/js/" +
         this.fundcode +
@@ -229,22 +279,41 @@ export default {
         .then(res => {
           let val = res.data.match(/\{(.+?)\}/);
           if (val) {
-            this.fundList.push(this.fundcode);
+            let val = {
+              code: this.fundcode,
+              num: null
+            };
+            this.fundListM.push(val);
             chrome.storage.sync.set(
               {
-                fundList: this.fundList
+                fundListM: this.fundListM
               },
               () => {
                 this.getData();
               }
             );
-          }else {
+          } else {
             alert("该基金可能为新发基金，暂无详细数据！");
           }
         })
         .catch(error => {
           alert("无法获取该基金信息！");
         });
+    },
+    sortUp(ind) {
+      if (ind == 0) {
+        return false;
+      }
+      let val = this.dataList[ind - 1];
+      this.$set(this.dataList, ind - 1, this.dataList[ind]);
+      this.$set(this.dataList, ind, val);
+      this.fundListM[ind] = [
+        this.fundListM[ind - 1],
+        (this.fundListM[ind - 1] = this.fundListM[ind])
+      ][0];
+      chrome.storage.sync.set({
+        fundListM: this.fundListM
+      });
     },
     slt(id) {
       if (id == this.RealtimeFundcode) {
@@ -270,13 +339,13 @@ export default {
       }
     },
     dlt(id) {
-      this.fundList = this.fundList.filter(function(ele) {
-        return ele != id;
+      this.fundListM = this.fundListM.filter(function(ele) {
+        return ele.code != id;
       });
 
       chrome.storage.sync.set(
         {
-          fundList: this.fundList
+          fundListM: this.fundListM
         },
         () => {
           this.getData();
@@ -298,6 +367,14 @@ export default {
 
 .more-height {
   height: 405px;
+}
+
+.more-width {
+  width: 600px;
+}
+
+.num-width {
+  min-width: 420px;
 }
 
 table {
@@ -349,6 +426,10 @@ tbody tr:hover {
 
 .btn.red {
   color: #f56c6c;
+}
+
+.btn.num {
+  width: 80px;
 }
 
 .slt {
