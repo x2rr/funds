@@ -128,8 +128,7 @@ var startInterval = RealtimeFundcode => {
 				color: [0, 0, 0, 0]
 			});
 		}
-	}, 5 * 1000)
-	// }, 3 * 60 * 1000)
+	}, 2 * 60 * 1000)
 
 }
 
