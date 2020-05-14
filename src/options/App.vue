@@ -23,16 +23,21 @@
         </li>
         <li>
           <div class="list-title">
-            显示份额与收益信息&nbsp;&nbsp;&nbsp;&nbsp;
-            <input
-              type="radio"
-              id="numFalse"
-              :value="false"
-              v-model="showNum"
-            />
-            <label for="numFalse">否</label>
-            <input type="radio" id="numTrue" :value="true" v-model="showNum" />
-            <label for="numTrue">是</label>
+            显示份额与收益信息
+            <div class="select-row">
+              显示持有金额
+              <input type="radio" id="numFalse" :value="false" v-model="showAmount" />
+              <label for="numFalse">否</label>
+              <input type="radio" id="numTrue" :value="true" v-model="showAmount" />
+              <label for="numTrue">是</label>
+            </div>
+            <div class="select-row">
+              显示估值收益
+              <input type="radio" id="numFalse" :value="false" v-model="showGains" />
+              <label for="numFalse">否</label>
+              <input type="radio" id="numTrue" :value="true" v-model="showGains" />
+              <label for="numTrue">是</label>
+            </div>
           </div>
 
           <p>tips：在编辑设置里，输入基金的持有份额，即可计算出收益估值情况。</p>
@@ -48,27 +53,65 @@ export default {
     return {
       holiday: null,
       disabled: false,
-      showNum: false
+      showAmount: false,
+      showGains: false
     };
   },
   mounted() {
-    chrome.storage.sync.get(["holiday", "showNum"], res => {
-      this.showNum = res.showNum ? res.showNum : false;
-      if (res.holiday) {
-        this.holiday = res.holiday;
-      } else {
-        this.getHoliday();
+    chrome.storage.sync.get(
+      ["holiday", "showNum", "showAmount", "showGains"],
+      res => {
+        if (res.showNum) { //解决版本遗留问题，拆分属性
+          chrome.storage.sync.set({
+            showNum: false
+          });
+          chrome.storage.sync.set(
+            {
+              showAmount: true
+            },
+            () => {
+              this.showAmount = true;
+            }
+          );
+          chrome.storage.sync.set(
+            {
+              showGains: true
+            },
+            () => {
+              this.showGains = true;
+            }
+          );
+        } else {
+          this.showAmount = res.showAmount ? res.showAmount : false;
+          this.showGains = res.showGains ? res.showGains : false;
+        }
+
+        if (res.holiday) {
+          this.holiday = res.holiday;
+        } else {
+          this.getHoliday();
+        }
       }
-    });
+    );
   },
   watch: {
-    showNum(val) {
+    showAmount(val) {
       chrome.storage.sync.set(
         {
-          showNum: val
+          showAmount: val
         },
         () => {
-          this.showNum = val;
+          this.showAmount = val;
+        }
+      );
+    },
+    showGains(val) {
+      chrome.storage.sync.set(
+        {
+          showGains: val
+        },
+        () => {
+          this.showGains = val;
         }
       );
     }
@@ -121,8 +164,13 @@ export default {
 }
 
 .list-title {
-  height: 34px;
+  min-height: 34px;
   line-height: 34px;
+}
+
+.list-title .select-row {
+  line-height: 30px;
+  padding-left: 20px;
 }
 
 .btn {

@@ -16,10 +16,10 @@
             <th v-if="isEdit">基金代码</th>
             <th v-if="!isEdit">估算净值</th>
             <th>涨跌幅</th>
-            <th v-if="showNum">持有额</th>
-            <th v-if="showNum">收益额</th>
+            <th v-if="showAmount">持有额</th>
+            <th v-if="showGains">估算收益</th>
             <th v-if="!isEdit">更新时间</th>
-            <th v-if="isEdit&&showNum">持有份额</th>
+            <th v-if="isEdit&&(showAmount||showGains)">持有份额</th>
             <th v-if="isEdit">排序</th>
             <th v-if="isEdit">特别关注</th>
             <th v-if="isEdit">删除</th>
@@ -31,10 +31,10 @@
             <td v-if="isEdit">{{ el.fundcode }}</td>
             <td v-if="!isEdit">{{ el.gsz }}</td>
             <td :class="el.gszzl > 0 ? 'up' : 'down'">{{ el.gszzl }}%</td>
-            <td v-if="showNum">{{calculateMoney(el)}}</td>
-            <td v-if="showNum" :class="el.gszzl > 0 ? 'up' : 'down'">{{calculate(el)}}</td>
+            <td v-if="showAmount">{{calculateMoney(el)}}</td>
+            <td v-if="showGains" :class="el.gszzl > 0 ? 'up' : 'down'">{{calculate(el)}}</td>
             <td v-if="!isEdit">{{ el.gztime.substr(5) }}</td>
-            <th v-if="isEdit&&showNum">
+            <th v-if="isEdit&&isEdit&&(showAmount||showGains)">
               <input
                 class="btn num"
                 placeholder="输入持有份额"
@@ -121,7 +121,8 @@ export default {
       myVar1: null,
       rewardShadow: false,
       checked: "wepay",
-      showNum: false,
+      showGains: false,
+      showAmount: false,
       fundList: ["001618"],
       fundListM: []
     };
@@ -130,7 +131,7 @@ export default {
     this.isLiveUpdate = true;
     this.getSeciData();
     chrome.storage.sync.get(
-      ["RealtimeFundcode", "fundListM", "showNum", "fundList"],
+      ["RealtimeFundcode", "fundListM", "showAmount", "showGains", "fundList"],
       res => {
         this.fundList = res.fundList ? res.fundList : this.fundList;
         if (res.fundListM) {
@@ -144,7 +145,8 @@ export default {
             this.fundListM.push(val);
           }
         }
-        this.showNum = res.showNum ? res.showNum : false;
+        this.showAmount = res.showAmount ? res.showAmount : false;
+        this.showGains = res.showGains ? res.showGains : false;
         this.RealtimeFundcode = res.RealtimeFundcode;
         this.getData();
       }
@@ -156,8 +158,10 @@ export default {
         return "more-height";
       } else if (this.isEdit) {
         return "more-width";
-      } else if (this.showNum) {
-        return "num-width";
+      } else if (this.showAmount && this.showGains) {
+        return "num-all-width";
+      } else if (this.showAmount || this.showGains) {
+        return "num-one-width";
       }
     }
   },
@@ -219,7 +223,7 @@ export default {
             responses.forEach(res => {
               let val = res.data.match(/\{(.+?)\}/);
               let data = JSON.parse(val[0]);
-              if (this.showNum) {
+              if (this.showAmount || this.showGains) {
                 let slt = this.fundListM.filter(
                   item => item.code == data.fundcode
                 );
@@ -251,7 +255,7 @@ export default {
       });
     },
     calculateMoney(val) {
-      let sum = ((val.gsz) * val.num).toFixed(1);
+      let sum = (val.gsz * val.num).toFixed(1);
       return sum;
     },
     calculate(val) {
@@ -373,7 +377,11 @@ export default {
   width: 600px;
 }
 
-.num-width {
+.num-all-width {
+  min-width: 500px;
+}
+
+.num-one-width {
   min-width: 420px;
 }
 
