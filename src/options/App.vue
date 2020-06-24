@@ -1,4 +1,3 @@
-
 <template>
   <div id="app" class="container">
     <div>
@@ -10,9 +9,13 @@
             <span class="loading" v-if="disabled">更新中。。。</span>
           </div>
           <p>
-            <span
-              v-if="holiday"
-            >当前版本：v{{holiday.version}}&nbsp;&nbsp;&nbsp;&nbsp;最后节假日日期：{{holiday.lastDate}}</span>
+            <span v-if="holiday">
+              当前版本：v{{
+              holiday.version
+              }}&nbsp;&nbsp;&nbsp;&nbsp;最后节假日日期：{{
+              holiday.lastDate
+              }}
+            </span>
           </p>
           <p>
             tips：更新节假日信息，可以在节假日暂停更新估值，节假日信息会不定时更新。
@@ -61,7 +64,8 @@ export default {
     chrome.storage.sync.get(
       ["holiday", "showNum", "showAmount", "showGains"],
       res => {
-        if (res.showNum) { //解决版本遗留问题，拆分属性
+        if (res.showNum) {
+          //解决版本遗留问题，拆分属性
           chrome.storage.sync.set({
             showNum: false
           });
@@ -209,4 +213,3 @@ export default {
   padding: 5px 15px;
 }
 </style>
-

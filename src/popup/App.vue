@@ -1,4 +1,3 @@
-
 <template>
   <div id="app" class="container" :class="containerWidth">
     <div>
@@ -19,27 +18,27 @@
             <th v-if="showAmount">持有额</th>
             <th v-if="showGains">估算收益</th>
             <th v-if="!isEdit">更新时间</th>
-            <th v-if="isEdit&&(showAmount||showGains)">持有份额</th>
+            <th v-if="isEdit && (showAmount || showGains)">持有份额</th>
             <th v-if="isEdit">排序</th>
             <th v-if="isEdit">特别关注</th>
             <th v-if="isEdit">删除</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(el,index) in dataList" :key="el.fundcode">
+          <tr v-for="(el, index) in dataList" :key="el.fundcode">
             <td>{{ el.name }}</td>
             <td v-if="isEdit">{{ el.fundcode }}</td>
             <td v-if="!isEdit">{{ el.gsz }}</td>
             <td :class="el.gszzl >= 0 ? 'up' : 'down'">{{ el.gszzl }}%</td>
-            <td v-if="showAmount">{{calculateMoney(el)}}</td>
-            <td v-if="showGains" :class="el.gszzl >= 0 ? 'up' : 'down'">{{calculate(el)}}</td>
+            <td v-if="showAmount">{{ calculateMoney(el) }}</td>
+            <td v-if="showGains" :class="el.gszzl >= 0 ? 'up' : 'down'">{{ calculate(el) }}</td>
             <td v-if="!isEdit">{{ el.gztime.substr(5) }}</td>
-            <th v-if="isEdit&&isEdit&&(showAmount||showGains)">
+            <th v-if="isEdit && isEdit && (showAmount || showGains)">
               <input
                 class="btn num"
                 placeholder="输入持有份额"
                 v-model="el.num"
-                @input="changeNum(el,index)"
+                @input="changeNum(el, index)"
                 type="text"
               />
             </th>
@@ -78,10 +77,12 @@
       <input
         v-if="showGains"
         class="btn"
-        :class="allGains >= 0?'btn-up':'btn-down'"
+        :class="allGains >= 0 ? 'btn-up' : 'btn-down'"
         type="button"
-        :title="allGains >= 0?'d=====(￣▽￣*)b 赞一个':'∑(っ°Д°;)っ 大事不好啦'"
-        :value="'总收益：'+allGains"
+        :title="
+          allGains >= 0 ? 'd=====(￣▽￣*)b 赞一个' : '∑(っ°Д°;)っ 大事不好啦'
+        "
+        :value="'总收益：' + allGains"
       />
     </div>
     <div v-if="isAdd" class="input-row">
@@ -595,4 +596,3 @@ tbody tr:hover {
   padding: 0 50px;
 }
 </style>
-
