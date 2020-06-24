@@ -5,8 +5,8 @@
       <div class="tab-row">
         <div v-for="el in seciData" class="tab-col" :key="el.f12">
           <h5>{{ el.f14 }}</h5>
-          <p :class="el.f3 > 0 ? 'up' : 'down'">{{ el.f2 }}</p>
-          <p :class="el.f3 > 0 ? 'up' : 'down'">{{ el.f4 }}&nbsp;&nbsp;{{ el.f3 }}%</p>
+          <p :class="el.f3 >= 0 ? 'up' : 'down'">{{ el.f2 }}</p>
+          <p :class="el.f3 >= 0 ? 'up' : 'down'">{{ el.f4 }}&nbsp;&nbsp;{{ el.f3 }}%</p>
         </div>
       </div>
       <table>
@@ -30,9 +30,9 @@
             <td>{{ el.name }}</td>
             <td v-if="isEdit">{{ el.fundcode }}</td>
             <td v-if="!isEdit">{{ el.gsz }}</td>
-            <td :class="el.gszzl > 0 ? 'up' : 'down'">{{ el.gszzl }}%</td>
+            <td :class="el.gszzl >= 0 ? 'up' : 'down'">{{ el.gszzl }}%</td>
             <td v-if="showAmount">{{calculateMoney(el)}}</td>
-            <td v-if="showGains" :class="el.gszzl > 0 ? 'up' : 'down'">{{calculate(el)}}</td>
+            <td v-if="showGains" :class="el.gszzl >= 0 ? 'up' : 'down'">{{calculate(el)}}</td>
             <td v-if="!isEdit">{{ el.gztime.substr(5) }}</td>
             <th v-if="isEdit&&isEdit&&(showAmount||showGains)">
               <input
@@ -74,7 +74,15 @@
       <input class="btn" v-if="!isDuringDate" type="button" value="休市中" />
       <input class="btn" type="button" :value="isEdit ? '取消编辑' : '编辑'" @click="isEdit = !isEdit" />
       <input class="btn" type="button" :value="isAdd ? '取消添加' : '添加'" @click="isAdd = !isAdd" />
-      <input class="btn primary" type="button" value="打赏" @click="reward" />
+      <input class="btn primary" type="button" title="φ(>ω<*)" value="打赏" @click="reward" />
+      <input
+        v-if="showGains"
+        class="btn"
+        :class="allGains >= 0?'btn-up':'btn-down'"
+        type="button"
+        :title="allGains >= 0?'d=====(￣▽￣*)b 赞一个':'∑(っ°Д°;)っ 大事不好啦'"
+        :value="'总收益：'+allGains"
+      />
     </div>
     <div v-if="isAdd" class="input-row">
       <input v-model="fundcode" class="btn" type="text" placeholder="请输入基金代码" />
@@ -124,7 +132,8 @@ export default {
       showGains: false,
       showAmount: false,
       fundList: ["001618"],
-      fundListM: []
+      fundListM: [],
+      allGains: 0
     };
   },
   mounted() {
@@ -229,7 +238,6 @@ export default {
                 );
                 data.num = slt[0].num;
               }
-
               this.dataList.push(data);
               if (data.fundcode == this.RealtimeFundcode) {
                 chrome.runtime.sendMessage({
@@ -238,11 +246,19 @@ export default {
                 });
               }
             });
+            this.getAllGains();
           })
         )
         .catch(error => {
           console.log("数据请求出现错误！");
         });
+    },
+    getAllGains() {
+      let allGains = 0;
+      this.dataList.forEach(val => {
+        allGains += parseFloat(this.calculate(val));
+      });
+      this.allGains = allGains.toFixed(1);
     },
     changeNum(item, ind) {
       for (let fund of this.fundListM) {
@@ -253,9 +269,10 @@ export default {
       chrome.storage.sync.set({
         fundListM: this.fundListM
       });
+      this.getAllGains();
     },
     calculateMoney(val) {
-      let sum = (val.gsz * val.num).toFixed(1);
+      let sum = (val.dwjz * val.num).toFixed(1);
       return sum;
     },
     calculate(val) {
@@ -424,6 +441,7 @@ tbody tr:hover {
   font-size: 12px;
   color: #000000;
   margin: 0 5px;
+  outline: none;
   border: 1px solid #dcdfe6;
 }
 
@@ -438,6 +456,16 @@ tbody tr:hover {
 
 .btn.num {
   width: 80px;
+}
+
+.btn-up {
+  color: #f56c6c;
+  border-color: #f56c6c;
+}
+
+.btn-down {
+  color: #4eb61b;
+  border-color: #4eb61b;
 }
 
 .slt {

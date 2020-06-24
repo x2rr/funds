@@ -102,7 +102,7 @@ var setBadge = (fundcode, Realtime) => {
 			chrome.browserAction.setBadgeText({
 				text: ress.gszzl
 			});
-			let color = Realtime ? ress.gszzl > 0 ? '#F56C6C' : '#4eb61b' : [0, 0, 0, 0];
+			let color = Realtime ? ress.gszzl >= 0 ? '#F56C6C' : '#4eb61b' : [0, 0, 0, 0];
 			chrome.browserAction.setBadgeBackgroundColor({
 				color: color
 			});
@@ -184,7 +184,7 @@ chrome.runtime.onMessage.addListener(
 			chrome.browserAction.setBadgeText({
 				text: request.data.gszzl
 			});
-			let color = isDuringDate() ? request.data.gszzl > 0 ? '#F56C6C' : '#4eb61b' : [0, 0, 0, 0];
+			let color = isDuringDate() ? request.data.gszzl >= 0 ? '#F56C6C' : '#4eb61b' : [0, 0, 0, 0];
 			chrome.browserAction.setBadgeBackgroundColor({
 				color: color
 			});
