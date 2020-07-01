@@ -62,6 +62,11 @@
       </table>
     </div>
     <p v-if="isEdit" class="tips">特别关注功能介绍：可以指定一个基金，实现后台自动更新估值涨跌幅，并在程序图标中以角标的形式实时更新。</p>
+    <div v-if="isAdd" class="input-row">
+      <span>添加新基金:</span>
+      <input v-model="fundcode" class="btn" type="text" placeholder="请输入基金代码" />
+      <input @click="save" class="btn" type="button" value="确定" />
+    </div>
     <div class="input-row">
       <input
         class="btn"
@@ -73,6 +78,7 @@
       <input class="btn" v-if="!isDuringDate" type="button" value="休市中" />
       <input class="btn" type="button" :value="isEdit ? '取消编辑' : '编辑'" @click="isEdit = !isEdit" />
       <input class="btn" type="button" :value="isAdd ? '取消添加' : '添加'" @click="isAdd = !isAdd" />
+      <input class="btn" type="button" value="设置" @click="option" />
       <input class="btn primary" type="button" title="φ(>ω<*)" value="打赏" @click="reward" />
       <input
         v-if="showGains"
@@ -85,10 +91,7 @@
         :value="'总收益：' + allGains"
       />
     </div>
-    <div v-if="isAdd" class="input-row">
-      <input v-model="fundcode" class="btn" type="text" placeholder="请输入基金代码" />
-      <input @click="save" class="btn" type="button" value="确定" />
-    </div>
+    
     <div v-if="rewardShadow" class="shadow">
       <div class="reward-box">
         <div class="tab-row">
@@ -194,6 +197,9 @@ export default {
     }
   },
   methods: {
+    option() {
+      chrome.tabs.create({ url: "options/options.html" });
+    },
     reward() {
       this.rewardShadow = true;
     },
