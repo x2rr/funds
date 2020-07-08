@@ -62,7 +62,7 @@
       </table>
     </div>
     <p v-if="isEdit" class="tips">特别关注功能介绍：可以指定一个基金，实现后台自动更新估值涨跌幅，并在程序图标中以角标的形式实时更新。</p>
-    <div v-if="isAdd" class="input-row">
+    <div v-if="isEdit" class="input-row">
       <span>添加新基金:</span>
       <input v-model="fundcode" class="btn" type="text" placeholder="请输入基金代码" />
       <input @click="save" class="btn" type="button" value="确定" />
@@ -77,7 +77,7 @@
       />
       <input class="btn" v-if="!isDuringDate" type="button" value="休市中" />
       <input class="btn" type="button" :value="isEdit ? '取消编辑' : '编辑'" @click="isEdit = !isEdit" />
-      <input class="btn" type="button" :value="isAdd ? '取消添加' : '添加'" @click="isAdd = !isAdd" />
+      <!-- <input class="btn" type="button" :value="isAdd ? '取消添加' : '添加'" @click="isAdd = !isAdd" /> -->
       <input class="btn" type="button" value="设置" @click="option" />
       <input class="btn primary" type="button" title="φ(>ω<*)" value="打赏" @click="reward" />
       <input
@@ -91,34 +91,16 @@
         :value="'总收益：' + allGains"
       />
     </div>
-    
-    <div v-if="rewardShadow" class="shadow">
-      <div class="reward-box">
-        <div class="tab-row">
-          <button @click="checked = 'wepay'" :class="checked == 'wepay' ? 'checked' : ''">微信</button>
-          <button @click="checked = 'alipay'" :class="checked == 'alipay' ? 'checked' : ''">支付宝</button>
-        </div>
-        <div class="qrcode">
-          <img
-            :src="
-              checked == 'wepay'
-                ? './../icons/qrcode/wepay.png'
-                : './../icons/qrcode/alipay.png'
-            "
-          />
-        </div>
-        <p class="tips reward-tips">感谢有您的支持，自选基金才能一直保持更新，增加更多功能。</p>
-        <div class="tab-row">
-          <input class="btn success" type="button" value="打赏好了" @click="rewardShadow = false" />
-          <input class="btn" type="button" value="下次一定" @click="rewardShadow = false" />
-        </div>
-      </div>
-    </div>
+    <reward @close="closeReward" ref="reward"></reward>
   </div>
 </template>
 
 <script>
+import reward from "../common/reward";
 export default {
+  components: {
+    reward
+  },
   data() {
     return {
       isEdit: false,
@@ -202,6 +184,10 @@ export default {
     },
     reward() {
       this.rewardShadow = true;
+      this.$refs.reward.init();
+    },
+    closeReward() {
+      this.rewardShadow = false;
     },
     getSeciData() {
       let url =
@@ -387,8 +373,7 @@ export default {
 <style lang="scss" scoped>
 .container {
   min-width: 380px;
-  min-height: 100px;
-  max-height: 405px;
+  min-height: 150px;
   overflow-y: auto;
   padding: 10px 5px;
 }
@@ -510,80 +495,11 @@ tbody tr:hover {
   clear: both;
 }
 
-.shadow {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  padding: 20px 40px;
-  box-sizing: border-box;
-  top: 0;
-  left: 0;
-  background-color: rgba(0, 0, 0, 0.7);
-}
-
-.reward-box {
-  background: #ffffff;
-  border-radius: 15px;
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  display: inline-block;
-  line-height: 1;
-  vertical-align: middle;
-  font-size: 0;
-}
-
-.reward-box button {
-  line-height: 1;
-  white-space: nowrap;
-  vertical-align: middle;
-  background: #fff;
-  border: 1px solid #dcdfe6;
-  font-weight: 500;
-  border-left: 0;
-  color: #606266;
-  -webkit-appearance: none;
-  text-align: center;
-  box-sizing: border-box;
-  margin: 0;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
-  padding: 12px 20px;
-  font-size: 14px;
-  width: 85px;
-  position: relative;
-  display: inline-block;
-  outline: none;
-}
-
-.reward-box button:first-child {
-  border-left: 1px solid #dcdfe6;
-  border-radius: 4px 0 0 4px;
-  box-shadow: none !important;
-}
-
-.reward-box button:last-child {
-  border-radius: 0 4px 4px 0;
-}
-
-.reward-box button.checked {
-  color: #fff;
-  background-color: #409eff;
-  border-color: #409eff;
-}
 
 .tab-row {
   padding: 12px 0;
 }
 
-.qrcode img {
-  width: 256px;
-}
-
-.success {
-  color: #4eb61b;
-  border-color: #4eb61b;
-}
 
 .primary {
   color: #409eff;
@@ -596,9 +512,5 @@ tbody tr:hover {
   color: #aaaaaa;
   line-height: 1.4;
   padding: 5px 15px;
-}
-
-.reward-tips {
-  padding: 0 50px;
 }
 </style>

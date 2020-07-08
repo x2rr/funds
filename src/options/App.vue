@@ -5,7 +5,7 @@
         <li>
           <div class="list-title">
             节假日信息
-            <button :disabled="disabled" @click="getHoliday" class="btn">更新</button>
+            <button :disabled="disabled" @click="getHoliday" title="点击更新节假日信息" class="btn">更新</button>
             <span class="loading" v-if="disabled">更新中。。。</span>
           </div>
           <p>
@@ -19,9 +19,7 @@
           </p>
           <p>
             tips：更新节假日信息，可以在节假日暂停更新估值，节假日信息会不定时更新。
-            <a
-              href="https://x2rr.github.io/funds/holiday.json"
-            >查看最新版</a>
+            <a href="#" @click="openHoliday">查看最新版</a>
           </p>
         </li>
         <li>
@@ -42,8 +40,43 @@
               <label for="numTrue">是</label>
             </div>
           </div>
-
           <p>tips：在编辑设置里，输入基金的持有份额，即可计算出收益估值情况。</p>
+        </li>
+        <li>
+          <div class="list-title">请作者喝杯咖啡</div>
+          <p style="line-height:34px">
+            如果你觉得此插件对你有所帮助，或者想要支持一下我
+            <input
+              class="btn primary"
+              type="button"
+              title="φ(>ω<*)"
+              value="点击打赏"
+              @click="reward"
+            />
+          </p>
+          <p style="line-height:34px">
+            或者你也可以帮忙点一个star，点击查看源码→
+            <a
+              @click="openGithub"
+              title="点击查看项目源码"
+              class="btn black icon-btn"
+            >
+              <svg
+                class="githubIcon"
+                height="24"
+                viewBox="0 0 16 16"
+                version="1.1"
+                width="24"
+                aria-hidden="true"
+              >
+                <path
+                  d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
+                />
+              </svg>
+              <span class="githubText">源代码</span>
+            </a>
+          </p>
+          <reward :top="50" ref="reward"></reward>
         </li>
       </ul>
     </div>
@@ -51,7 +84,11 @@
 </template>
 
 <script>
+import reward from "../common/reward";
 export default {
+  components: {
+    reward
+  },
   data() {
     return {
       holiday: null,
@@ -135,6 +172,15 @@ export default {
           }
         );
       });
+    },
+    openHoliday() {
+      window.open("https://x2rr.github.io/funds/holiday.json");
+    },
+    openGithub() {
+      window.open("https://github.com/x2rr/funds");
+    },
+    reward(data) {
+      this.$refs.reward.init();
     }
   }
 };
@@ -143,7 +189,7 @@ export default {
 <style lang="scss" scoped>
 .container {
   min-width: 700px;
-  min-height: 400px;
+  min-height: 520px;
   text-align: center;
   padding-top: 15px;
 }
@@ -194,6 +240,23 @@ export default {
   color: #aaaaaa;
 }
 
+.btn.icon-btn {
+  line-height: 28px;
+  position: relative;
+  padding: 0 5px;
+  width: 74px;
+  text-decoration: none;
+}
+
+.githubIcon {
+  position: absolute;
+  top: 2px;
+}
+.githubText {
+  line-height: 28px;
+  padding-left: 30px;
+}
+
 .slt {
   color: #fff;
   background-color: #67c23a;
@@ -211,5 +274,14 @@ export default {
   color: #aaaaaa;
   line-height: 1.4;
   padding: 5px 15px;
+}
+.primary {
+  color: #409eff;
+  border-color: #409eff;
+}
+
+.black {
+  color: #24292e;
+  border-color: #24292e;
 }
 </style>
