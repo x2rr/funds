@@ -32,7 +32,7 @@
   "applications": {
     "gecko": {
       "id": "lbxuan123@gmail.com",
-      "strict_min_version": "42.0"
+      "strict_min_version": "63.0"
     }
   },
   "permissions": [
