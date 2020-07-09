@@ -103,7 +103,7 @@ var setBadge = (fundcode, Realtime) => {
         ress.gszzl >= 0 ?
         "#F56C6C" :
         "#4eb61b" :
-        [0, 0, 0, 0];
+        "#4285f4";
       chrome.browserAction.setBadgeBackgroundColor({
         color: color
       });
@@ -116,6 +116,7 @@ var setBadge = (fundcode, Realtime) => {
 };
 
 var startInterval = RealtimeFundcode => {
+  chrome.browserAction.setBadgeTextColor({color: "#ffffff"});
   endInterval(Interval);
   let Realtime = isDuringDate();
   setBadge(RealtimeFundcode, Realtime);
@@ -124,7 +125,7 @@ var startInterval = RealtimeFundcode => {
       setBadge(RealtimeFundcode, true);
     } else {
       chrome.browserAction.setBadgeBackgroundColor({
-        color: [0, 0, 0, 0]
+        color: "#4285f4"
       });
     }
   }, 2 * 60 * 1000);
@@ -185,7 +186,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       request.data.gszzl >= 0 ?
       "#F56C6C" :
       "#4eb61b" :
-      [0, 0, 0, 0];
+      "#4285f4";
     chrome.browserAction.setBadgeBackgroundColor({
       color: color
     });

@@ -180,7 +180,7 @@ export default {
   },
   methods: {
     option() {
-      chrome.tabs.create({ url: "options/options.html" });
+      chrome.tabs.create({ url: "/options/options.html" });
     },
     reward() {
       this.rewardShadow = true;
@@ -376,6 +376,8 @@ export default {
   min-height: 150px;
   overflow-y: auto;
   padding: 10px 5px;
+  font-size: 12px;
+  font-family: "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
 }
 
 .more-height {
@@ -479,6 +481,7 @@ tbody tr:hover {
 
 .tab-col h5 {
   margin: 4px 0;
+  font-size: 12px;
 }
 
 .tab-col p {
@@ -495,11 +498,9 @@ tbody tr:hover {
   clear: both;
 }
 
-
 .tab-row {
   padding: 12px 0;
 }
-
 
 .primary {
   color: #409eff;
