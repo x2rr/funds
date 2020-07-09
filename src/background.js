@@ -116,6 +116,7 @@ var setBadge = (fundcode, Realtime) => {
 };
 
 var startInterval = RealtimeFundcode => {
+  chrome.browserAction.setBadgeTextColor({color: "#ffffff"});
   endInterval(Interval);
   let Realtime = isDuringDate();
   setBadge(RealtimeFundcode, Realtime);

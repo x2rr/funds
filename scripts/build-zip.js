@@ -41,7 +41,7 @@ const buildZip = (src, dist, zipFilename) => {
 
 const main = () => {
   const {name, version} = extractExtensionData();
-  const zipFilename = `${name}-v${version}.zip`;
+  const zipFilename = `${name}-firefox-v${version}.zip`;
   
   makeDestZipDirIfNotExists();
 
