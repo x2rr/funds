@@ -1,5 +1,5 @@
-# 自选基金
-自选基金，实时查看您关注的基金，助您快速获取实时数据。
+# 自选基金助手
+自选基金助手，实时查看您关注的基金，助您快速获取实时数据。
 
 可以用来查看您的自选基金的实时估值情况，可以自由的增减自选基金。您的自选基金数据会跟随账号同步。
 ## 介绍
@@ -13,11 +13,18 @@
 
 插件已上架Microsoft Edge扩展商店：[点击跳转至Microsoft Edge扩展商店](https://microsoftedge.microsoft.com/addons/detail/kophadiajpobbfoobhclbobddkoindoi)
 
+插件已上架火狐Firefox扩展商店：[点击跳转至火狐Firefox扩展商店](https://addons.mozilla.org/zh-CN/firefox/addon/choose-funds/)
+
 ![主界面1](./image/1111.png)
 
 ![主界面2](./image/2222.png)
 
 ## 更新说明
+### v1.5.5
+- 改个名字，φ(>ω<*) 听说名字越长越厉害。
+- 优化滚动条效果，调整页面布局。
+- 优化基金名称过长时的显示效果。
+
 ### v1.5.4
 - 有小伙伴反馈找不到设置入口，现在主页面增加设置入口，主页面布局调整。
 - 设置页增加源码入口，感兴趣的小伙伴可以帮忙点个star。

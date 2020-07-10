@@ -26,7 +26,7 @@
         </thead>
         <tbody>
           <tr v-for="(el, index) in dataList" :key="el.fundcode">
-            <td>{{ el.name }}</td>
+            <td class="fundName" :title="el.name">{{ el.name }}</td>
             <td v-if="isEdit">{{ el.fundcode }}</td>
             <td v-if="!isEdit">{{ el.gsz }}</td>
             <td :class="el.gszzl >= 0 ? 'up' : 'down'">{{ el.gszzl }}%</td>
@@ -372,12 +372,14 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  min-width: 380px;
+  min-width: 400px;
   min-height: 150px;
   overflow-y: auto;
-  padding: 10px 5px;
+  padding: 8px 2px;
   font-size: 12px;
-  font-family: "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, "PingFang SC",
+    "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei",
+    sans-serif;
 }
 
 .more-height {
@@ -385,15 +387,15 @@ export default {
 }
 
 .more-width {
-  width: 600px;
+  width: 620px;
 }
 
 .num-all-width {
-  min-width: 500px;
+  min-width: 520px;
 }
 
 .num-one-width {
-  min-width: 420px;
+  min-width: 440px;
 }
 
 table {
@@ -404,11 +406,11 @@ table {
 }
 
 table th {
-  padding: 8px 7px;
+  padding: 8px 6px;
 }
 
 table td {
-  padding: 7px;
+  padding: 6px 6px 5px;
 }
 
 .up {
@@ -499,7 +501,7 @@ tbody tr:hover {
 }
 
 .tab-row {
-  padding: 12px 0;
+  padding: 6px 0;
 }
 
 .primary {
@@ -513,5 +515,29 @@ tbody tr:hover {
   color: #aaaaaa;
   line-height: 1.4;
   padding: 5px 15px;
+}
+
+.fundName {
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  background-color: rgba(240, 240, 240, 1);
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 0px rgba(240, 240, 240, 0.5);
+  border-radius: 10px;
+  background-color: rgba(240, 240, 240, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  box-shadow: inset 0 0 0px rgba(240, 240, 240, 0.5);
+  background-color: #cccccc;
 }
 </style>
