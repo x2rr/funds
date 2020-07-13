@@ -76,7 +76,7 @@
         @click="isLiveUpdate = !isLiveUpdate"
       />
       <input class="btn" v-if="!isDuringDate" type="button" value="休市中" />
-      <input class="btn" type="button" :value="isEdit ? '取消编辑' : '编辑'" @click="isEdit = !isEdit" />
+      <input class="btn" type="button" :value="isEdit ? '完成编辑' : '编辑'" @click="isEdit = !isEdit" />
       <!-- <input class="btn" type="button" :value="isAdd ? '取消添加' : '添加'" @click="isAdd = !isAdd" /> -->
       <input class="btn" type="button" value="设置" @click="option" />
       <input class="btn primary" type="button" title="φ(>ω<*)" value="打赏" @click="reward" />

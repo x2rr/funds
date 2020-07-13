@@ -61,7 +61,13 @@ var cpr_version = (a, b) => {
 };
 
 var isDuringDate = () => {
-  var curDate = new Date();
+
+ //时区转换为东8区
+ var zoneOffset = 8;
+ var offset8 = new Date().getTimezoneOffset()* 60 * 1000;
+ var nowDate8 = new Date().getTime();
+ var curDate = new Date(nowDate8 + offset8 + zoneOffset*60*60*1000);
+
   if (checkHoliday(curDate)) {
     return false;
   }
