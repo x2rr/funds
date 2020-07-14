@@ -249,11 +249,13 @@ export default {
 
 .icon-btn-row {
   position: relative;
+  width: 88px;
+  display: inline-block;
 }
 
 .githubIcon {
   position: absolute;
-  top: -4px;
+  top: 5px;
   left: 12px;
 }
 .githubText {
@@ -287,5 +289,21 @@ export default {
 .black {
   color: #24292e;
   border-color: #24292e;
+}
+
+@media screen and (max-width: 620px) {
+  .container {
+  min-width: 100%;
+  min-height: 520px;
+  text-align: center;
+  padding-top: 15px;
+}
+
+.setting-list {
+  width: 95%;
+  margin: 0 auto;
+  text-align: left;
+  padding: 0;
+}
 }
 </style>
