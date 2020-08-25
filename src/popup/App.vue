@@ -19,13 +19,20 @@
             <th v-if="showGains">估算收益</th>
             <th v-if="!isEdit">更新时间</th>
             <th v-if="isEdit && (showAmount || showGains)">持有份额</th>
-            <th v-if="isEdit">排序</th>
             <th v-if="isEdit">特别关注</th>
             <th v-if="isEdit">删除</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(el, index) in dataList" :key="el.fundcode">
+          <tr
+            v-for="(el, index) in dataList"
+            :key="el.fundcode"
+            :draggable="isEdit"
+            @dragstart="handleDragStart($event, el)"
+            @dragover.prevent="handleDragOver($event, el)"
+            @dragenter="handleDragEnter($event, el, index)"
+            @dragend="handleDragEnd($event, el)"
+          >
             <td class="fundName" :title="el.name">{{ el.name }}</td>
             <td v-if="isEdit">{{ el.fundcode }}</td>
             <td v-if="!isEdit">{{ el.gsz }}</td>
@@ -42,9 +49,6 @@
                 type="text"
               />
             </th>
-            <td v-if="isEdit">
-              <input @click="sortUp(index)" class="btn edit" value="▲" type="button" />
-            </td>
             <td v-if="isEdit">
               <input
                 @click="slt(el.fundcode)"
@@ -119,7 +123,8 @@ export default {
       showAmount: false,
       fundList: ["001618"],
       fundListM: [],
-      allGains: 0
+      allGains: 0,
+      dragging: null,
     };
   },
   mounted() {
@@ -278,6 +283,11 @@ export default {
         return currentValue.code == this.fundcode;
       });
 
+      if (this.fundcode.trim() == "") {
+        alert("请输入基金代码！");
+        return false;
+      }
+
       if (hasCode) {
         alert("该基金已添加！");
         return false;
@@ -313,21 +323,6 @@ export default {
         .catch(error => {
           alert("无法获取该基金信息！");
         });
-    },
-    sortUp(ind) {
-      if (ind == 0) {
-        return false;
-      }
-      let val = this.dataList[ind - 1];
-      this.$set(this.dataList, ind - 1, this.dataList[ind]);
-      this.$set(this.dataList, ind, val);
-      this.fundListM[ind] = [
-        this.fundListM[ind - 1],
-        (this.fundListM[ind - 1] = this.fundListM[ind])
-      ][0];
-      chrome.storage.sync.set({
-        fundListM: this.fundListM
-      });
     },
     slt(id) {
       if (id == this.RealtimeFundcode) {
@@ -365,8 +360,39 @@ export default {
           this.getData();
         }
       );
-    }
-  }
+    },
+    handleDragStart(e, item) {
+      this.dragging = item;
+    },
+    handleDragEnd(e, item) {
+      this.dragging = null;
+      chrome.storage.sync.set(
+        {
+          fundListM: this.fundListM,
+        },
+        () => {
+          this.getData();
+        }
+      );
+    },
+    handleDragOver(e) {
+      e.dataTransfer.dropEffect = "move";
+    },
+    handleDragEnter(e, item, index) {
+      e.dataTransfer.effectAllowed = "move";
+      if (item.fundcode === this.dragging.fundcode) {
+        return;
+      }
+      const newItems = [...this.fundListM];
+      const src = newItems.findIndex((n) => n.code == this.dragging.fundcode);
+      const dst = newItems.findIndex((n) => n.code == item.fundcode);
+      // // 替换
+      newItems.splice(dst, 0, ...newItems.splice(src, 1));
+      // // 让item的颜色等于新交换的颜色
+      this.fundListM = newItems;
+      console.log(this.fundListM, newItems);
+    },
+  },
 };
 </script>
 
