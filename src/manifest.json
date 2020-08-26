@@ -32,6 +32,6 @@
   "permissions": [
     "storage",
     "http://fundgz.1234567.com.cn/js/*",
-    "https://push2.eastmoney.com/api/*"
+    "https://*.eastmoney.com/*"
   ]
 }
