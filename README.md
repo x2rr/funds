@@ -15,11 +15,17 @@
 
 插件已上架火狐Firefox扩展商店：[点击跳转至火狐Firefox扩展商店](https://addons.mozilla.org/zh-CN/firefox/addon/choose-funds/)
 
-![主界面1](./image/1111.png)
+![主界面1](https://raw.githubusercontent.com/x2rr/Picture/master/img/20200716181144.png)
 
-![主界面2](./image/2222.png)
+![主界面2](https://raw.githubusercontent.com/x2rr/Picture/master/img/20200716181202.png)
 
 ## 更新说明
+### v1.6.0
+- 解决基金添加后无法显示、基金丢失等异常问题。
+- 增加按类别排序功能。
+- 增加拖拽排序功能。
+- 添加基金时增加搜索与多选功能。
+
 ### v1.5.6
 - 修复不同时区的时间异常问题。
 

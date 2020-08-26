@@ -56,7 +56,7 @@
           </p>
           <p style="line-height:34px">
             或者你也可以帮忙点一个star，点击查看源码→
-            <span class="black icon-btn-row">
+            <span title="点击查看项目源码" class="black icon-btn-row" @click="openGithub">
               <svg
                 class="githubIcon"
                 height="24"
@@ -72,9 +72,7 @@
               <input
                 class="btn black githubText"
                 type="button"
-                title="点击查看项目源码"
                 value="源代码"
-                @click="openGithub"
               />
             </span>
           </p>
@@ -240,6 +238,7 @@ export default {
   font-size: 14px;
   color: #000000;
   margin: 0 5px;
+  outline: none;
   border: 1px solid #dcdfe6;
 }
 
@@ -251,6 +250,7 @@ export default {
   position: relative;
   width: 88px;
   display: inline-block;
+  cursor: pointer;
 }
 
 .githubIcon {
