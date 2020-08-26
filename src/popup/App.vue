@@ -68,6 +68,7 @@
             v-for="(el, index) in dataList"
             :key="el.fundcode"
             :draggable="isEdit"
+            :class="drag"
             @dragstart="handleDragStart($event, el)"
             @dragover.prevent="handleDragOver($event, el)"
             @dragenter="handleDragEnter($event, el, index)"
@@ -214,6 +215,11 @@ export default {
         return "table-more-height";
       }
     },
+    drag() {
+      if (this.isEdit) {
+        return "table-drag";
+      }
+    },
   },
   watch: {
     isLiveUpdate(val) {
@@ -336,8 +342,80 @@ export default {
         axiosArray.push(newPromise);
       }
 
+      const promisesResolved = axiosArray.map((promise) =>
+        promise.catch((error) => ({ error }))
+      );
+
+      function checkFailed(then) {
+        return function (responses) {
+          const someFailed = responses.some((response) => response.error);
+          if (someFailed) {
+            throw responses;
+          }
+          return then(responses);
+        };
+      }
+
+      const formatData = (data) => {
+        this.dataList = [];
+        data.forEach((res, ind) => {
+          if (res.data && res.data.match(/\{(.+?)\}/)) {
+            let val = res.data.match(/\{(.+?)\}/);
+            if (val) {
+              //判读返回数据格式是否正常
+              let data = JSON.parse(val[0]);
+              if (this.showAmount || this.showGains) {
+                let slt = this.fundListM.filter(
+                  (item) => item.code == data.fundcode
+                );
+                data.num = slt[0].num;
+                data.amount = this.calculateMoney(data);
+                data.gains = this.calculate(data);
+              }
+              this.dataList.push(data);
+              if (data.fundcode == this.RealtimeFundcode) {
+                chrome.runtime.sendMessage({
+                  type: "refreshBadge",
+                  data: data,
+                });
+              }
+            }
+          } else {
+            //不支持的基金特殊处理
+            let data = {
+              fundcode: this.fundListM[ind].code,
+              name: this.fundListM[ind].code + "无法获取详情",
+              jzrq: "",
+              dwjz: "0",
+              gsz: "0",
+              gszzl: "0",
+              gztime: "0",
+              num: "0",
+              amount: "0",
+              gains: "0",
+            };
+
+            this.dataList.push(data);
+          }
+        });
+        this.getAllGains();
+      };
+
       this.$axios
-        .all(axiosArray)
+        .all(promisesResolved)
+        .then(
+          checkFailed((responses) => {
+            formatData(responses);
+          })
+        )
+        .catch((err) => {
+          formatData(err);
+        });
+
+      return false;
+
+      this.$axios
+        .all(promisesResolved)
         .then(
           this.$axios.spread((...responses) => {
             this.dataList = [];
@@ -351,6 +429,8 @@ export default {
                     (item) => item.code == data.fundcode
                   );
                   data.num = slt[0].num;
+                  data.amount = this.calculateMoney(data);
+                  data.gains = this.calculate(data);
                 }
                 this.dataList.push(data);
                 if (data.fundcode == this.RealtimeFundcode) {
@@ -510,7 +590,6 @@ export default {
       // // 让item的颜色等于新交换的颜色
       this.fundListM = newItems;
 
-      
       //数据列表也同步更新
       const newDataItems = [...this.dataList];
       const dataSrc = newDataItems.findIndex(
@@ -549,7 +628,9 @@ export default {
 .table-more-height {
   min-height: 160px;
 }
-
+.table-drag {
+  cursor: move;
+}
 .num-all-width {
   min-width: 520px;
 }
