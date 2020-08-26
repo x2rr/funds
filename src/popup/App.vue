@@ -418,6 +418,7 @@ export default {
         };
         this.fundListM.push(val);
       });
+
       chrome.storage.sync.set(
         {
           fundListM: this.fundListM,
@@ -489,6 +490,7 @@ export default {
         {
           fundListM: this.fundListM,
         },
+
         () => {}
       );
     },
@@ -507,6 +509,7 @@ export default {
       newItems.splice(dst, 0, ...newItems.splice(src, 1));
       // // 让item的颜色等于新交换的颜色
       this.fundListM = newItems;
+
       
       //数据列表也同步更新
       const newDataItems = [...this.dataList];
