@@ -1,6 +1,12 @@
 {
   "plugins": [
-    "@babel/plugin-proposal-optional-chaining"
+    [
+      "component",
+      {
+        "libraryName": "element-ui",
+        "styleLibraryName": "theme-chalk"
+      }
+    ]
   ],
   "presets": [
     ["@babel/preset-env", {

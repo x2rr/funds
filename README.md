@@ -15,9 +15,9 @@
 
 插件已上架火狐Firefox扩展商店：[点击跳转至火狐Firefox扩展商店](https://addons.mozilla.org/zh-CN/firefox/addon/choose-funds/)
 
-![主界面1](./image/1111.png)
+![主界面1](https://raw.githubusercontent.com/x2rr/Picture/master/img/20200716181144.png)
 
-![主界面2](./image/2222.png)
+![主界面2](https://raw.githubusercontent.com/x2rr/Picture/master/img/20200716181202.png)
 
 ## 更新说明
 ### v1.5.6
