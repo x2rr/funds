@@ -59,13 +59,20 @@
             </th>
             <th v-if="!isEdit">更新时间</th>
             <th v-if="isEdit && (showAmount || showGains)">持有份额</th>
-            <th v-if="isEdit">排序</th>
             <th v-if="isEdit">特别关注</th>
             <th v-if="isEdit">删除</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(el, index) in dataList" :key="el.fundcode">
+          <tr
+            v-for="(el, index) in dataList"
+            :key="el.fundcode"
+            :draggable="isEdit"
+            @dragstart="handleDragStart($event, el)"
+            @dragover.prevent="handleDragOver($event, el)"
+            @dragenter="handleDragEnter($event, el, index)"
+            @dragend="handleDragEnd($event, el)"
+          >
             <td class="fundName" :title="el.name">{{ el.name }}</td>
             <td v-if="isEdit">{{ el.fundcode }}</td>
             <td v-if="!isEdit">{{ el.gsz }}</td>
@@ -82,9 +89,6 @@
                 type="text"
               />
             </th>
-            <td v-if="isEdit">
-              <input @click="sortUp(index)" class="btn edit" value="▲" type="button" />
-            </td>
             <td v-if="isEdit">
               <input
                 @click="slt(el.fundcode)"
@@ -165,6 +169,7 @@ export default {
       value: [],
       list: [],
       loading: false,
+      dragging: null,
     };
   },
   mounted() {
@@ -227,6 +232,17 @@ export default {
         }
       });
     },
+    //编辑状态停止更新
+    isEdit(val) {
+      if (val) {
+        clearInterval(this.myVar1);
+      } else {
+        this.getData();
+        this.myVar1 = setInterval(() => {
+          this.getData();
+        }, 60 * 1000);
+      }
+    },
   },
   methods: {
     selectChange() {
@@ -241,7 +257,6 @@ export default {
           "&_=" +
           new Date().getTime();
         this.$axios.get(url).then((res) => {
-
           this.searchOptions = res.data.Datas.filter((val) => {
             let hasCode = this.fundListM.some((currentValue, index, array) => {
               return currentValue.code == val.CODE;
@@ -371,7 +386,7 @@ export default {
     },
     getAllGains() {
       let allGains = 0;
-      this.dataList.forEach(val => {
+      this.dataList.forEach((val) => {
         allGains += parseFloat(this.calculate(val));
       });
       this.allGains = allGains.toFixed(1);
@@ -464,6 +479,45 @@ export default {
           this.getData();
         }
       );
+    },
+    handleDragStart(e, item) {
+      this.dragging = item;
+    },
+    handleDragEnd(e, item) {
+      this.dragging = null;
+      chrome.storage.sync.set(
+        {
+          fundListM: this.fundListM,
+        },
+        () => {}
+      );
+    },
+    handleDragOver(e) {
+      e.dataTransfer.dropEffect = "move";
+    },
+    handleDragEnter(e, item, index) {
+      e.dataTransfer.effectAllowed = "move";
+      if (item.fundcode === this.dragging.fundcode) {
+        return;
+      }
+      const newItems = [...this.fundListM];
+      const src = newItems.findIndex((n) => n.code == this.dragging.fundcode);
+      const dst = newItems.findIndex((n) => n.code == item.fundcode);
+      // // 替换
+      newItems.splice(dst, 0, ...newItems.splice(src, 1));
+      // // 让item的颜色等于新交换的颜色
+      this.fundListM = newItems;
+      
+      //数据列表也同步更新
+      const newDataItems = [...this.dataList];
+      const dataSrc = newDataItems.findIndex(
+        (n) => n.fundcode == this.dragging.fundcode
+      );
+      const dataDst = newDataItems.findIndex(
+        (n) => n.fundcode == item.fundcode
+      );
+      newDataItems.splice(dataDst, 0, ...newDataItems.splice(dataSrc, 1));
+      this.dataList = newDataItems;
     },
   },
 };
