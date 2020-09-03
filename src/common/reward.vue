@@ -1,22 +1,39 @@
 <template>
   <div v-if="rewardShadow" class="shadow">
-    <div class="reward-box" :style="{marginTop: top +'px'}">
+    <div class="reward-box" :style="{ marginTop: top + 'px' }">
       <div class="tab-row">
-        <button @click="checked = 'wepay'" :class="checked == 'wepay' ? 'checked' : ''">微信</button>
-        <button @click="checked = 'alipay'" :class="checked == 'alipay' ? 'checked' : ''">支付宝</button>
+        <button
+          @click="checked = 'wepay'"
+          :class="checked == 'wepay' ? 'checked' : ''"
+        >
+          微信
+        </button>
+        <button
+          @click="checked = 'alipay'"
+          :class="checked == 'alipay' ? 'checked' : ''"
+        >
+          支付宝
+        </button>
       </div>
       <div class="qrcode">
         <img
           :src="
-              checked == 'wepay'
-                ? './../icons/qrcode/wepay.png'
-                : './../icons/qrcode/alipay.png'
-            "
+            checked == 'wepay'
+              ? './../icons/qrcode/wepay.png'
+              : './../icons/qrcode/alipay.png'
+          "
         />
       </div>
-      <p class="tips reward-tips">感谢有您的支持，自选基金才能一直保持更新，增加更多功能。</p>
+      <p class="tips reward-tips">
+        感谢有您的支持，自选基金才能一直保持更新，增加更多功能。
+      </p>
       <div class="tab-row">
-        <input class="btn success" type="button" value="打赏好了" @click="close" />
+        <input
+          class="btn success"
+          type="button"
+          value="打赏好了"
+          @click="close"
+        />
         <input class="btn" type="button" value="下次一定" @click="close" />
       </div>
     </div>
@@ -27,13 +44,13 @@ export default {
   props: {
     top: {
       type: Number,
-      default: 0
-    }
+      default: 0,
+    },
   },
   data() {
     return {
       rewardShadow: false,
-      checked: "wepay"
+      checked: "wepay",
     };
   },
   mounted() {},
@@ -44,8 +61,8 @@ export default {
     close() {
       this.rewardShadow = false;
       this.$emit("close", false);
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -139,6 +156,7 @@ export default {
 
 .reward-tips {
   padding: 0 50px;
+  margin-top: 5px;
 }
 
 .btn {
@@ -157,5 +175,31 @@ export default {
 .success {
   color: #4eb61b;
   border-color: #4eb61b;
+}
+
+.darkMode .reward-box {
+  color: rgba($color: #ffffff, $alpha: 0.6);
+  background-color: #373737;
+  .btn {
+    background-color: rgba($color: #ffffff, $alpha: 0.16);
+    color: rgba($color: #ffffff, $alpha: 0.6);
+    border: 1px solid rgba($color: #ffffff, $alpha: 0.6);
+  }
+  .success {
+    border: 1px solid rgba($color: #4eb61b, $alpha: 0.6);
+    background-color: rgba($color: #4eb61b, $alpha: 0.6);
+  }
+
+  button {
+    background-color: rgba($color: #ffffff, $alpha: 0.16);
+    color: rgba($color: #ffffff, $alpha: 0.6);
+    border: 1px solid rgba($color: #ffffff, $alpha: 0.38);
+  }
+
+  button.checked {
+    color: rgba($color: #ffffff, $alpha: 0.6);
+    border: 1px solid rgba($color: #409eff, $alpha: 0.38);
+    background-color: rgba($color: #409eff, $alpha: 0.6);
+  }
 }
 </style>

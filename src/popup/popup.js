@@ -3,13 +3,15 @@ import App from "./App";
 import axios from "axios";
 import {
   Select,
-  Option
+  Option,
+  Switch
 } from 'element-ui';
 
 Vue.prototype.$axios = axios;
 
 Vue.use(Select)
 Vue.use(Option)
+Vue.use(Switch)
 
 /* eslint-disable no-new */
 new Vue({
