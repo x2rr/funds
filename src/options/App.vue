@@ -1,20 +1,25 @@
 <template>
-  <div id="app" class="container">
+  <div id="app" class="container" :class="containerClass">
     <div>
       <ul class="setting-list">
         <li>
           <div class="list-title">
             节假日信息
-            <button :disabled="disabled" @click="getHoliday" title="点击更新节假日信息" class="btn">更新</button>
+            <button
+              :disabled="disabled"
+              @click="getHoliday"
+              title="点击更新节假日信息"
+              class="btn"
+            >
+              更新
+            </button>
             <span class="loading" v-if="disabled">更新中。。。</span>
           </div>
           <p>
             <span v-if="holiday">
               当前版本：v{{
-              holiday.version
-              }}&nbsp;&nbsp;&nbsp;&nbsp;最后节假日日期：{{
-              holiday.lastDate
-              }}
+                holiday.version
+              }}&nbsp;&nbsp;&nbsp;&nbsp;最后节假日日期：{{ holiday.lastDate }}
             </span>
           </p>
           <p>
@@ -24,23 +29,27 @@
         </li>
         <li>
           <div class="list-title">
-            显示份额与收益信息
+            主题设置
             <div class="select-row">
-              显示持有金额
-              <input type="radio" id="numFalse" :value="false" v-model="showAmount" />
-              <label for="numFalse">否</label>
-              <input type="radio" id="numTrue" :value="true" v-model="showAmount" />
-              <label for="numTrue">是</label>
-            </div>
-            <div class="select-row">
-              显示估值收益
-              <input type="radio" id="numFalse" :value="false" v-model="showGains" />
-              <label for="numFalse">否</label>
-              <input type="radio" id="numTrue" :value="true" v-model="showGains" />
-              <label for="numTrue">是</label>
+              <el-switch
+                v-model="darkMode"
+                @change="changeDarkMode"
+                active-color="#484848"
+                inactive-color="#13ce66"
+                inactive-text="标准模式"
+                active-text="暗色模式"
+              >
+              </el-switch>
             </div>
           </div>
-          <p>tips：在编辑设置里，输入基金的持有份额，即可计算出收益估值情况。</p>
+        </li>
+        <li>
+          <div class="list-title">
+            显示份额与收益信息
+          </div>
+          <p>
+            tips：在编辑设置里，输入基金的持有份额，即可计算出收益估值情况。
+          </p>
         </li>
         <li>
           <div class="list-title">请作者喝杯咖啡</div>
@@ -56,7 +65,11 @@
           </p>
           <p style="line-height:34px">
             或者你也可以帮忙点一个star，点击查看源码→
-            <span title="点击查看项目源码" class="black icon-btn-row" @click="openGithub">
+            <span
+              title="点击查看项目源码"
+              class="black icon-btn-row"
+              @click="openGithub"
+            >
               <svg
                 class="githubIcon"
                 height="24"
@@ -87,28 +100,29 @@
 import reward from "../common/reward";
 export default {
   components: {
-    reward
+    reward,
   },
   data() {
     return {
       holiday: null,
       disabled: false,
       showAmount: false,
-      showGains: false
+      showGains: false,
+      darkMode: false,
     };
   },
   mounted() {
     chrome.storage.sync.get(
-      ["holiday", "showNum", "showAmount", "showGains"],
-      res => {
+      ["holiday", "showNum", "showAmount", "showGains", "darkMode"],
+      (res) => {
         if (res.showNum) {
           //解决版本遗留问题，拆分属性
           chrome.storage.sync.set({
-            showNum: false
+            showNum: false,
           });
           chrome.storage.sync.set(
             {
-              showAmount: true
+              showAmount: true,
             },
             () => {
               this.showAmount = true;
@@ -116,7 +130,7 @@ export default {
           );
           chrome.storage.sync.set(
             {
-              showGains: true
+              showGains: true,
             },
             () => {
               this.showGains = true;
@@ -132,6 +146,8 @@ export default {
         } else {
           this.getHoliday();
         }
+
+        this.darkMode = res.darkMode ? res.darkMode : false;
       }
     );
   },
@@ -139,7 +155,7 @@ export default {
     showAmount(val) {
       chrome.storage.sync.set(
         {
-          showAmount: val
+          showAmount: val,
         },
         () => {
           this.showAmount = val;
@@ -149,22 +165,29 @@ export default {
     showGains(val) {
       chrome.storage.sync.set(
         {
-          showGains: val
+          showGains: val,
         },
         () => {
           this.showGains = val;
         }
       );
-    }
+    },
+  },
+  computed: {
+    containerClass() {
+      if (this.darkMode) {
+        return "darkMode";
+      }
+    },
   },
   methods: {
     getHoliday() {
       this.disabled = true;
       let url = "https://x2rr.github.io/funds/holiday.json";
-      this.$axios.get(url).then(res => {
+      this.$axios.get(url).then((res) => {
         chrome.storage.sync.set(
           {
-            holiday: res.data
+            holiday: res.data,
           },
           () => {
             this.holiday = res.data;
@@ -181,8 +204,13 @@ export default {
     },
     reward(data) {
       this.$refs.reward.init();
-    }
-  }
+    },
+    changeDarkMode() {
+      chrome.storage.sync.set({
+        darkMode: this.darkMode,
+      });
+    },
+  },
 };
 </script>
 
@@ -202,7 +230,8 @@ export default {
   width: 600px;
   margin: 0 auto;
   text-align: left;
-  padding: 0;
+  padding: 0 10px 10px;
+  border-radius: 8px;
 }
 
 .setting-list li {
@@ -263,17 +292,6 @@ export default {
   padding: 8px 8px 8px 36px;
 }
 
-.slt {
-  color: #fff;
-  background-color: #67c23a;
-  border-color: #67c23a;
-}
-
-.input-row {
-  text-align: center;
-  margin-top: 10px;
-}
-
 .tips {
   font-size: 12px;
   margin: 0;
@@ -293,17 +311,46 @@ export default {
 
 @media screen and (max-width: 620px) {
   .container {
-  min-width: 100%;
-  min-height: 520px;
-  text-align: center;
-  padding-top: 15px;
-}
+    min-width: 100%;
+    min-height: 520px;
+    text-align: center;
+    padding-top: 15px;
+  }
 
-.setting-list {
-  width: 95%;
-  margin: 0 auto;
-  text-align: left;
-  padding: 0;
+  .setting-list {
+    width: 95%;
+    margin: 0 auto;
+    text-align: left;
+    padding: 0;
+  }
 }
+//暗黑主题
+.container.darkMode {
+  color: rgba($color: #ffffff, $alpha: 0.6);
+  background-color: #121212;
+  .btn {
+    background-color: rgba($color: #ffffff, $alpha: 0.16);
+    color: rgba($color: #ffffff, $alpha: 0.6);
+    border: 1px solid rgba($color: #ffffff, $alpha: 0.6);
+  }
+  .primary {
+    border: 1px solid rgba($color: #409eff, $alpha: 0.6);
+    background-color: rgba($color: #409eff, $alpha: 0.6);
+  }
+
+  .setting-list {
+    background-color: rgba($color: #ffffff, $alpha: 0.11);
+  }
+
+  .setting-list li {
+    border-bottom: 1px solid rgba($color: #ffffff, $alpha: 0.38);
+  }
+
+  /deep/ .el-switch__label.is-active {
+    color: rgba($color: #409eff, $alpha: 0.87);
+  }
+  /deep/ .el-switch__label {
+    color: rgba($color: #ffffff, $alpha: 0.6);
+  }
 }
 </style>

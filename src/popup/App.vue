@@ -1,11 +1,67 @@
 <template>
-  <div id="app" class="container" :class="containerWidth">
+  <div id="app" class="container" :class="containerClass">
     <div>
       <div class="tab-row">
-        <div v-for="el in seciData" class="tab-col" :key="el.f12">
-          <h5>{{ el.f14 }}</h5>
+        <div
+          v-for="(el, index) in indFundData"
+          :draggable="isEdit"
+          class="tab-col"
+          :class="drag"
+          :key="el.f12"
+          @dragstart="handleDragStart($event, el)"
+          @dragover.prevent="handleDragOver($event, el)"
+          @dragenter="handleDragEnter($event, el, index)"
+          @dragend="handleDragEnd($event, el)"
+        >
+          <h5>
+            {{ el.f14 }}
+            <span
+              v-if="isEdit"
+              @click="dltIndFund(index)"
+              class="dltBtn edit red btn"
+              >✖</span
+            >
+          </h5>
           <p :class="el.f3 >= 0 ? 'up' : 'down'">{{ el.f2 }}</p>
-          <p :class="el.f3 >= 0 ? 'up' : 'down'">{{ el.f4 }}&nbsp;&nbsp;{{ el.f3 }}%</p>
+          <p :class="el.f3 >= 0 ? 'up' : 'down'">
+            {{ el.f4 }}&nbsp;&nbsp;{{ el.f3 }}%
+          </p>
+        </div>
+        <div v-if="isEdit && indFundData.length < 4" class="tab-col">
+          <div
+            v-if="!showAddSeciInput"
+            class="addSeci"
+            @click="() => (showAddSeciInput = true)"
+          >
+            添加
+          </div>
+          <div v-else>
+            <div style="padding-top:2px">
+              <el-select
+                size="mini"
+                :popper-append-to-body="false"
+                v-model="sltSeci"
+                style="width:110px"
+                placeholder="请选择"
+              >
+                <el-option
+                  v-for="item in userSeciList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </div>
+            <div style="margin-top:4px">
+              <input
+                class="btn"
+                type="button"
+                value="取消"
+                @click="() => (showAddSeciInput = false)"
+              />
+              <input class="btn" type="button" value="确定" @click="saveSeci" />
+            </div>
+          </div>
         </div>
       </div>
       <div v-if="isEdit" class="input-row">
@@ -15,6 +71,7 @@
           v-model="fundcode"
           multiple
           filterable
+          :popper-append-to-body="false"
           remote
           size="mini"
           reserve-keyword
@@ -33,12 +90,15 @@
             <span style="float: left">{{ item.label }}</span>
             <span
               style="float: right; color: #8492a6; font-size: 13px;margim-right:20px;padding-right:15px"
-            >{{ item.value }}</span>
+              >{{ item.value }}</span
+            >
           </el-option>
         </el-select>
         <input @click="save" class="btn" type="button" value="确定" />
       </div>
-      <p v-if="isEdit" class="tips center">部分新发基金或QDII基金可以搜索到，但可能无法获取估值情况</p>
+      <p v-if="isEdit" class="tips center">
+        部分新发基金或QDII基金可以搜索到，但可能无法获取估值情况
+      </p>
       <table :class="tableHeight">
         <thead>
           <tr>
@@ -79,7 +139,9 @@
             <td v-if="!isEdit">{{ el.gsz }}</td>
             <td :class="el.gszzl >= 0 ? 'up' : 'down'">{{ el.gszzl }}%</td>
             <td v-if="showAmount">{{ calculateMoney(el) }}</td>
-            <td v-if="showGains" :class="el.gszzl >= 0 ? 'up' : 'down'">{{ calculate(el) }}</td>
+            <td v-if="showGains" :class="el.gszzl >= 0 ? 'up' : 'down'">
+              {{ calculate(el) }}
+            </td>
             <td v-if="!isEdit">{{ el.gztime.substr(5) }}</td>
             <th v-if="isEdit && isEdit && (showAmount || showGains)">
               <input
@@ -100,27 +162,60 @@
               />
             </td>
             <td v-if="isEdit">
-              <input @click="dlt(el.fundcode)" class="btn red edit" value="✖" type="button" />
+              <input
+                @click="dlt(el.fundcode)"
+                class="btn red edit"
+                value="✖"
+                type="button"
+              />
             </td>
           </tr>
         </tbody>
       </table>
     </div>
-    <p v-if="isEdit" class="tips">特别关注功能介绍：可以指定一个基金，实现后台自动更新估值涨跌幅，并在程序图标中以角标的形式实时更新。</p>
+    <p v-if="isEdit" class="tips">
+      特别关注功能介绍：可以指定一个基金，在后台自动更新估值涨跌幅，并在程序图标中以角标的形式实时更新。
+    </p>
+
+    <div v-show="isEdit" class="input-row">
+      <el-switch
+        v-model="darkMode"
+        @change="changeDarkMode"
+        active-color="#484848"
+        inactive-color="#13ce66"
+        inactive-text="标准模式"
+        active-text="暗色模式"
+      >
+      </el-switch>
+    </div>
 
     <div class="input-row">
       <input
         class="btn"
         v-if="isDuringDate"
         type="button"
-        :value="isLiveUpdate ? '暂停实时更新' : '实时更新'"
-        @click="isLiveUpdate = !isLiveUpdate"
+        :value="isLiveUpdate ? '暂停更新' : '实时更新'"
+        :title="
+          isLiveUpdate ? '正在实时更新，点击暂停' : '已暂停，点击切换为实时更新'
+        "
+        @click="changeLiveUpdate"
       />
       <input class="btn" v-if="!isDuringDate" type="button" value="休市中" />
-      <input class="btn" type="button" :value="isEdit ? '完成编辑' : '编辑'" @click="isEdit = !isEdit" />
+      <input
+        class="btn"
+        type="button"
+        :value="isEdit ? '完成编辑' : '编辑'"
+        @click="isEdit = !isEdit"
+      />
       <!-- <input class="btn" type="button" :value="isAdd ? '取消添加' : '添加'" @click="isAdd = !isAdd" /> -->
       <input class="btn" type="button" value="设置" @click="option" />
-      <input class="btn primary" type="button" title="φ(>ω<*)" value="打赏" @click="reward" />
+      <input
+        class="btn primary"
+        type="button"
+        title="φ(>ω<*)"
+        value="打赏"
+        @click="reward"
+      />
       <input
         v-if="showGains"
         class="btn"
@@ -147,7 +242,7 @@ export default {
       isEdit: false,
       fundcode: "",
       isAdd: false,
-      seciData: [],
+      indFundData: [],
       isLiveUpdate: false,
       isDuringDate: false,
       RealtimeFundcode: null,
@@ -171,13 +266,66 @@ export default {
       list: [],
       loading: false,
       dragging: null,
+      showAddSeciInput: false,
+      seciList: ["1.000001", "1.000300", "0.399001", "0.399006"],
+      allSeciList: [
+        {
+          value: "1.000001",
+          label: "上证指数",
+        },
+        {
+          value: "1.000300",
+          label: "沪深300",
+        },
+        {
+          value: "0.399001",
+          label: "深证成指",
+        },
+        {
+          value: "1.000688",
+          label: "科创50",
+        },
+        {
+          value: "0.399006",
+          label: "创业板指",
+        },
+        {
+          value: "0.399005",
+          label: "中小板指",
+        },
+        {
+          value: "100.HSI",
+          label: "恒生指数",
+        },
+        {
+          value: "100.DJIA",
+          label: "道琼斯",
+        },
+        {
+          value: "100.NDX",
+          label: "纳斯达克",
+        },
+        {
+          value: "100.SPX",
+          label: "标普500",
+        },
+      ],
+      sltSeci: "",
+      darkMode: false,
     };
   },
   mounted() {
-    this.isLiveUpdate = true;
-    this.getSeciData();
     chrome.storage.sync.get(
-      ["RealtimeFundcode", "fundListM", "showAmount", "showGains", "fundList"],
+      [
+        "RealtimeFundcode",
+        "fundListM",
+        "showAmount",
+        "showGains",
+        "fundList",
+        "seciList",
+        "darkMode",
+        "isLiveUpdate",
+      ],
       (res) => {
         this.fundList = res.fundList ? res.fundList : this.fundList;
         if (res.fundListM) {
@@ -191,24 +339,39 @@ export default {
             this.fundListM.push(val);
           }
         }
+        this.darkMode = res.darkMode ? res.darkMode : false;
+        this.seciList = res.seciList ? res.seciList : this.seciList;
         this.showAmount = res.showAmount ? res.showAmount : false;
         this.showGains = res.showGains ? res.showGains : false;
         this.RealtimeFundcode = res.RealtimeFundcode;
+        this.isLiveUpdate = res.isLiveUpdate ? res.isLiveUpdate : false;
+        this.getIndFundData();
         this.getData();
+        this.checkInterval(true);
       }
     );
   },
   computed: {
-    containerWidth() {
-      if (this.rewardShadow) {
-        return "more-height";
-      } else if (this.isEdit) {
-        return "more-width";
-      } else if (this.showAmount && this.showGains) {
-        return "num-all-width";
-      } else if (this.showAmount || this.showGains) {
-        return "num-one-width";
+    containerClass() {
+      let className = "";
+      if (this.darkMode) {
+        className += "darkMode ";
       }
+      if (this.rewardShadow) {
+        className += "more-height";
+      } else if (this.isEdit) {
+        className += "more-width";
+      } else if (this.showAmount && this.showGains) {
+        className += "num-all-width";
+      } else if (this.showAmount || this.showGains) {
+        className += "num-one-width";
+      }
+      return className;
+    },
+    userSeciList() {
+      return this.allSeciList.filter((val) => {
+        return this.seciList.indexOf(val.value) == -1;
+      });
     },
     tableHeight() {
       if (this.isEdit) {
@@ -222,12 +385,27 @@ export default {
     },
   },
   watch: {
-    isLiveUpdate(val) {
+    //编辑状态停止更新
+    isEdit(val) {
+      if (val) {
+        clearInterval(this.myVar);
+        clearInterval(this.myVar1);
+      } else {
+        this.checkInterval();
+      }
+    },
+  },
+  methods: {
+    checkInterval(isFirst) {
       chrome.runtime.sendMessage({ type: "DuringDate" }, (response) => {
         this.isDuringDate = response.farewell;
-        if (val && this.isDuringDate) {
+        if (this.isLiveUpdate && this.isDuringDate) {
+          if (!isFirst) {
+            this.getIndFundData();
+            this.getData();
+          }
           this.myVar = setInterval(() => {
-            this.getSeciData();
+            this.getIndFundData();
           }, 5 * 1000);
           this.myVar1 = setInterval(() => {
             this.getData();
@@ -238,19 +416,6 @@ export default {
         }
       });
     },
-    //编辑状态停止更新
-    isEdit(val) {
-      if (val) {
-        clearInterval(this.myVar1);
-      } else {
-        this.getData();
-        this.myVar1 = setInterval(() => {
-          this.getData();
-        }, 60 * 1000);
-      }
-    },
-  },
-  methods: {
     selectChange() {
       this.searchOptions = [];
     },
@@ -301,7 +466,7 @@ export default {
       );
     },
     compare(property, type) {
-      return function (obj1, obj2) {
+      return function(obj1, obj2) {
         var val1 = obj1[property];
         var val2 = obj2[property];
         if (type == "asc") {
@@ -314,12 +479,54 @@ export default {
     closeReward() {
       this.rewardShadow = false;
     },
-    getSeciData() {
+    changeDarkMode() {
+      chrome.storage.sync.set({
+        darkMode: this.darkMode,
+      });
+    },
+    changeLiveUpdate() {
+      chrome.storage.sync.set(
+        {
+          isLiveUpdate: !this.isLiveUpdate,
+        },
+        () => {
+          this.isLiveUpdate = !this.isLiveUpdate;
+          this.checkInterval();
+        }
+      );
+    },
+    saveSeci() {
+      this.seciList.push(this.sltSeci);
+      chrome.storage.sync.set(
+        {
+          seciList: this.seciList,
+        },
+        () => {
+          this.sltSeci = "";
+          this.getIndFundData();
+        }
+      );
+    },
+    dltIndFund(ind) {
+      this.seciList.splice(ind, 1);
+      chrome.storage.sync.set(
+        {
+          seciList: this.seciList,
+        },
+        () => {
+          this.getIndFundData();
+        }
+      );
+    },
+    getIndFundData() {
+      let seciListStr = this.seciList.join(",");
       let url =
-        "https://push2.eastmoney.com/api/qt/ulist.np/get?fltt=2&fields=f2,f3,f4,f12,f14&secids=1.000001,1.000300,0.399001,0.399006&_=" +
+        "https://push2.eastmoney.com/api/qt/ulist.np/get?fltt=2&fields=f2,f3,f4,f12,f14&secids=" +
+        seciListStr +
+        "&_=" +
         new Date().getTime();
       this.$axios.get(url).then((res) => {
-        this.seciData = res.data.data.diff;
+        this.indFundData = res.data.data.diff;
       });
     },
     getData() {
@@ -347,7 +554,7 @@ export default {
       );
 
       function checkFailed(then) {
-        return function (responses) {
+        return function(responses) {
           const someFailed = responses.some((response) => response.error);
           if (someFailed) {
             throw responses;
@@ -362,7 +569,7 @@ export default {
           if (res.data && res.data.match(/\{(.+?)\}/)) {
             let val = res.data.match(/\{(.+?)\}/);
             if (val) {
-              //判读返回数据格式是否正常
+              //判断返回数据格式是否正常
               let data = JSON.parse(val[0]);
               if (this.showAmount || this.showGains) {
                 let slt = this.fundListM.filter(
@@ -410,58 +617,6 @@ export default {
         )
         .catch((err) => {
           formatData(err);
-        });
-
-      return false;
-
-      this.$axios
-        .all(promisesResolved)
-        .then(
-          this.$axios.spread((...responses) => {
-            this.dataList = [];
-            responses.forEach((res, ind) => {
-              let val = res.data.match(/\{(.+?)\}/);
-              if (val) {
-                //判读返回数据格式是否正常
-                let data = JSON.parse(val[0]);
-                if (this.showAmount || this.showGains) {
-                  let slt = this.fundListM.filter(
-                    (item) => item.code == data.fundcode
-                  );
-                  data.num = slt[0].num;
-                  data.amount = this.calculateMoney(data);
-                  data.gains = this.calculate(data);
-                }
-                this.dataList.push(data);
-                if (data.fundcode == this.RealtimeFundcode) {
-                  chrome.runtime.sendMessage({
-                    type: "refreshBadge",
-                    data: data,
-                  });
-                }
-              } else {
-                //不支持的基金特殊处理
-                let data = {
-                  fundcode: this.fundListM[ind].code,
-                  name: this.fundListM[ind].code + "无法获取详情",
-                  jzrq: "",
-                  dwjz: "0",
-                  gsz: "0",
-                  gszzl: "0",
-                  gztime: "0",
-                  num: "0",
-                  amount: "0",
-                  gains: "0",
-                };
-
-                this.dataList.push(data);
-              }
-            });
-            this.getAllGains();
-          })
-        )
-        .catch((error) => {
-          console.log("数据请求出现错误！");
         });
     },
     getAllGains() {
@@ -548,9 +703,21 @@ export default {
       }
     },
     dlt(id) {
-      this.fundListM = this.fundListM.filter(function (ele) {
+      this.fundListM = this.fundListM.filter(function(ele) {
         return ele.code != id;
       });
+
+      if (id == this.RealtimeFundcode) {
+        chrome.storage.sync.set(
+          {
+            RealtimeFundcode: null,
+          },
+          () => {
+            this.RealtimeFundcode = null;
+            chrome.runtime.sendMessage({ type: "endInterval" });
+          }
+        );
+      }
 
       chrome.storage.sync.set(
         {
@@ -564,42 +731,81 @@ export default {
     handleDragStart(e, item) {
       this.dragging = item;
     },
-    handleDragEnd(e, item) {
-      this.dragging = null;
-      chrome.storage.sync.set(
-        {
-          fundListM: this.fundListM,
-        },
-
-        () => {}
-      );
-    },
     handleDragOver(e) {
       e.dataTransfer.dropEffect = "move";
     },
-    handleDragEnter(e, item, index) {
-      e.dataTransfer.effectAllowed = "move";
-      if (item.fundcode === this.dragging.fundcode) {
-        return;
+    handleDragEnd(e, item) {
+      this.dragging = null;
+      if (item.fundcode) {
+        chrome.storage.sync.set(
+          {
+            fundListM: this.fundListM,
+          },
+          () => {}
+        );
+      } else if (item.f12) {
+        chrome.storage.sync.set(
+          {
+            seciList: this.seciList,
+          },
+          () => {}
+        );
       }
-      const newItems = [...this.fundListM];
-      const src = newItems.findIndex((n) => n.code == this.dragging.fundcode);
-      const dst = newItems.findIndex((n) => n.code == item.fundcode);
-      // // 替换
-      newItems.splice(dst, 0, ...newItems.splice(src, 1));
-      // // 让item的颜色等于新交换的颜色
-      this.fundListM = newItems;
+    },
+    handleDragEnter(e, item, index) {
+      // 基金排序
+      if (this.dragging && this.dragging.fundcode && item.fundcode) {
+        e.dataTransfer.effectAllowed = "move";
+        if (item.fundcode === this.dragging.fundcode) {
+          return;
+        }
+        const newItems = [...this.fundListM];
+        const src = newItems.findIndex((n) => n.code == this.dragging.fundcode);
+        const dst = newItems.findIndex((n) => n.code == item.fundcode);
+        // // 替换
+        newItems.splice(dst, 0, ...newItems.splice(src, 1));
 
-      //数据列表也同步更新
-      const newDataItems = [...this.dataList];
-      const dataSrc = newDataItems.findIndex(
-        (n) => n.fundcode == this.dragging.fundcode
-      );
-      const dataDst = newDataItems.findIndex(
-        (n) => n.fundcode == item.fundcode
-      );
-      newDataItems.splice(dataDst, 0, ...newDataItems.splice(dataSrc, 1));
-      this.dataList = newDataItems;
+        this.fundListM = newItems;
+
+        //数据列表也同步更新
+        const newDataItems = [...this.dataList];
+        const dataSrc = newDataItems.findIndex(
+          (n) => n.fundcode == this.dragging.fundcode
+        );
+        const dataDst = newDataItems.findIndex(
+          (n) => n.fundcode == item.fundcode
+        );
+        newDataItems.splice(dataDst, 0, ...newDataItems.splice(dataSrc, 1));
+        this.dataList = newDataItems;
+      } else if (this.dragging && this.dragging.f12 && item.f12) {
+        e.dataTransfer.effectAllowed = "move";
+        if (item.f12 === this.dragging.f12) {
+          return;
+        }
+        const newIndItems = [...this.seciList];
+        const indSrc = newIndItems.findIndex(
+          (n) => n.split(".")[1] == this.dragging.f12
+        );
+        const indDst = newIndItems.findIndex(
+          (n) => n.split(".")[1] == item.f12
+        );
+        console.log(newIndItems);
+        newIndItems.splice(indDst, 0, ...newIndItems.splice(indSrc, 1));
+        console.log(newIndItems);
+        this.seciList = newIndItems;
+
+        const newIndDataItems = [...this.indFundData];
+        const indDataSrc = newIndDataItems.findIndex(
+          (n) => n.f12 == this.dragging.f12
+        );
+        const indDataDst = newIndDataItems.findIndex((n) => n.f12 == item.f12);
+        newIndDataItems.splice(
+          indDataDst,
+          0,
+          ...newIndDataItems.splice(indDataSrc, 1)
+        );
+        this.indFundData = newIndDataItems;
+      }
     },
   },
 };
@@ -610,7 +816,7 @@ export default {
   min-width: 400px;
   min-height: 150px;
   overflow-y: auto;
-  padding: 8px 2px;
+  padding: 10px 7px;
   font-size: 12px;
   font-family: "Helvetica Neue", Helvetica, Arial, "PingFang SC",
     "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei",
@@ -618,7 +824,7 @@ export default {
 }
 
 .more-height {
-  height: 405px;
+  height: 415px;
 }
 
 .more-width {
@@ -681,7 +887,7 @@ tbody tr:hover {
   border-radius: 3px;
   font-size: 12px;
   color: #000000;
-  margin: 0 5px;
+  margin: 0 3px;
   outline: none;
   border: 1px solid #dcdfe6;
 }
@@ -721,18 +927,28 @@ tbody tr:hover {
 }
 
 .tab-col {
-  float: left;
-  width: 25%;
+  flex: 1;
+  margin: 0 4px;
   text-align: center;
-}
-
-.tab-col h5 {
-  margin: 4px 0;
-  font-size: 12px;
-}
-
-.tab-col p {
-  margin: 4px 0;
+  h5 {
+    margin: 4px 0;
+    font-size: 12px;
+    .dltBtn {
+      margin-left: 3px;
+    }
+  }
+  p {
+    margin: 4px 0;
+  }
+  .addSeci {
+    margin: 10px auto;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    line-height: 40px;
+    border: 1px solid #dcdfe6;
+    border-radius: 50%;
+  }
 }
 
 .tab-row:after,
@@ -747,6 +963,8 @@ tbody tr:hover {
 
 .tab-row {
   padding: 6px 0;
+  display: flex;
+  margin: 0 -3px;
 }
 
 .primary {
@@ -823,5 +1041,107 @@ tbody tr:hover {
 
 .pointer {
   cursor: pointer;
+}
+
+//暗黑主题
+.container.darkMode {
+  color: rgba($color: #ffffff, $alpha: 0.6);
+  background-color: #121212;
+  .btn {
+    background-color: rgba($color: #ffffff, $alpha: 0.16);
+    color: rgba($color: #ffffff, $alpha: 0.6);
+    border: 1px solid rgba($color: #ffffff, $alpha: 0.6);
+  }
+  .primary {
+    border: 1px solid rgba($color: #409eff, $alpha: 0.6);
+    background-color: rgba($color: #409eff, $alpha: 0.6);
+  }
+  /deep/ .el-input__inner {
+    background-color: rgba($color: #ffffff, $alpha: 0.16);
+    color: rgba($color: #ffffff, $alpha: 0.6);
+  }
+  /deep/ .el-select__input {
+    color: rgba($color: #ffffff, $alpha: 0.6);
+  }
+
+  /deep/ tbody tr:hover {
+    background-color: rgba($color: #ffffff, $alpha: 0.08);
+  }
+
+  .slt {
+    border: 1px solid rgba($color: #67c23a, $alpha: 0.6);
+    background-color: rgba($color: #67c23a, $alpha: 0.6);
+  }
+
+  .btn.red {
+    border: 1px solid rgba($color: #f56c6c, $alpha: 0.6);
+    background-color: rgba($color: #f56c6c, $alpha: 0.6);
+  }
+
+  .btn-up {
+    border: 1px solid rgba($color: #f56c6c, $alpha: 0.6);
+    background-color: rgba($color: #f56c6c, $alpha: 0.6);
+  }
+
+  .btn-down {
+    border: 1px solid rgba($color: #4eb61b, $alpha: 0.6);
+    background-color: rgba($color: #4eb61b, $alpha: 0.6);
+  }
+
+  .tab-col {
+    background-color: rgba($color: #ffffff, $alpha: 0.09);
+    border-radius: 5px;
+  }
+
+  table {
+    background-color: rgba($color: #ffffff, $alpha: 0.12);
+    border-radius: 5px;
+  }
+
+  ::placeholder {
+    color: rgba($color: #ffffff, $alpha: 0.38);
+  }
+
+  /deep/ .el-select .el-input.is-focus .el-input__inner {
+    border-color: rgba($color: #409eff, $alpha: 0.6);
+  }
+
+  /deep/ .el-select .el-tag {
+    background-color: rgba($color: #ffffff, $alpha: 0.14);
+    color: rgba($color: #ffffff, $alpha: 0.6);
+  }
+
+  /deep/ .el-select-dropdown {
+    background-color: #383838;
+    border: 1px solid rgba($color: #ffffff, $alpha: 0.38);
+    .popper__arrow::after {
+      border-bottom-color: #383838;
+    }
+    .el-scrollbar {
+      background-color: rgba($color: #ffffff, $alpha: 0.16);
+    }
+    .el-select-dropdown__item {
+      color: rgba($color: #ffffff, $alpha: 0.6);
+    }
+
+    .el-select-dropdown__item.hover,
+    .el-select-dropdown__item:hover {
+      background-color: rgba($color: #ffffff, $alpha: 0.08);
+    }
+    .el-select-dropdown__item.selected {
+      color: rgba($color: #409eff, $alpha: 0.6);
+      background-color: rgba($color: #ffffff, $alpha: 0.08);
+    }
+    .el-select-dropdown__item.selected::after {
+      color: rgba($color: #409eff, $alpha: 0.6);
+    }
+  }
+
+  /deep/ .el-switch__label.is-active {
+    color: rgba($color: #409eff, $alpha: 0.87);
+  }
+  /deep/ .el-switch__label {
+    color: rgba($color: #ffffff, $alpha: 0.6);
+  }
 }
 </style>
