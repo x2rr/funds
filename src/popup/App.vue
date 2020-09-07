@@ -1,5 +1,14 @@
 <template>
-  <div id="app" class="container" :class="containerClass">
+  <div
+    id="app"
+    class="container"
+    :class="containerClass"
+    :style="
+      diyContainer
+        ? { width: containerWidth + 'px', height: containerHeight + 'px' }
+        : ''
+    "
+  >
     <div>
       <div class="tab-row">
         <div
@@ -104,7 +113,8 @@
           <tr>
             <th>基金名称</th>
             <th v-if="isEdit">基金代码</th>
-            <th v-if="!isEdit">估算净值</th>
+            <th v-if="showGSZ && !isEdit">估算净值</th>
+            <th v-if="isEdit && showCost">成本价</th>
             <th @click="sortList('gszzl')" class="pointer">
               涨跌幅
               <span :class="sortType.gszzl" class="down-arrow"></span>
@@ -113,12 +123,16 @@
               持有额
               <span :class="sortType.amount" class="down-arrow"></span>
             </th>
+            <th v-if="showCost">持有收益</th>
+            <th v-if="showCostRate">持有收益率</th>
             <th @click="sortList('gains')" v-if="showGains" class="pointer">
               估算收益
               <span :class="sortType.gains" class="down-arrow"></span>
             </th>
             <th v-if="!isEdit">更新时间</th>
-            <th v-if="isEdit && (showAmount || showGains)">持有份额</th>
+            <th v-if="isEdit && (showAmount || showGains || showCost)">
+              持有份额
+            </th>
             <th v-if="isEdit">特别关注</th>
             <th v-if="isEdit">删除</th>
           </tr>
@@ -136,14 +150,32 @@
           >
             <td class="fundName" :title="el.name">{{ el.name }}</td>
             <td v-if="isEdit">{{ el.fundcode }}</td>
-            <td v-if="!isEdit">{{ el.gsz }}</td>
+            <td v-if="showGSZ && !isEdit">{{ el.gsz }}</td>
+            <td v-if="isEdit && showCost">
+              <input
+                class="btn num"
+                placeholder="持仓成本价"
+                v-model="el.cost"
+                @input="changeCost(el, index)"
+                type="text"
+              />
+            </td>
             <td :class="el.gszzl >= 0 ? 'up' : 'down'">{{ el.gszzl }}%</td>
             <td v-if="showAmount">{{ calculateMoney(el) }}</td>
+            <td v-if="showCost" :class="calculateCost(el) >= 0 ? 'up' : 'down'">
+              {{ calculateCost(el) }}
+            </td>
+            <td
+              v-if="showCostRate"
+              :class="calculateCostRate(el) >= 0 ? 'up' : 'down'"
+            >
+              {{ el.cost > 0 ? calculateCostRate(el) + "%" : "" }}
+            </td>
             <td v-if="showGains" :class="el.gszzl >= 0 ? 'up' : 'down'">
               {{ calculate(el) }}
             </td>
             <td v-if="!isEdit">{{ el.gztime.substr(5) }}</td>
-            <th v-if="isEdit && isEdit && (showAmount || showGains)">
+            <th v-if="isEdit && (showAmount || showGains || showCost)">
               <input
                 class="btn num"
                 placeholder="输入持有份额"
@@ -187,6 +219,8 @@
         active-text="暗色模式"
       >
       </el-switch>
+      <!-- <input v-model="containerWidth" type="number" />
+      <input v-model="containerHeight" type="number" /> -->
     </div>
 
     <div class="input-row">
@@ -216,6 +250,8 @@
         value="打赏"
         @click="reward"
       />
+    </div>
+    <div class="input-row">
       <input
         v-if="showGains"
         class="btn"
@@ -224,7 +260,17 @@
         :title="
           allGains >= 0 ? 'd=====(￣▽￣*)b 赞一个' : '∑(っ°Д°;)っ 大事不好啦'
         "
-        :value="'总收益：' + allGains"
+        :value="'日估值收益：' + allGains"
+      />
+      <input
+        v-if="showCost"
+        class="btn"
+        :class="allCost >= 0 ? 'btn-up' : 'btn-down'"
+        type="button"
+        :title="
+          allCost >= 0 ? 'd=====(￣▽￣*)b 赞一个' : '∑(っ°Д°;)っ 大事不好啦'
+        "
+        :value="'总持有收益：' + allCost"
       />
     </div>
     <reward @close="closeReward" ref="reward"></reward>
@@ -253,9 +299,13 @@ export default {
       checked: "wepay",
       showGains: false,
       showAmount: false,
+      showCost: false,
+      showCostRate: false,
+      showGSZ: false,
       fundList: ["001618"],
       fundListM: [],
       allGains: 0,
+      allCost: 0,
       sortType: {
         gszzl: "none",
         amount: "none",
@@ -312,6 +362,9 @@ export default {
       ],
       sltSeci: "",
       darkMode: false,
+      diyContainer: false,
+      containerWidth: 790,
+      containerHeight: 590,
     };
   },
   mounted() {
@@ -325,6 +378,9 @@ export default {
         "seciList",
         "darkMode",
         "isLiveUpdate",
+        "showCost",
+        "showCostRate",
+        "showGSZ",
       ],
       (res) => {
         this.fundList = res.fundList ? res.fundList : this.fundList;
@@ -345,6 +401,9 @@ export default {
         this.showGains = res.showGains ? res.showGains : false;
         this.RealtimeFundcode = res.RealtimeFundcode;
         this.isLiveUpdate = res.isLiveUpdate ? res.isLiveUpdate : false;
+        this.showCost = res.showCost ? res.showCost : false;
+        this.showCostRate = res.showCostRate ? res.showCostRate : false;
+        this.showGSZ = res.showGSZ ? res.showGSZ : false;
         this.getIndFundData();
         this.getData();
         this.checkInterval(true);
@@ -361,10 +420,22 @@ export default {
         className += "more-height";
       } else if (this.isEdit) {
         className += "more-width";
-      } else if (this.showAmount && this.showGains) {
-        className += "num-all-width";
-      } else if (this.showAmount || this.showGains) {
-        className += "num-one-width";
+      } else {
+        let tablist = [
+          this.showAmount,
+          this.showGains,
+          this.showGains,
+          this.showCostRate,
+          this.showGSZ,
+        ];
+        let num = 0;
+        tablist.forEach((val) => {
+          if (val) {
+            num++;
+          }
+        });
+        console.log(num);
+        className += "num-width-" + num;
       }
       return className;
     },
@@ -571,14 +642,11 @@ export default {
             if (val) {
               //判断返回数据格式是否正常
               let data = JSON.parse(val[0]);
-              if (this.showAmount || this.showGains) {
-                let slt = this.fundListM.filter(
-                  (item) => item.code == data.fundcode
-                );
-                data.num = slt[0].num;
-                data.amount = this.calculateMoney(data);
-                data.gains = this.calculate(data);
-              }
+              let slt = this.fundListM.filter(
+                (item) => item.code == data.fundcode
+              );
+              data.num = slt[0].num;
+              data.cost = slt[0].cost;
               this.dataList.push(data);
               if (data.fundcode == this.RealtimeFundcode) {
                 chrome.runtime.sendMessage({
@@ -606,6 +674,7 @@ export default {
           }
         });
         this.getAllGains();
+        this.getAllCost();
       };
 
       this.$axios
@@ -626,6 +695,13 @@ export default {
       });
       this.allGains = allGains.toFixed(1);
     },
+    getAllCost() {
+      let allCost = 0;
+      this.dataList.forEach((val) => {
+        allCost += parseFloat(this.calculateCost(val));
+      });
+      this.allCost = allCost.toFixed(1);
+    },
     changeNum(item, ind) {
       for (let fund of this.fundListM) {
         if (fund.code == item.fundcode) {
@@ -637,6 +713,17 @@ export default {
       });
       this.getAllGains();
     },
+    changeCost(item, ind) {
+      for (let fund of this.fundListM) {
+        if (fund.code == item.fundcode) {
+          fund.cost = item.cost;
+        }
+      }
+      chrome.storage.sync.set({
+        fundListM: this.fundListM,
+      });
+      // this.getAllGains();
+    },
     calculateMoney(val) {
       let sum = (val.dwjz * val.num).toFixed(1);
       return sum;
@@ -644,6 +731,22 @@ export default {
     calculate(val) {
       let sum = ((val.gsz - val.dwjz) * val.num).toFixed(1);
       return sum;
+    },
+    calculateCost(val) {
+      if (val.cost) {
+        let sum = ((val.dwjz - val.cost) * val.num).toFixed(1);
+        return sum;
+      } else {
+        return 0;
+      }
+    },
+    calculateCostRate(val) {
+      if (val.cost && val.cost != 0) {
+        let sum = (((val.dwjz - val.cost) / val.cost) * 100).toFixed(2);
+        return sum;
+      } else {
+        return 0;
+      }
     },
     save() {
       this.fundcode.forEach((code) => {
@@ -817,6 +920,7 @@ export default {
   min-height: 150px;
   overflow-y: auto;
   padding: 10px 7px;
+  box-sizing: border-box;
   font-size: 12px;
   font-family: "Helvetica Neue", Helvetica, Arial, "PingFang SC",
     "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei",
@@ -828,7 +932,7 @@ export default {
 }
 
 .more-width {
-  width: 620px;
+  width: 790px;
 }
 
 .table-more-height {
@@ -841,8 +945,20 @@ export default {
   min-width: 520px;
 }
 
-.num-one-width {
-  min-width: 440px;
+.num-width-1 {
+  min-width: 420px;
+}
+.num-width-2 {
+  min-width: 470px;
+}
+.num-width-3 {
+  min-width: 540px;
+}
+.num-width-4 {
+  min-width: 620px;
+}
+.num-width-5 {
+  min-width: 690px;
 }
 
 table {
@@ -902,7 +1018,7 @@ tbody tr:hover {
 }
 
 .btn.num {
-  width: 80px;
+  width: 75px;
 }
 
 .btn-up {

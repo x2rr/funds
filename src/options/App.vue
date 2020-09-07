@@ -45,7 +45,92 @@
         </li>
         <li>
           <div class="list-title">
-            显示份额与收益信息
+            基金列表展示内容设置
+            <div class="select-row">
+              <span>显示估算净值</span>
+              <input
+                type="radio"
+                id="GSZFalse"
+                :value="false"
+                v-model="showGSZ"
+              />
+              <label for="GSZFalse">否</label>
+              <input
+                type="radio"
+                id="GSZTrue"
+                :value="true"
+                v-model="showGSZ"
+              />
+              <label for="GSZTrue">是</label>
+            </div>
+            <div class="select-row">
+              <span>显示持有金额</span>
+              <input
+                type="radio"
+                id="AmountFalse"
+                :value="false"
+                v-model="showAmount"
+              />
+              <label for="AmountFalse">否</label>
+              <input
+                type="radio"
+                id="AmountTrue"
+                :value="true"
+                v-model="showAmount"
+              />
+              <label for="AmountTrue">是</label>
+            </div>
+            <div class="select-row">
+              <span>显示估值收益</span>
+              <input
+                type="radio"
+                id="GainsFalse"
+                :value="false"
+                v-model="showGains"
+              />
+              <label for="GainsFalse">否</label>
+              <input
+                type="radio"
+                id="GainsTrue"
+                :value="true"
+                v-model="showGains"
+              />
+              <label for="GainsTrue">是</label>
+            </div>
+            <div class="select-row">
+              <span>显示持有收益</span>
+              <input
+                type="radio"
+                id="CostFalse"
+                :value="false"
+                v-model="showCost"
+              />
+              <label for="CostFalse">否</label>
+              <input
+                type="radio"
+                id="CostTrue"
+                :value="true"
+                v-model="showCost"
+              />
+              <label for="CostTrue">是</label>
+            </div>
+            <div class="select-row">
+              <span>显示持有收益率</span>
+              <input
+                type="radio"
+                id="CostRateFalse"
+                :value="false"
+                v-model="showCostRate"
+              />
+              <label for="CostRateFalse">否</label>
+              <input
+                type="radio"
+                id="CostRateTrue"
+                :value="true"
+                v-model="showCostRate"
+              />
+              <label for="CostRateTrue">是</label>
+            </div>
           </div>
           <p>
             tips：在编辑设置里，输入基金的持有份额，即可计算出收益估值情况。
@@ -106,14 +191,26 @@ export default {
     return {
       holiday: null,
       disabled: false,
+      showGSZ: false,
       showAmount: false,
       showGains: false,
+      showCost: false,
+      showCostRate: false,
       darkMode: false,
     };
   },
   mounted() {
     chrome.storage.sync.get(
-      ["holiday", "showNum", "showAmount", "showGains", "darkMode"],
+      [
+        "holiday",
+        "showNum",
+        "showAmount",
+        "showGains",
+        "showCost",
+        "showCostRate",
+        "showGSZ",
+        "darkMode",
+      ],
       (res) => {
         if (res.showNum) {
           //解决版本遗留问题，拆分属性
@@ -146,7 +243,9 @@ export default {
         } else {
           this.getHoliday();
         }
-
+        this.showGSZ = res.showGSZ ? res.showGSZ : false;
+        this.showCost = res.showCost ? res.showCost : false;
+        this.showCostRate = res.showCostRate ? res.showCostRate : false;
         this.darkMode = res.darkMode ? res.darkMode : false;
       }
     );
@@ -172,6 +271,36 @@ export default {
         }
       );
     },
+    showCost(val) {
+      chrome.storage.sync.set(
+        {
+          showCost: val,
+        },
+        () => {
+          this.showCost = val;
+        }
+      );
+    },
+    showCostRate(val) {
+      chrome.storage.sync.set(
+        {
+          showCostRate: val,
+        },
+        () => {
+          this.showCostRate = val;
+        }
+      );
+    },
+    showGSZ(val) {
+      chrome.storage.sync.set(
+        {
+          showGSZ: val,
+        },
+        () => {
+          this.showGSZ = val;
+        }
+      );
+    }
   },
   computed: {
     containerClass() {
@@ -255,6 +384,15 @@ export default {
 .list-title .select-row {
   line-height: 30px;
   padding-left: 20px;
+  &>span {
+    display: inline-block;
+    width: 120px;
+    margin-right: 3px;
+    text-align: right;
+  }
+  input,label {
+    cursor: pointer;
+  }
 }
 
 .btn {
