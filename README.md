@@ -15,11 +15,18 @@
 
 插件已上架火狐Firefox扩展商店：[点击跳转至火狐Firefox扩展商店](https://addons.mozilla.org/zh-CN/firefox/addon/choose-funds/)
 
-![主界面1](https://raw.githubusercontent.com/x2rr/Picture/master/img/20200716181144.png)
+![主界面1](https://gitee.com/rabt/Picture/raw/master/img/20200717165330.png)
 
-![主界面2](https://raw.githubusercontent.com/x2rr/Picture/master/img/20200716181202.png)
+![主界面2](https://gitee.com/rabt/Picture/raw/master/img/20200907111218.png)
+
+![主界面3](https://gitee.com/rabt/Picture/raw/master/img/20200907111226.png)
+
 
 ## 更新说明
+### v1.7.1
+- 新增查看持有收益功能，添加持仓成本后，可以统计持仓总收益。
+- 修复设置页面中的bug。
+
 ### v1.7.0
 - 新增暗色模式主题。
 - 顶部指数信息支持动态修改。
