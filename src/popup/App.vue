@@ -484,6 +484,9 @@ export default {
         } else {
           clearInterval(this.myVar);
           clearInterval(this.myVar1);
+          // after clear interval, need to get data last time that make sure data is latest data.
+          this.getIndFundData();
+          this.getData();
         }
       });
     },
