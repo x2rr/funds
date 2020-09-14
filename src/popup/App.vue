@@ -537,9 +537,19 @@ export default {
       );
     },
     compare(property, type) {
+      var that = this;
       return function(obj1, obj2) {
-        var val1 = obj1[property];
-        var val2 = obj2[property];
+        var val1 = 0, val2 = 0;
+        if(property == "amount") {
+          val1 = parseFloat(that.calculateMoney(obj1));
+          val2 = parseFloat(that.calculateMoney(obj2));
+        } else if(property == "gains") {
+          val1 = parseFloat(that.calculate(obj1));
+          val2 = parseFloat(that.calculate(obj2));
+        } else {
+          val1 = obj1[property];
+          val2 = obj2[property];
+        }
         if (type == "asc") {
           return val1 - val2;
         } else {
