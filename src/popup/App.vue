@@ -745,13 +745,13 @@ export default {
               name: val.SHORTNAME,
               jzrq: val.PDATE,
               dwjz: val.NAV,
-              gsz: val.GSZ,
-              gszzl: val.GSZZL,
+              gsz: isNaN(val.GSZ) ? 0 : val.GSZ,
+              gszzl: isNaN(val.GSZZL) ? 0 : val.GSZZL,
               gztime: val.GZTIME,
             };
             if (val.PDATE == val.GZTIME.substr(0, 10)) {
               data.gsz = val.NAV;
-              data.gszzl = val.NAVCHGRT;
+              data.gszzl = isNaN(val.NAVCHGRT) ? 0 : val.NAVCHGRT;
               data.hasReplace = true;
             }
 
@@ -790,7 +790,7 @@ export default {
           },
           () => {
             item.amount = this.calculateMoney(item);
-            item.gains = this.calculate(item.item.hasReplace);
+            item.gains = this.calculate(item, item.hasReplace);
             item.costGains = this.calculateCost(item);
           }
         );

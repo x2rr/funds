@@ -1,5 +1,14 @@
 
 [{
+    "version": "2.0.2",
+    "type": 1,
+    "content": [{
+            "type": 1,
+            "content": "修复个别基金数据异常的bug。"
+        }
+    ]
+},
+{
     "version": "2.0.0",
     "type": 2,
     "content": [{

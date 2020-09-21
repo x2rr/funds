@@ -156,7 +156,8 @@ var setBadge = (fundcode, Realtime, type) => {
         if (val.PDATE == val.GZTIME.substr(0, 10)) {
           sum = (val.NAV - val.NAV / (1 + val.NAVCHGRT * 0.01)) * num
         } else {
-          sum = (val.GSZ - val.NAV) * num
+          let gsz = isNaN(val.GSZ) ? 0 : val.GSZ
+          sum = (gsz - val.NAV) * num
         }
         allGains += sum;
 
@@ -190,6 +191,7 @@ var setBadge = (fundcode, Realtime, type) => {
 
 
 };
+
 
 var startInterval = (RealtimeFundcode, type = 1) => {
   endInterval(Interval);
