@@ -17,12 +17,27 @@
 
 ![主界面1](https://gitee.com/rabt/Picture/raw/master/img/20200717165330.png)
 
-![主界面2](https://gitee.com/rabt/Picture/raw/master/img/20200907111218.png)
+![主界面2](https://gitee.com/rabt/Picture/raw/master/img/20200916120011.png)
 
-![主界面3](https://gitee.com/rabt/Picture/raw/master/img/20200907111226.png)
+![主界面3](https://gitee.com/rabt/Picture/raw/master/img/20200916120012.png)
+
+![主界面4](https://gitee.com/rabt/Picture/raw/master/img/20200907111218.png)
+
+![主界面5](https://gitee.com/rabt/Picture/raw/master/img/20200907111226.png)
+
 
 
 ## 更新说明
+### v2.0.0
+- 调整基金接口，支持当日实际净值，已更新的基金会有√提示。
+- 角标支持自定义功能，单个、全部、收益率、收益额，随心所欲。
+- 支持查看历史更新日志功能。
+
+### v1.8.0
+- 新增查看基金详情功能，点击基金名称即可查看估值图、走势图等相关信息。
+- 新增基金配置信息的导入导出功能。
+- 修复页面布局中的bug。
+
 ### v1.7.1
 - 新增查看持有收益功能，添加持仓成本后，可以统计持仓总收益。
 - 修复设置页面中的bug。
