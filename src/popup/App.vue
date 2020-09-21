@@ -108,105 +108,138 @@
       <p v-if="isEdit" class="tips center">
         部分新发基金或QDII基金可以搜索到，但可能无法获取估值情况
       </p>
-      <table :class="tableHeight">
-        <thead>
-          <tr>
-            <th>基金名称</th>
-            <th v-if="isEdit">基金代码</th>
-            <th v-if="showGSZ && !isEdit">估算净值</th>
-            <th v-if="isEdit && showCost">成本价</th>
-            <th @click="sortList('gszzl')" class="pointer">
-              涨跌幅
-              <span :class="sortType.gszzl" class="down-arrow"></span>
-            </th>
-            <th @click="sortList('amount')" v-if="showAmount" class="pointer">
-              持有额
-              <span :class="sortType.amount" class="down-arrow"></span>
-            </th>
-            <th v-if="showCost">持有收益</th>
-            <th v-if="showCostRate">持有收益率</th>
-            <th @click="sortList('gains')" v-if="showGains" class="pointer">
-              估算收益
-              <span :class="sortType.gains" class="down-arrow"></span>
-            </th>
-            <th v-if="!isEdit">更新时间</th>
-            <th v-if="isEdit && (showAmount || showGains || showCost)">
-              持有份额
-            </th>
-            <th v-if="isEdit">特别关注</th>
-            <th v-if="isEdit">删除</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="(el, index) in dataList"
-            :key="el.fundcode"
-            :draggable="isEdit"
-            :class="drag"
-            @dragstart="handleDragStart($event, el)"
-            @dragover.prevent="handleDragOver($event, el)"
-            @dragenter="handleDragEnter($event, el, index)"
-            @dragend="handleDragEnd($event, el)"
-          >
-            <td class="fundName" :title="el.name">{{ el.name }}</td>
-            <td v-if="isEdit">{{ el.fundcode }}</td>
-            <td v-if="showGSZ && !isEdit">{{ el.gsz }}</td>
-            <td v-if="isEdit && showCost">
-              <input
-                class="btn num"
-                placeholder="持仓成本价"
-                v-model="el.cost"
-                @input="changeCost(el, index)"
-                type="text"
-              />
-            </td>
-            <td :class="el.gszzl >= 0 ? 'up' : 'down'">{{ el.gszzl }}%</td>
-            <td v-if="showAmount">{{ calculateMoney(el) }}</td>
-            <td v-if="showCost" :class="calculateCost(el) >= 0 ? 'up' : 'down'">
-              {{ calculateCost(el) }}
-            </td>
-            <td
-              v-if="showCostRate"
-              :class="calculateCostRate(el) >= 0 ? 'up' : 'down'"
+      <div class="table-row">
+        <table :class="tableHeight">
+          <thead>
+            <tr>
+              <th>基金名称</th>
+              <th v-if="isEdit">基金代码</th>
+              <th v-if="showGSZ && !isEdit">估算净值</th>
+              <th v-if="isEdit && (showCostRate || showCost)">成本价</th>
+              <th @click="sortList('amount')" v-if="showAmount" class="pointer">
+                持有额
+                <span :class="sortType.amount" class="down-arrow"></span>
+              </th>
+              <th
+                @click="sortList('costGains')"
+                v-if="showCost"
+                class="pointer"
+              >
+                持有收益
+                <span :class="sortType.costGains" class="down-arrow"></span>
+              </th>
+              <th
+                @click="sortList('costGainsRate')"
+                v-if="showCostRate"
+                class="pointer"
+              >
+                持有收益率
+                <span :class="sortType.costGainsRate" class="down-arrow"></span>
+              </th>
+              <th @click="sortList('gszzl')" class="pointer">
+                涨跌幅
+                <span :class="sortType.gszzl" class="down-arrow"></span>
+              </th>
+              <th @click="sortList('gains')" v-if="showGains" class="pointer">
+                估算收益
+                <span :class="sortType.gains" class="down-arrow"></span>
+              </th>
+              <th v-if="!isEdit">更新时间</th>
+              <th
+                v-if="
+                  isEdit &&
+                    (showAmount || showGains || showCost || showCostRate)
+                "
+              >
+                持有份额
+              </th>
+              <th v-if="isEdit && BadgeContent == 1">特别关注</th>
+              <th v-if="isEdit">删除</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="(el, index) in dataList"
+              :key="el.fundcode"
+              :draggable="isEdit"
+              :class="drag"
+              @dragstart="handleDragStart($event, el)"
+              @dragover.prevent="handleDragOver($event, el)"
+              @dragenter="handleDragEnter($event, el, index)"
+              @dragend="handleDragEnd($event, el)"
             >
-              {{ el.cost > 0 ? calculateCostRate(el) + "%" : "" }}
-            </td>
-            <td v-if="showGains" :class="el.gszzl >= 0 ? 'up' : 'down'">
-              {{ calculate(el) }}
-            </td>
-            <td v-if="!isEdit">{{ el.gztime.substr(5) }}</td>
-            <th v-if="isEdit && (showAmount || showGains || showCost)">
-              <input
-                class="btn num"
-                placeholder="输入持有份额"
-                v-model="el.num"
-                @input="changeNum(el, index)"
-                type="text"
-              />
-            </th>
-            <td v-if="isEdit">
-              <input
-                @click="slt(el.fundcode)"
-                :class="el.fundcode == RealtimeFundcode ? 'slt' : ''"
-                class="btn edit"
-                value="✔"
-                type="button"
-              />
-            </td>
-            <td v-if="isEdit">
-              <input
-                @click="dlt(el.fundcode)"
-                class="btn red edit"
-                value="✖"
-                type="button"
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
+              <td
+                :class="isEdit ? 'fundName-noclick' : 'fundName'"
+                :title="el.name"
+                @click.stop="!isEdit && fundDetail(el)"
+              >
+                {{ el.name }}
+              </td>
+              <td v-if="isEdit">{{ el.fundcode }}</td>
+              <td v-if="showGSZ && !isEdit">{{ el.gsz }}</td>
+              <td v-if="isEdit && showCost">
+                <input
+                  class="btn num"
+                  placeholder="持仓成本价"
+                  v-model="el.cost"
+                  @input="changeCost(el, index)"
+                  type="text"
+                />
+              </td>
+
+              <td v-if="showAmount">{{ el.amount }}</td>
+              <td v-if="showCost" :class="el.costGains >= 0 ? 'up' : 'down'">
+                {{ el.costGains }}
+              </td>
+              <td
+                v-if="showCostRate"
+                :class="el.costGainsRate >= 0 ? 'up' : 'down'"
+              >
+                {{ el.cost > 0 ? el.costGainsRate + "%" : "" }}
+              </td>
+              <td :class="el.gszzl >= 0 ? 'up' : 'down'">{{ el.gszzl }}%</td>
+              <td v-if="showGains" :class="el.gszzl >= 0 ? 'up' : 'down'">
+                {{ el.gains }}
+              </td>
+              <td v-if="!isEdit">
+                {{
+                  el.hasReplace ? el.gztime.substr(5, 5) : el.gztime.substr(5)
+                }}
+                <span class="hasReplace-tip" v-if="el.hasReplace">✔</span>
+              </td>
+              <th v-if="isEdit && (showAmount || showGains || showCost)">
+                <input
+                  class="btn num"
+                  placeholder="输入持有份额"
+                  v-model="el.num"
+                  @input="changeNum(el, index)"
+                  type="text"
+                />
+              </th>
+              <td v-if="isEdit && BadgeContent == 1">
+                <input
+                  @click="slt(el.fundcode)"
+                  :class="el.fundcode == RealtimeFundcode ? 'slt' : ''"
+                  class="btn edit"
+                  value="✔"
+                  type="button"
+                />
+              </td>
+              <td v-if="isEdit">
+                <input
+                  @click="dlt(el.fundcode)"
+                  class="btn red edit"
+                  value="✖"
+                  type="button"
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
     <p v-if="isEdit" class="tips">
-      特别关注功能介绍：可以指定一个基金，在后台自动更新估值涨跌幅，并在程序图标中以角标的形式实时更新。
+      特别关注功能介绍：指定一个基金，在程序图标中以角标的形式实时更新，请在设置中选择角标类型与内容。
     </p>
 
     <div v-show="isEdit" class="input-row">
@@ -243,6 +276,7 @@
       />
       <!-- <input class="btn" type="button" :value="isAdd ? '取消添加' : '添加'" @click="isAdd = !isAdd" /> -->
       <input class="btn" type="button" value="设置" @click="option" />
+      <input class="btn" type="button" value="日志" @click="changelog" />
       <input
         class="btn primary"
         type="button"
@@ -260,28 +294,50 @@
         :title="
           allGains >= 0 ? 'd=====(￣▽￣*)b 赞一个' : '∑(っ°Д°;)っ 大事不好啦'
         "
-        :value="'日估值收益：' + allGains"
+        :value="'当日收益：' + allGains"
       />
       <input
         v-if="showCost"
         class="btn"
-        :class="allCost >= 0 ? 'btn-up' : 'btn-down'"
+        :class="allCostGains >= 0 ? 'btn-up' : 'btn-down'"
         type="button"
         :title="
-          allCost >= 0 ? 'd=====(￣▽￣*)b 赞一个' : '∑(っ°Д°;)っ 大事不好啦'
+          allCostGains >= 0
+            ? 'd=====(￣▽￣*)b 赞一个'
+            : '∑(っ°Д°;)っ 大事不好啦'
         "
-        :value="'总持有收益：' + allCost"
+        :value="'总持有收益：' + allCostGains"
       />
     </div>
-    <reward @close="closeReward" ref="reward"></reward>
+    <!-- <charts @close="closeCharts" ref="charts"></charts> -->
+    <fund-detail
+      @close="closeCharts"
+      :fund="sltFund"
+      :darkMode="darkMode"
+      ref="charts"
+    ></fund-detail>
+    <reward @close="rewardShadow = false" ref="reward"></reward>
+    <change-log @close="closeChangelog" ref="changelog" :top="40"></change-log>
   </div>
 </template>
 
 <script>
+const { version } = require("../../package.json");
 import reward from "../common/reward";
+import fundDetail from "../common/fundDetail";
+import changeLog from "../common/changeLog";
+//防抖
+let timeout = null;
+function debounce(fn, wait = 700) {
+  if (timeout !== null) clearTimeout(timeout);
+  timeout = setTimeout(fn, wait);
+}
+
 export default {
   components: {
     reward,
+    fundDetail,
+    changeLog,
   },
   data() {
     return {
@@ -304,12 +360,12 @@ export default {
       showGSZ: false,
       fundList: ["001618"],
       fundListM: [],
-      allGains: 0,
-      allCost: 0,
       sortType: {
         gszzl: "none",
         amount: "none",
         gains: "none",
+        costGains: "none",
+        costGainsRate: "none",
       },
       searchOptions: [],
       value: [],
@@ -365,6 +421,12 @@ export default {
       diyContainer: false,
       containerWidth: 790,
       containerHeight: 590,
+      detailShadow: false,
+      changelogShadow: false,
+      sltFund: {},
+      localVersion: version,
+      BadgeContent: 1,
+      userId: null,
     };
   },
   mounted() {
@@ -381,6 +443,9 @@ export default {
         "showCost",
         "showCostRate",
         "showGSZ",
+        "version",
+        "BadgeContent",
+        "userId",
       ],
       (res) => {
         this.fundList = res.fundList ? res.fundList : this.fundList;
@@ -395,6 +460,14 @@ export default {
             this.fundListM.push(val);
           }
         }
+        if (res.userId) {
+          this.userId = res.userId;
+        } else {
+          this.userId = this.getGuid();
+          chrome.storage.sync.set({
+            userId: this.userId,
+          });
+        }
         this.darkMode = res.darkMode ? res.darkMode : false;
         this.seciList = res.seciList ? res.seciList : this.seciList;
         this.showAmount = res.showAmount ? res.showAmount : false;
@@ -404,27 +477,54 @@ export default {
         this.showCost = res.showCost ? res.showCost : false;
         this.showCostRate = res.showCostRate ? res.showCostRate : false;
         this.showGSZ = res.showGSZ ? res.showGSZ : false;
+        this.BadgeContent = res.BadgeContent ? res.BadgeContent : 1;
+
         this.getIndFundData();
         this.getData();
         this.checkInterval(true);
+
+        let ver = res.version ? res.version : "1.0.0";
+        if (ver != this.localVersion) {
+          this.changelog();
+        }
       }
     );
   },
   computed: {
+    allGains() {
+      let allGains = 0;
+      this.dataList.forEach((val) => {
+        allGains += parseFloat(val.gains);
+      });
+      allGains = allGains.toFixed(1);
+      return allGains;
+    },
+    allCostGains() {
+      let allCostGains = 0;
+      this.dataList.forEach((val) => {
+        allCostGains += parseFloat(val.costGains);
+      });
+      allCostGains = allCostGains.toFixed(1);
+      return allCostGains;
+    },
     containerClass() {
       let className = "";
       if (this.darkMode) {
         className += "darkMode ";
       }
-      if (this.rewardShadow) {
+      if (this.changelogShadow) {
+        className += "changelog-container";
+      } else if (this.rewardShadow) {
         className += "more-height";
+      } else if (this.detailShadow) {
+        className += "detail-container";
       } else if (this.isEdit) {
         className += "more-width";
       } else {
         let tablist = [
           this.showAmount,
           this.showGains,
-          this.showGains,
+          this.showCost,
           this.showCostRate,
           this.showGSZ,
         ];
@@ -434,7 +534,6 @@ export default {
             num++;
           }
         });
-        console.log(num);
         className += "num-width-" + num;
       }
       return className;
@@ -452,6 +551,8 @@ export default {
     drag() {
       if (this.isEdit) {
         return "table-drag";
+      } else {
+        return "";
       }
     },
   },
@@ -467,6 +568,23 @@ export default {
     },
   },
   methods: {
+    getGuid() {
+      return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(
+        c
+      ) {
+        var r = (Math.random() * 16) | 0,
+          v = c == "x" ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      });
+    },
+    fundDetail(val) {
+      this.sltFund = val;
+      this.detailShadow = true;
+      this.$refs.charts.init();
+    },
+    closeCharts() {
+      this.detailShadow = false;
+    },
     checkInterval(isFirst) {
       chrome.runtime.sendMessage({ type: "DuringDate" }, (response) => {
         this.isDuringDate = response.farewell;
@@ -523,6 +641,16 @@ export default {
       this.rewardShadow = true;
       this.$refs.reward.init();
     },
+    changelog() {
+      this.changelogShadow = true;
+      this.$refs.changelog.init();
+    },
+    closeChangelog() {
+      this.changelogShadow = false;
+      chrome.storage.sync.set({
+        version: this.localVersion,
+      });
+    },
     sortList(type) {
       for (const key in this.sortType) {
         if (this.sortType.hasOwnProperty(key)) {
@@ -547,9 +675,7 @@ export default {
         }
       };
     },
-    closeReward() {
-      this.rewardShadow = false;
-    },
+
     changeDarkMode() {
       chrome.storage.sync.set({
         darkMode: this.darkMode,
@@ -601,135 +727,107 @@ export default {
       });
     },
     getData() {
-      // 	  ["fundcode"]=>"519983"           //基金代码
-      // 	  ["name"]=>"长信量化先锋混合A"    //基金名称
-      // 	  ["jzrq"]=>"2018-09-21"           //净值日期
-      // 	  ["dwjz"]=>"1.2440"               //当日净值
-      // 	  ["gsz"]=>"1.2388"                //估算净值
-      // 	  ["gszzl"]=>"-0.42"               //估算涨跌百分比 即-0.42%
-      // 	  ["gztime"]=>"2018-09-25 15:00"   //估值时间
-
-      let axiosArray = [];
-      for (const fund of this.fundListM) {
-        let url =
-          "http://fundgz.1234567.com.cn/js/" +
-          fund.code +
-          ".js?rt=" +
-          new Date().getTime();
-        let newPromise = this.$axios.get(url);
-        axiosArray.push(newPromise);
-      }
-
-      const promisesResolved = axiosArray.map((promise) =>
-        promise.catch((error) => ({ error }))
-      );
-
-      function checkFailed(then) {
-        return function(responses) {
-          const someFailed = responses.some((response) => response.error);
-          if (someFailed) {
-            throw responses;
-          }
-          return then(responses);
-        };
-      }
-
-      const formatData = (data) => {
-        this.dataList = [];
-        data.forEach((res, ind) => {
-          if (res.data && res.data.match(/\{(.+?)\}/)) {
-            let val = res.data.match(/\{(.+?)\}/);
-            if (val) {
-              //判断返回数据格式是否正常
-              let data = JSON.parse(val[0]);
-              let slt = this.fundListM.filter(
-                (item) => item.code == data.fundcode
-              );
-              data.num = slt[0].num;
-              data.cost = slt[0].cost;
-              this.dataList.push(data);
-              if (data.fundcode == this.RealtimeFundcode) {
-                chrome.runtime.sendMessage({
-                  type: "refreshBadge",
-                  data: data,
-                });
-              }
-            }
-          } else {
-            //不支持的基金特殊处理
-            let data = {
-              fundcode: this.fundListM[ind].code,
-              name: this.fundListM[ind].code + "无法获取详情",
-              jzrq: "",
-              dwjz: "0",
-              gsz: "0",
-              gszzl: "0",
-              gztime: "0",
-              num: "0",
-              amount: "0",
-              gains: "0",
-            };
-
-            this.dataList.push(data);
-          }
-        });
-        this.getAllGains();
-        this.getAllCost();
-      };
-
+      let fundlist = this.fundListM.map((val) => val.code).join(",");
+      let url =
+        "https://fundmobapi.eastmoney.com/FundMNewApi/FundMNFInfo?pageIndex=1&pageSize=50&plat=Android&appType=ttjj&product=EFund&Version=1&deviceid=" +
+        this.userId +
+        "&Fcodes=" +
+        fundlist;
       this.$axios
-        .all(promisesResolved)
-        .then(
-          checkFailed((responses) => {
-            formatData(responses);
-          })
-        )
-        .catch((err) => {
-          formatData(err);
-        });
-    },
-    getAllGains() {
-      let allGains = 0;
-      this.dataList.forEach((val) => {
-        allGains += parseFloat(this.calculate(val));
-      });
-      this.allGains = allGains.toFixed(1);
-    },
-    getAllCost() {
-      let allCost = 0;
-      this.dataList.forEach((val) => {
-        allCost += parseFloat(this.calculateCost(val));
-      });
-      this.allCost = allCost.toFixed(1);
+        .get(url)
+        .then((res) => {
+          let data = res.data.Datas;
+          this.dataList = [];
+          let dataList = [];
+          data.forEach((val) => {
+            let data = {
+              fundcode: val.FCODE,
+              name: val.SHORTNAME,
+              jzrq: val.PDATE,
+              dwjz: val.NAV,
+              gsz: val.GSZ,
+              gszzl: val.GSZZL,
+              gztime: val.GZTIME,
+            };
+            if (val.PDATE == val.GZTIME.substr(0, 10)) {
+              data.gsz = val.NAV;
+              data.gszzl = val.NAVCHGRT;
+              data.hasReplace = true;
+            }
+
+            let slt = this.fundListM.filter(
+              (item) => item.code == data.fundcode
+            );
+            data.num = slt[0].num;
+            data.cost = slt[0].cost;
+            data.amount = this.calculateMoney(data);
+            data.gains = this.calculate(data, data.hasReplace);
+            data.costGains = this.calculateCost(data);
+            data.costGainsRate = this.calculateCostRate(data);
+
+            if (data.fundcode == this.RealtimeFundcode) {
+              chrome.runtime.sendMessage({
+                type: "refreshBadge",
+                data: data,
+              });
+            }
+            dataList.push(data);
+          });
+          this.dataList = dataList;
+        })
+        .catch((error) => {});
     },
     changeNum(item, ind) {
-      for (let fund of this.fundListM) {
-        if (fund.code == item.fundcode) {
-          fund.num = item.num;
+      debounce(() => {
+        for (let fund of this.fundListM) {
+          if (fund.code == item.fundcode) {
+            fund.num = item.num;
+          }
         }
-      }
-      chrome.storage.sync.set({
-        fundListM: this.fundListM,
+        chrome.storage.sync.set(
+          {
+            fundListM: this.fundListM,
+          },
+          () => {
+            item.amount = this.calculateMoney(item);
+            item.gains = this.calculate(item.item.hasReplace);
+            item.costGains = this.calculateCost(item);
+          }
+        );
       });
-      this.getAllGains();
     },
     changeCost(item, ind) {
-      for (let fund of this.fundListM) {
-        if (fund.code == item.fundcode) {
-          fund.cost = item.cost;
+      debounce(() => {
+        for (let fund of this.fundListM) {
+          if (fund.code == item.fundcode) {
+            fund.cost = item.cost;
+          }
         }
-      }
-      chrome.storage.sync.set({
-        fundListM: this.fundListM,
+        chrome.storage.sync.set(
+          {
+            fundListM: this.fundListM,
+          },
+          () => {
+            item.costGains = this.calculateCost(item);
+            item.costGainsRate = this.calculateCostRate(item);
+          }
+        );
       });
-      // this.getAllGains();
     },
     calculateMoney(val) {
       let sum = (val.dwjz * val.num).toFixed(1);
       return sum;
     },
-    calculate(val) {
-      let sum = ((val.gsz - val.dwjz) * val.num).toFixed(1);
+    calculate(val, hasReplace) {
+      var sum;
+      if (hasReplace) {
+        sum = (
+          (val.dwjz - val.dwjz / (1 + val.gszzl * 0.01)) *
+          val.num
+        ).toFixed(1);
+      } else {
+        sum = ((val.gsz - val.dwjz) * val.num).toFixed(1);
+      }
       return sum;
     },
     calculateCost(val) {
@@ -767,21 +865,6 @@ export default {
         }
       );
     },
-    sortUp(ind) {
-      if (ind == 0) {
-        return false;
-      }
-      let val = this.dataList[ind - 1];
-      this.$set(this.dataList, ind - 1, this.dataList[ind]);
-      this.$set(this.dataList, ind, val);
-      this.fundListM[ind] = [
-        this.fundListM[ind - 1],
-        (this.fundListM[ind - 1] = this.fundListM[ind]),
-      ][0];
-      chrome.storage.sync.set({
-        fundListM: this.fundListM,
-      });
-    },
     slt(id) {
       if (id == this.RealtimeFundcode) {
         chrome.storage.sync.set(
@@ -817,7 +900,9 @@ export default {
           },
           () => {
             this.RealtimeFundcode = null;
-            chrome.runtime.sendMessage({ type: "endInterval" });
+            if (this.BadgeContent == 1) {
+              chrome.runtime.sendMessage({ type: "endInterval" });
+            }
           }
         );
       }
@@ -827,7 +912,9 @@ export default {
           fundListM: this.fundListM,
         },
         () => {
-          this.getData();
+          this.dataList = this.dataList.filter(function(ele) {
+            return ele.fundcode != id;
+          });
         }
       );
     },
@@ -892,9 +979,7 @@ export default {
         const indDst = newIndItems.findIndex(
           (n) => n.split(".")[1] == item.f12
         );
-        console.log(newIndItems);
         newIndItems.splice(indDst, 0, ...newIndItems.splice(indSrc, 1));
-        console.log(newIndItems);
         this.seciList = newIndItems;
 
         const newIndDataItems = [...this.indFundData];
@@ -927,12 +1012,22 @@ export default {
     sans-serif;
 }
 
+.detail-container {
+  min-height: 450px;
+  min-width: 610px;
+}
+
 .more-height {
-  height: 415px;
+  height: 450px;
 }
 
 .more-width {
-  width: 790px;
+  width: 785px;
+}
+
+.changelog-container {
+  min-height: 550px;
+  min-width: 500px;
 }
 
 .table-more-height {
@@ -949,16 +1044,35 @@ export default {
   min-width: 420px;
 }
 .num-width-2 {
-  min-width: 470px;
+  min-width: 480px;
 }
 .num-width-3 {
   min-width: 540px;
 }
 .num-width-4 {
-  min-width: 620px;
+  min-width: 610px;
 }
 .num-width-5 {
-  min-width: 690px;
+  min-width: 680px;
+}
+
+.table-row {
+  max-height: 435px;
+  overflow-y: auto;
+}
+
+.hasReplace {
+  background-color: #409eff;
+}
+
+.hasReplace-tip {
+  display: inline-block;
+  padding: 0 2px;
+  margin-left: 2px;
+  border-radius: 2px;
+  line-height: 12px;
+  color: #409eff;
+  border: 1px solid #409eff;
 }
 
 table {
@@ -1097,27 +1211,23 @@ tbody tr:hover {
 }
 
 .fundName {
-  max-width: 140px;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+}
+
+.fundName-noclick {
+  max-width: 150px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-  background-color: rgba(240, 240, 240, 1);
-}
 
-::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 0px rgba(240, 240, 240, 0.5);
-  border-radius: 10px;
-  background-color: rgba(240, 240, 240, 0.5);
-}
-
-::-webkit-scrollbar-thumb {
-  border-radius: 10px;
-  box-shadow: inset 0 0 0px rgba(240, 240, 240, 0.5);
-  background-color: #cccccc;
+.fundName:hover {
+  color: #409eff;
 }
 
 .down-arrow {
@@ -1157,6 +1267,7 @@ tbody tr:hover {
 
 .pointer {
   cursor: pointer;
+  user-select: none;
 }
 
 //暗黑主题
@@ -1258,6 +1369,12 @@ tbody tr:hover {
   }
   /deep/ .el-switch__label {
     color: rgba($color: #ffffff, $alpha: 0.6);
+  }
+
+  /deep/ .hasReplace-tip {
+    color: rgba($color: #ffffff, $alpha: 0.6);
+    border: 1px solid rgba($color: #409eff, $alpha: 0.6);
+    background-color: rgba($color: #409eff, $alpha: 0.6);
   }
 }
 </style>

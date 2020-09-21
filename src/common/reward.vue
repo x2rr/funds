@@ -68,7 +68,7 @@ export default {
 
 <style lang="scss" scoped>
 .shadow {
-  position: absolute;
+  position: fixed;
   width: 100%;
   height: 100%;
   padding: 20px 40px;

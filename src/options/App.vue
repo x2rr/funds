@@ -30,110 +30,134 @@
         <li>
           <div class="list-title">
             主题设置
-            <div class="select-row">
-              <el-switch
-                v-model="darkMode"
-                @change="changeDarkMode"
-                active-color="#484848"
-                inactive-color="#13ce66"
-                inactive-text="标准模式"
-                active-text="暗色模式"
-              >
-              </el-switch>
-            </div>
+          </div>
+          <div class="select-row">
+            <el-switch
+              v-model="darkMode"
+              @change="changeDarkMode"
+              active-color="#484848"
+              inactive-color="#13ce66"
+              inactive-text="标准模式"
+              active-text="暗色模式"
+            >
+            </el-switch>
           </div>
         </li>
         <li>
           <div class="list-title">
+            角标展示设置
+          </div>
+          <div class="select-row">
+            角标开关：
+            <el-radio-group
+              v-model="showBadge"
+              @change="changeOption($event, 'showBadge', true)"
+            >
+              <el-radio border :label="1">打开角标</el-radio>
+              <el-radio border :label="2">关闭角标</el-radio>
+            </el-radio-group>
+          </div>
+          <div v-if="showBadge == 1" class="select-row">
+            角标内容：
+            <el-radio-group
+              v-model="BadgeContent"
+              @change="changeOption($event, 'BadgeContent', true)"
+            >
+              <el-radio border :label="1">单个基金</el-radio>
+              <el-radio border :label="2">所有基金</el-radio>
+            </el-radio-group>
+          </div>
+          <div v-if="showBadge == 1" class="select-row">
+            角标类型：
+            <el-radio-group
+              v-model="BadgeType"
+              @change="changeOption($event, 'BadgeType', true)"
+            >
+              <el-radio border :label="1">日收益率</el-radio>
+              <el-radio border :label="2">日收益额</el-radio>
+            </el-radio-group>
+          </div>
+          <p style="margin-top:5px">
+            tips：若选择单个基金，请打开编辑按钮中的特别关注选项；若要计算收益额，需要先打开显示持有金额开关，在编辑中填写基金对应的持有额。
+          </p>
+        </li>
+
+        <li>
+          <div class="list-title">
             基金列表展示内容设置
-            <div class="select-row">
-              <span>显示估算净值</span>
-              <input
-                type="radio"
-                id="GSZFalse"
-                :value="false"
-                v-model="showGSZ"
-              />
-              <label for="GSZFalse">否</label>
-              <input
-                type="radio"
-                id="GSZTrue"
-                :value="true"
-                v-model="showGSZ"
-              />
-              <label for="GSZTrue">是</label>
-            </div>
-            <div class="select-row">
-              <span>显示持有金额</span>
-              <input
-                type="radio"
-                id="AmountFalse"
-                :value="false"
-                v-model="showAmount"
-              />
-              <label for="AmountFalse">否</label>
-              <input
-                type="radio"
-                id="AmountTrue"
-                :value="true"
-                v-model="showAmount"
-              />
-              <label for="AmountTrue">是</label>
-            </div>
-            <div class="select-row">
-              <span>显示估值收益</span>
-              <input
-                type="radio"
-                id="GainsFalse"
-                :value="false"
-                v-model="showGains"
-              />
-              <label for="GainsFalse">否</label>
-              <input
-                type="radio"
-                id="GainsTrue"
-                :value="true"
-                v-model="showGains"
-              />
-              <label for="GainsTrue">是</label>
-            </div>
-            <div class="select-row">
-              <span>显示持有收益</span>
-              <input
-                type="radio"
-                id="CostFalse"
-                :value="false"
-                v-model="showCost"
-              />
-              <label for="CostFalse">否</label>
-              <input
-                type="radio"
-                id="CostTrue"
-                :value="true"
-                v-model="showCost"
-              />
-              <label for="CostTrue">是</label>
-            </div>
-            <div class="select-row">
-              <span>显示持有收益率</span>
-              <input
-                type="radio"
-                id="CostRateFalse"
-                :value="false"
-                v-model="showCostRate"
-              />
-              <label for="CostRateFalse">否</label>
-              <input
-                type="radio"
-                id="CostRateTrue"
-                :value="true"
-                v-model="showCostRate"
-              />
-              <label for="CostRateTrue">是</label>
-            </div>
+          </div>
+          <div class="select-row">
+            <span>显示估算净值</span>
+            <el-switch
+              v-model="showGSZ"
+              @change="changeOption($event, 'showGSZ')"
+            >
+            </el-switch>
+          </div>
+          <div class="select-row">
+            <span>显示持有金额</span>
+            <el-switch
+              v-model="showAmount"
+              @change="changeOption($event, 'showAmount')"
+            >
+            </el-switch>
+          </div>
+          <div class="select-row">
+            <span>显示估值收益</span>
+            <el-switch
+              v-model="showGains"
+              @change="changeOption($event, 'showGains')"
+            >
+            </el-switch>
+          </div>
+          <div class="select-row">
+            <span>显示持有收益</span>
+            <el-switch
+              v-model="showCost"
+              @change="changeOption($event, 'showCost')"
+            >
+            </el-switch>
+          </div>
+          <div class="select-row">
+            <span>显示持有收益率</span>
+            <el-switch
+              v-model="showCostRate"
+              @change="changeOption($event, 'showCostRate')"
+            >
+            </el-switch>
           </div>
           <p>
-            tips：在编辑设置里，输入基金的持有份额，即可计算出收益估值情况。
+            tips：在编辑设置里，输入持有份额可计算当日估值收益。输入持仓成本可计算累计持有收益。
+          </p>
+        </li>
+        <li>
+          <div class="list-title">
+            基金配置信息导入与导出
+          </div>
+          <div style="padding:8px 0 10px">
+            <input
+              class="btn"
+              type="button"
+              value="导出配置"
+              @click="exportConfig"
+            />
+            <a
+              class="exportBtn"
+              ref="configMsg"
+              :href="configHref"
+              download="自选基金助手配置文件.json"
+            ></a>
+            <a href="javascript:;" class="uploadFile btn"
+              >导入配置
+              <input
+                type="file"
+                accept="application/json"
+                @change="importInput"
+              />
+            </a>
+          </div>
+          <p>
+            tips：插件本身支持跟随浏览器账号自动同步，若想手动同步可使用导入导出功能。
           </p>
         </li>
         <li>
@@ -176,6 +200,30 @@
           </p>
           <reward :top="50" ref="reward"></reward>
         </li>
+        <li>
+          <div class="list-title">
+            关于插件
+          </div>
+          <p style="line-height:34px">
+            当前版本：v{{ version }}
+            <input
+              class="btn"
+              type="button"
+              value="更新日志"
+              @click="changelog"
+            />
+          </p>
+          <p style="line-height:34px">
+            电报群：https://t.me/choose_funds_chat
+            <input class="btn" type="button" value="点击跳转" @click="openTG" />
+          </p>
+          <change-log
+            @close="closeChangelog"
+            :darkMode="darkMode"
+            ref="changelog"
+            :top="40"
+          ></change-log>
+        </li>
       </ul>
     </div>
   </div>
@@ -183,12 +231,16 @@
 
 <script>
 import reward from "../common/reward";
+import changeLog from "../common/changeLog";
+const { version } = require("../../package.json");
 export default {
   components: {
     reward,
+    changeLog,
   },
   data() {
     return {
+      configHref: null,
       holiday: null,
       disabled: false,
       showGSZ: false,
@@ -197,111 +249,17 @@ export default {
       showCost: false,
       showCostRate: false,
       darkMode: false,
+      showBadge: 1,
+      BadgeContent: 1,
+      BadgeType: 1,
+      changelogShadow: false,
+      version,
     };
   },
   mounted() {
-    chrome.storage.sync.get(
-      [
-        "holiday",
-        "showNum",
-        "showAmount",
-        "showGains",
-        "showCost",
-        "showCostRate",
-        "showGSZ",
-        "darkMode",
-      ],
-      (res) => {
-        if (res.showNum) {
-          //解决版本遗留问题，拆分属性
-          chrome.storage.sync.set({
-            showNum: false,
-          });
-          chrome.storage.sync.set(
-            {
-              showAmount: true,
-            },
-            () => {
-              this.showAmount = true;
-            }
-          );
-          chrome.storage.sync.set(
-            {
-              showGains: true,
-            },
-            () => {
-              this.showGains = true;
-            }
-          );
-        } else {
-          this.showAmount = res.showAmount ? res.showAmount : false;
-          this.showGains = res.showGains ? res.showGains : false;
-        }
-
-        if (res.holiday) {
-          this.holiday = res.holiday;
-        } else {
-          this.getHoliday();
-        }
-        this.showGSZ = res.showGSZ ? res.showGSZ : false;
-        this.showCost = res.showCost ? res.showCost : false;
-        this.showCostRate = res.showCostRate ? res.showCostRate : false;
-        this.darkMode = res.darkMode ? res.darkMode : false;
-      }
-    );
+    this.initOption();
   },
-  watch: {
-    showAmount(val) {
-      chrome.storage.sync.set(
-        {
-          showAmount: val,
-        },
-        () => {
-          this.showAmount = val;
-        }
-      );
-    },
-    showGains(val) {
-      chrome.storage.sync.set(
-        {
-          showGains: val,
-        },
-        () => {
-          this.showGains = val;
-        }
-      );
-    },
-    showCost(val) {
-      chrome.storage.sync.set(
-        {
-          showCost: val,
-        },
-        () => {
-          this.showCost = val;
-        }
-      );
-    },
-    showCostRate(val) {
-      chrome.storage.sync.set(
-        {
-          showCostRate: val,
-        },
-        () => {
-          this.showCostRate = val;
-        }
-      );
-    },
-    showGSZ(val) {
-      chrome.storage.sync.set(
-        {
-          showGSZ: val,
-        },
-        () => {
-          this.showGSZ = val;
-        }
-      );
-    }
-  },
+  watch: {},
   computed: {
     containerClass() {
       if (this.darkMode) {
@@ -310,6 +268,129 @@ export default {
     },
   },
   methods: {
+    changelog() {
+      this.changelogShadow = true;
+      this.$refs.changelog.init();
+    },
+    closeChangelog() {
+      this.changelogShadow = false;
+      // chrome.storage.sync.set(
+      //   {
+      //     version: this.localVersion,
+      //   }
+      // );
+    },
+    changeOption(val, type, sendMessage) {
+      chrome.storage.sync.set(
+        {
+          [type]: val,
+        },
+        () => {
+          this[type] = val;
+          if (sendMessage) {
+            chrome.runtime.sendMessage({
+              type: "refreshOption",
+              data: { type: type, value: val },
+            });
+          }
+        }
+      );
+    },
+    initOption() {
+      chrome.storage.sync.get(
+        [
+          "holiday",
+          "showNum",
+          "showAmount",
+          "showGains",
+          "showCost",
+          "showCostRate",
+          "showGSZ",
+          "darkMode",
+          "showBadge",
+          "BadgeContent",
+          "BadgeType",
+        ],
+        (res) => {
+          if (res.showNum) {
+            //解决版本遗留问题，拆分属性
+            chrome.storage.sync.set({
+              showNum: false,
+            });
+            chrome.storage.sync.set(
+              {
+                showAmount: true,
+              },
+              () => {
+                this.showAmount = true;
+              }
+            );
+            chrome.storage.sync.set(
+              {
+                showGains: true,
+              },
+              () => {
+                this.showGains = true;
+              }
+            );
+          } else {
+            this.showAmount = res.showAmount ? res.showAmount : false;
+            this.showGains = res.showGains ? res.showGains : false;
+          }
+
+          if (res.holiday) {
+            this.holiday = res.holiday;
+          } else {
+            this.getHoliday();
+          }
+          this.showGSZ = res.showGSZ ? res.showGSZ : false;
+          this.showCost = res.showCost ? res.showCost : false;
+          this.showCostRate = res.showCostRate ? res.showCostRate : false;
+          this.darkMode = res.darkMode ? res.darkMode : false;
+          this.showBadge = res.showBadge ? res.showBadge : 1;
+          this.BadgeContent = res.BadgeContent ? res.BadgeContent : 1;
+          this.BadgeType = res.BadgeType ? res.BadgeType : 1;
+        }
+      );
+    },
+    exportConfig() {
+      chrome.storage.sync.get(null, (res) => {
+        delete res.holiday;
+        this.configHref = "data:text/plain," + JSON.stringify(res);
+        setTimeout(() => {
+          this.$refs["configMsg"].click();
+        }, 200);
+      });
+    },
+    importInput(e) {
+      let files = e.target.files;
+      if (!files || !files.length) {
+        throw new Error("No files");
+      }
+
+      let reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          let config = JSON.parse(event.target.result);
+          chrome.storage.sync.set(config, (val) => {
+            this.initOption();
+            this.$message({
+              message: "恭喜,导入配置成功！",
+              type: "success",
+              center: true,
+            });
+          });
+          return config;
+        } catch (e) {
+          this.$message({
+            message: "导入失败！",
+            type: "error",
+            center: true,
+          });
+        }
+      };
+      reader.readAsText(files[0]);
+    },
     getHoliday() {
       this.disabled = true;
       let url = "https://x2rr.github.io/funds/holiday.json";
@@ -331,6 +412,9 @@ export default {
     openGithub() {
       window.open("https://github.com/x2rr/funds");
     },
+    openTG() {
+      window.open("https://t.me/choose_funds_chat");
+    },
     reward(data) {
       this.$refs.reward.init();
     },
@@ -348,7 +432,7 @@ export default {
   min-width: 630px;
   min-height: 520px;
   text-align: center;
-  padding-top: 15px;
+  padding: 15px 0;
   font-size: 13px;
   font-family: "Helvetica Neue", Helvetica, Arial, "PingFang SC",
     "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei",
@@ -379,19 +463,25 @@ export default {
 .list-title {
   min-height: 34px;
   line-height: 34px;
+  font-weight: bold;
 }
 
-.list-title .select-row {
-  line-height: 30px;
+.select-row {
+  line-height: 35px;
   padding-left: 20px;
-  &>span {
+  & > span {
     display: inline-block;
     width: 120px;
     margin-right: 3px;
     text-align: right;
   }
-  input,label {
+  input,
+  label {
     cursor: pointer;
+  }
+
+  .el-radio {
+    margin-right: 0;
   }
 }
 
@@ -407,6 +497,26 @@ export default {
   margin: 0 5px;
   outline: none;
   border: 1px solid #dcdfe6;
+}
+
+.exportBtn {
+  visibility: hidden;
+}
+
+.uploadFile {
+  text-decoration: none;
+  display: inline-flex;
+  position: relative;
+  overflow: hidden;
+}
+
+.uploadFile input {
+  position: absolute;
+  font-size: 100px;
+  cursor: pointer;
+  right: 0;
+  top: 0;
+  opacity: 0;
 }
 
 .btn[disabled] {
@@ -471,6 +581,28 @@ export default {
     color: rgba($color: #409eff, $alpha: 0.87);
   }
   /deep/ .el-switch__label {
+    color: rgba($color: #ffffff, $alpha: 0.6);
+  }
+
+  /deep/ .el-switch.is-checked .el-switch__core {
+    border: 1px solid rgba($color: #409eff, $alpha: 0.6);
+    background-color: rgba($color: #409eff, $alpha: 0.6);
+  }
+
+  /deep/ .el-radio__input.is-checked + .el-radio__label {
+    color: rgba($color: #409eff, $alpha: 0.87);
+  }
+  /deep/ .el-radio__input.is-checked .el-radio__inner {
+    background-color: rgba($color: #409eff, $alpha: 0.6);
+    border: 1px solid rgba($color: #409eff, $alpha: 0.6);
+  }
+  /deep/ .el-radio.is-bordered.is-checked {
+    border: 1px solid rgba($color: #409eff, $alpha: 0.6);
+  }
+  /deep/ .el-radio.is-bordered {
+    border: 1px solid rgba($color: #ffffff, $alpha: 0.6);
+  }
+  /deep/ .el-radio {
     color: rgba($color: #ffffff, $alpha: 0.6);
   }
 }

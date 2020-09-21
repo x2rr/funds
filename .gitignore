@@ -103,3 +103,5 @@ dist-zip
 
 # TernJS port file
 .tern-port
+dev.md
+src/popup/App copy.vue
