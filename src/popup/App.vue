@@ -317,7 +317,12 @@
       ref="charts"
     ></fund-detail>
     <reward @close="rewardShadow = false" ref="reward"></reward>
-    <change-log @close="closeChangelog" ref="changelog" :top="40"></change-log>
+    <change-log
+      @close="closeChangelog"
+      :darkMode="darkMode"
+      ref="changelog"
+      :top="40"
+    ></change-log>
   </div>
 </template>
 
@@ -426,6 +431,7 @@ export default {
       sltFund: {},
       localVersion: version,
       BadgeContent: 1,
+      showBadge: 1,
       userId: null,
     };
   },
@@ -444,6 +450,7 @@ export default {
         "showCostRate",
         "showGSZ",
         "version",
+        "showBadge",
         "BadgeContent",
         "userId",
       ],
@@ -478,6 +485,7 @@ export default {
         this.showCostRate = res.showCostRate ? res.showCostRate : false;
         this.showGSZ = res.showGSZ ? res.showGSZ : false;
         this.BadgeContent = res.BadgeContent ? res.BadgeContent : 1;
+        this.showBadge = res.showBadge ? res.showBadge : 1;
 
         this.getIndFundData();
         this.getData();
@@ -739,6 +747,7 @@ export default {
           let data = res.data.Datas;
           this.dataList = [];
           let dataList = [];
+          
           data.forEach((val) => {
             let data = {
               fundcode: val.FCODE,
@@ -766,13 +775,26 @@ export default {
             data.costGainsRate = this.calculateCostRate(data);
 
             if (data.fundcode == this.RealtimeFundcode) {
+              if (this.showBadge == 1) {
+                if (this.BadgeContent == 1) {
+                  chrome.runtime.sendMessage({
+                    type: "refreshBadge",
+                    data: data,
+                  });
+                }
+              }
+            }
+
+            dataList.push(data);
+          });
+          if (this.showBadge == 1) {
+            if (this.BadgeContent == 2) {
               chrome.runtime.sendMessage({
-                type: "refreshBadge",
+                type: "refreshBadgeAllGains",
                 data: data,
               });
             }
-            dataList.push(data);
-          });
+          }
           this.dataList = dataList;
         })
         .catch((error) => {});
@@ -792,6 +814,7 @@ export default {
             item.amount = this.calculateMoney(item);
             item.gains = this.calculate(item, item.hasReplace);
             item.costGains = this.calculateCost(item);
+            chrome.runtime.sendMessage({ type: "refresh" });
           }
         );
       });
@@ -862,6 +885,7 @@ export default {
         () => {
           this.fundcode = [];
           this.getData();
+          chrome.runtime.sendMessage({ type: "refresh" });
         }
       );
     },
@@ -906,7 +930,6 @@ export default {
           }
         );
       }
-
       chrome.storage.sync.set(
         {
           fundListM: this.fundListM,
@@ -915,6 +938,9 @@ export default {
           this.dataList = this.dataList.filter(function(ele) {
             return ele.fundcode != id;
           });
+          if (this.BadgeContent == 2) {
+              chrome.runtime.sendMessage({ type: "refresh" });
+            }
         }
       );
     },

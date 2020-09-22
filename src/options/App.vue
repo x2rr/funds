@@ -150,6 +150,7 @@
             <a href="javascript:;" class="uploadFile btn"
               >导入配置
               <input
+                ref="importInput"
                 type="file"
                 accept="application/json"
                 @change="importInput"
@@ -379,6 +380,7 @@ export default {
               type: "success",
               center: true,
             });
+            this.$refs.importInput.value = null;
           });
           return config;
         } catch (e) {

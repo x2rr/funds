@@ -8,6 +8,10 @@
             "content": [{
                 "type": 1,
                 "content": "修复一系列bug,优化代码。"
+            },
+            {
+                "type": 1,
+                "content": "添加交流群，欢迎交流与反馈。"
             }]
         }, {
             "version": "2.0.2",

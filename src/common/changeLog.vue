@@ -10,9 +10,17 @@
     width="400px"
     center
   >
-    <div class="content">
+    <div
+      class="content"
+      v-loading="loading"
+      :element-loading-background="darkMode?'rgba(0, 0, 0, 0.9)':'rgba(255, 255, 255, 0.9)'"
+    >
+      <p>qq群：{{ changelog.qqGroup }}</p>
+      <p>电报群：{{ changelog.tgGroup }}</p>
+      <p>微信群二维码</p>
+      <div ref="qrcode" id="qrcode"></div>
       <ul>
-        <li v-for="el in logList" :key="el.version">
+        <li v-for="el in changelog.list" :key="el.version">
           <h5>
             v{{ el.version }}
             <span class="btn primary" v-if="el.type == 2">重要更新</span>
@@ -38,6 +46,7 @@
 
 <script>
 var json = require("./changeLog.json");
+import QRCode from "qrcodejs2";
 export default {
   props: {
     top: {
@@ -49,25 +58,53 @@ export default {
       default: false,
     },
   },
+  components: {
+    QRCode,
+  },
   data() {
     return {
+      updateurl: {
+        github: "https://x2rr.github.io/funds/src/common/changeLog.json",
+      },
       centerDialogVisible: false,
-      logList: json,
+      qrcode: false,
+      changelog: {},
+      loading: true,
     };
   },
   mounted() {},
   methods: {
+    getChangelog() {
+      this.loading = true;
+      let url = "";
+      this.$axios.get(this.updateurl.github).then((res) => {
+        this.loading = false;
+        this.logList = res.data.list;
+        this.qrlink = res.data.qrcode;
+        this.changelog = res.data;
+        this.setQrcode();
+      });
+    },
     init() {
       this.centerDialogVisible = true;
+      this.getChangelog();
+    },
+    setQrcode() {
+      let that = this;
+      this.qrcode = new QRCode("qrcode", {
+        width: 160,
+        height: 160, // 高度
+        text: this.changelog.qrcode, // 二维码内容
+      });
     },
 
     close() {
+      this.qrcode.clear();
+      this.$refs.qrcode.innerHTML = null;
       this.centerDialogVisible = false;
+
       this.$emit("close", false);
-    },
-    closeDialog() {
-      console.log(111);
-    },
+    }
   },
 };
 </script>
@@ -79,12 +116,27 @@ export default {
     border-radius: 15px;
   }
 
+  #qrcode {
+    text-align: center;
+    width: 160px;
+    height: 160px;
+    padding: 6px;
+    margin: 0 auto;
+    background-color: #fff;
+  }
+
   .content {
     height: 340px;
+    p {
+      text-align: center;
+      margin: 0;
+      padding: 2px 0;
+    }
 
     overflow-y: auto;
     ul {
       padding-left: 22px;
+      margin: 5px 0;
       li {
         padding: 3px 0;
         .major {
