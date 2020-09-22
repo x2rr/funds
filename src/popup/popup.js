@@ -11,11 +11,14 @@ import {
   RadioButton,
   RadioGroup,
   Dialog,
-  Button
+  Button,
+  Loading
 } from 'element-ui';
 
 Vue.prototype.$axios = axios;
 Vue.prototype.$ELEMENT = { size: 'mini' };
+Vue.use(Loading.directive);
+Vue.prototype.$loading = Loading.service;
 
 Vue.use(Select)
 Vue.use(Option)
@@ -27,6 +30,7 @@ Vue.use(RadioButton)
 Vue.use(RadioGroup)
 Vue.use(Dialog)
 Vue.use(Button)
+Vue.use(Loading)
 
 /* eslint-disable no-new */
 new Vue({

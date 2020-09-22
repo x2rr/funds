@@ -136,7 +136,7 @@ var setBadge = (fundcode, Realtime, type) => {
   }
 
   let url =
-    "https://fundmobapi.eastmoney.com/FundMNewApi/FundMNFInfo?pageIndex=1&pageSize=50&plat=Android&appType=ttjj&product=EFund&Version=1&deviceid="+userId+"&Fcodes=" +
+    "https://fundmobapi.eastmoney.com/FundMNewApi/FundMNFInfo?pageIndex=1&pageSize=50&plat=Android&appType=ttjj&product=EFund&Version=1&deviceid=" + userId + "&Fcodes=" +
     fundStr;
   axios
     .get(url)
@@ -156,7 +156,8 @@ var setBadge = (fundcode, Realtime, type) => {
         if (val.PDATE == val.GZTIME.substr(0, 10)) {
           sum = (val.NAV - val.NAV / (1 + val.NAVCHGRT * 0.01)) * num
         } else {
-          sum = (val.GSZ - val.NAV) * num
+          let gsz = isNaN(val.GSZ) ? 0 : val.GSZ
+          sum = (gsz - val.NAV) * num
         }
         allGains += sum;
 
@@ -196,6 +197,7 @@ var startInterval = (RealtimeFundcode, type = 1) => {
   chrome.browserAction.setBadgeTextColor({color: "#ffffff"});
   endInterval(Interval);
   let Realtime = isDuringDate();
+  RealtimeFundcode = RealtimeFundcode;
   setBadge(RealtimeFundcode, Realtime, type);
   Interval = setInterval(() => {
     if (isDuringDate()) {
@@ -234,41 +236,88 @@ var runStart = RealtimeFundcode => {
 };
 
 
-chrome.storage.sync.get(["holiday", "fundListM", "RealtimeFundcode", "showBadge", "BadgeContent", "BadgeType", "userId"], res => {
-  RealtimeFundcode = res.RealtimeFundcode ? res.RealtimeFundcode : null;
-  fundListM = res.fundListM ? res.fundListM : [];
-  showBadge = res.showBadge ? res.showBadge : 1;
-  BadgeContent = res.BadgeContent ? res.BadgeContent : 1;
-  BadgeType = res.BadgeType ? res.BadgeType : 1;
-  if (res.userId) {
-    userId = res.userId;
-  } else {
-    userId = getGuid();
-    chrome.storage.sync.set({
-      userId: userId,
-    });
-  }
-  if (res.holiday) {
-    holiday = res.holiday;
-    runStart(RealtimeFundcode);
-  } else {
-    getHoliday().then(res => {
+var getData = () => {
+  chrome.storage.sync.get(["holiday", "fundListM", "RealtimeFundcode", "showBadge", "BadgeContent", "BadgeType", "userId"], res => {
+    RealtimeFundcode = res.RealtimeFundcode ? res.RealtimeFundcode : null;
+    fundListM = res.fundListM ? res.fundListM : [];
+    showBadge = res.showBadge ? res.showBadge : 1;
+    BadgeContent = res.BadgeContent ? res.BadgeContent : 1;
+    BadgeType = res.BadgeType ? res.BadgeType : 1;
+    if (res.userId) {
+      userId = res.userId;
+    } else {
+      userId = getGuid();
       chrome.storage.sync.set({
-          holiday: res.data
-        },
-        () => {
-          holiday = res.data;
-          runStart(RealtimeFundcode);
-        }
-      );
-    });
-  }
-});
+        userId: userId,
+      });
+    }
+    if (res.holiday) {
+      holiday = res.holiday;
+      runStart(RealtimeFundcode);
+    } else {
+      getHoliday().then(res => {
+        chrome.storage.sync.set({
+            holiday: res.data
+          },
+          () => {
+            holiday = res.data;
+            runStart(RealtimeFundcode);
+          }
+        );
+      });
+    }
+  });
+}
+
+getData();
+
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type == "DuringDate") {
     let DuringDate = isDuringDate();
     sendResponse({
       farewell: DuringDate
+    });
+  }
+  if (request.type == "refresh") {
+    getData();
+  }
+  if (request.type == "refreshBadgeAllGains") {
+    let allAmount = 0;
+    let allGains = 0;
+    request.data.forEach((val) => {
+      let slt = fundListM.filter(
+        (item) => item.code == val.FCODE
+      );
+      let num = slt[0].num;
+      allAmount += val.NAV * num;
+      var sum = 0;
+      if (val.PDATE == val.GZTIME.substr(0, 10)) {
+        sum = (val.NAV - val.NAV / (1 + val.NAVCHGRT * 0.01)) * num
+      } else {
+        let gsz = isNaN(val.GSZ) ? 0 : val.GSZ
+        sum = (gsz - val.NAV) * num
+      }
+      allGains += sum;
+
+    });
+    let textStr = null;
+    if (BadgeType == 1) {
+      textStr = (100 * allGains / allAmount).toFixed(2);
+    } else {
+      textStr = formatNum(allGains);
+    }
+
+    chrome.browserAction.setBadgeText({
+      text: textStr
+    });
+    let color = Realtime ?
+      allGains >= 0 ?
+      "#F56C6C" :
+      "#4eb61b" :
+      "#4285f4";
+    chrome.browserAction.setBadgeBackgroundColor({
+      color: color
     });
   }
   if (request.type == "endInterval") {
@@ -292,26 +341,24 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     runStart(RealtimeFundcode);
   }
   if (request.type == "refreshBadge") {
-    if (showBadge == 1 && BadgeContent == 1) {
-      let textstr = null;
-      if (BadgeType == 1) {
-        textstr = request.data.gszzl;
-      } else {
-        let val = request.data;
-        textstr = ((val.gsz - val.dwjz) * val.num).toFixed(1);
-      }
-      chrome.browserAction.setBadgeText({
-        text: textstr
-      });
-      let color = isDuringDate() ?
-        request.data.gszzl >= 0 ?
-        "#F56C6C" :
-        "#4eb61b" :
-        "#4285f4";
-      chrome.browserAction.setBadgeBackgroundColor({
-        color: color
-      });
+    let textstr = null;
+    if (BadgeType == 1) {
+      textstr = request.data.gszzl;
+    } else {
+      let val = request.data;
+      allgains = ((val.gsz - val.dwjz) * val.num).toFixed(1);
+      textstr = formatNum(allgains);
     }
-
+    chrome.browserAction.setBadgeText({
+      text: textstr
+    });
+    let color = isDuringDate() ?
+      request.data.gszzl >= 0 ?
+      "#F56C6C" :
+      "#4eb61b" :
+      "#4285f4";
+    chrome.browserAction.setBadgeBackgroundColor({
+      color: color
+    });
   }
 });

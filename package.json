@@ -1,8 +1,8 @@
 {
   "name": "choose-funds",
-  "version": "2.0.0",
+  "version": "2.0.3",
   "description": "A Vue.js web extension",
-  "author": "Liu Rabt",
+  "author": "Liu_Rabt",
   "license": "GPL-3.0",
   "engines": {
     "node": ">=10"
@@ -20,6 +20,7 @@
     "axios": "^0.19.0",
     "echarts": "^4.9.0",
     "element-ui": "^2.13.2",
+    "qrcodejs2": "0.0.2",
     "vue": "^2.6.10"
   },
   "devDependencies": {
