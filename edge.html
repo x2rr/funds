@@ -38,6 +38,16 @@
         .img-row img {
             max-width: 100%;
         }
+
+        #content>p {
+            margin: 6px 0;
+        }
+
+        #qrcode {
+            width: 200px;
+            height: 200px;
+            padding: 10px 5px;
+        }
     </style>
 </head>
 
@@ -78,48 +88,65 @@
             <img style="margin: 10px;" src="https://gitee.com/rabt/Picture/raw/master/img/20200907111226.png"
                 alt="主界面5">
         </div>
-        <h2>更新说明</h2>
-        <div id="changelog">
-            <div v-for="el in logList" :key="el.version">
-                <h3>{{el.version}}</h3>
-                <ul>
-                    <li v-for="(i, ind) in el.content" :key="ind">
-                        {{i.content}}
-                    </li>
-                </ul>
-            </div>
+        <div id="content">
+            <h2>交流反馈</h2>
+            <p>qq群：{{ changelog.qqGroup }}</p>
+            <p>电报群：{{ changelog.tgGroup }}</p>
+            <p>微信群二维码</p>
+            <div id="qrcode"></div>
+            <h2>更新说明</h2>
+            <div>
+                <div v-for="el in changelog.list" :key="el.version">
+                    <h3>{{el.version}}</h3>
+                    <ul>
+                        <li v-for="(i, ind) in el.content" :key="ind">
+                            {{i.content}}
+                        </li>
+                    </ul>
+                </div>
 
+            </div>
         </div>
+
+        <!-- <h3>v1.8.0</h3>
+        <ul>
+            <li>新增查看基金详情功能，点击基金名称即可查看估值图、走势图等相关信息。</li>
+            <li>新增基金配置信息的导入导出功能。</li>
+            <li>修复页面布局中的bug。</li>
+        </ul> -->
+
 
         <h2>隐私协议</h2>
 
         <p><a href="https://x2rr.github.io/funds/privacy.html">点击跳转</a></p>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="./lib/qrcode.min.js"></script>
     <script>
         var vm = new Vue({
-            el: "#changelog",
+            el: "#content",
             data: {
-                logList: []
+                changelog: {}
             },
             mounted() {
-                let _this = this;
                 $.ajax({
                     type: "get",
                     url: "./src/common/changeLog.json",
                     dataType: "json",
-                    success: function (data) {
-                        _this.logList = data.list;
+                    success: (data) => {
+                        this.changelog = data;
+                        var qrcode = new QRCode('qrcode', {
+                            text: data.qrcode,
+                            width: 200,
+                            height: 200,
+                        });
                     },
                     error: function () {}
                 });
             }
         });
     </script>
-
-
 </body>
 
 </html>
