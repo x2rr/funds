@@ -1,5 +1,7 @@
 {
     "qrcode": "https://weixin.qq.com/g/AQYAAF9N_Yx2bXDK_dhhJGY-SqMds1UQy_QXtu1NcpeANoLi9wc1dw0xtq3GjFSt",
+    "tgGroup":"https://t.me/choose_funds_chat",
+    "qqGroup": "951222618",
     "list": [{
             "version": "2.0.3",
             "type": 1,
