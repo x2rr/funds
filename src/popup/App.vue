@@ -198,7 +198,7 @@
                 {{ el.cost > 0 ? el.costGainsRate + "%" : "" }}
               </td>
               <td :class="el.gszzl >= 0 ? 'up' : 'down'">{{ el.gszzl }}%</td>
-              <td v-if="showGains" :class="el.gszzl >= 0 ? 'up' : 'down'">
+              <td v-if="showGains" :class="el.gains >= 0 ? 'up' : 'down'">
                 {{ el.gains }}
               </td>
               <td v-if="!isEdit">
@@ -462,10 +462,13 @@ export default {
           for (const fund of this.fundList) {
             let val = {
               code: fund,
-              num: null,
+              num: 0,
             };
             this.fundListM.push(val);
           }
+          chrome.storage.sync.set({
+            fundListM: this.fundListM,
+          });
         }
         if (res.userId) {
           this.userId = res.userId;
@@ -747,7 +750,7 @@ export default {
           let data = res.data.Datas;
           this.dataList = [];
           let dataList = [];
-          
+
           data.forEach((val) => {
             let data = {
               fundcode: val.FCODE,
@@ -843,13 +846,11 @@ export default {
     },
     calculate(val, hasReplace) {
       var sum;
+      let num = val.num ? val.num : 0;
       if (hasReplace) {
-        sum = (
-          (val.dwjz - val.dwjz / (1 + val.gszzl * 0.01)) *
-          val.num
-        ).toFixed(1);
+        sum = ((val.dwjz - val.dwjz / (1 + val.gszzl * 0.01)) * num).toFixed(1);
       } else {
-        sum = ((val.gsz - val.dwjz) * val.num).toFixed(1);
+        sum = ((val.gsz - val.dwjz) * num).toFixed(1);
       }
       return sum;
     },
@@ -873,7 +874,7 @@ export default {
       this.fundcode.forEach((code) => {
         let val = {
           code: code,
-          num: null,
+          num: 0,
         };
         this.fundListM.push(val);
       });
@@ -907,7 +908,7 @@ export default {
           },
           () => {
             this.RealtimeFundcode = id;
-            chrome.runtime.sendMessage({ type: "startInterval", id: id });
+            chrome.runtime.sendMessage({ type: "refresh" });
           }
         );
       }
@@ -939,8 +940,8 @@ export default {
             return ele.fundcode != id;
           });
           if (this.BadgeContent == 2) {
-              chrome.runtime.sendMessage({ type: "refresh" });
-            }
+            chrome.runtime.sendMessage({ type: "refresh" });
+          }
         }
       );
     },

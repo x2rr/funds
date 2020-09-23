@@ -1,19 +1,33 @@
 {
-    "qrcode": "https://weixin.qq.com/g/AQYAAF9N_Yx2bXDK_dhhJGY-SqMds1UQy_QXtu1NcpeANoLi9wc1dw0xtq3GjFSt",
-    "tgGroup":"https://t.me/choose_funds_chat",
+    "qrcode": "https://weixin.qq.com/g/AQYAAE8_LUkuvycwBrbY2OySKCiZrqATkAzet_Gyb2kYH_mq0_MUS1VeYVMqNHh4",
+    "tgGroup": "https://t.me/choose_funds_chat",
     "qqGroup": "951222618",
     "list": [{
+            "version": "2.0.4",
+            "type": 1,
+            "content": [{
+                    "type": 1,
+                    "content": "修复角标NAN问题。"
+                },
+                {
+                    "type": 1,
+                    "content": "修复更新日志无法关闭问题。"
+                }
+            ]
+        }, {
             "version": "2.0.3",
             "type": 1,
             "content": [{
-                "type": 1,
-                "content": "修复一系列bug,优化代码。"
-            },
-            {
-                "type": 1,
-                "content": "添加交流群，欢迎交流与反馈。"
-            }]
-        }, {
+                    "type": 1,
+                    "content": "修复一系列bug,优化代码。"
+                },
+                {
+                    "type": 1,
+                    "content": "添加交流群，欢迎交流与反馈。"
+                }
+            ]
+        },
+        {
             "version": "2.0.2",
             "type": 1,
             "content": [{

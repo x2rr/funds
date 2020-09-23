@@ -395,7 +395,7 @@ export default {
     },
     getHoliday() {
       this.disabled = true;
-      let url = "https://x2rr.github.io/funds/holiday.json";
+      let url = "https://rabt.gitee.io/funds/holiday.json";
       this.$axios.get(url).then((res) => {
         chrome.storage.sync.set(
           {
@@ -409,7 +409,7 @@ export default {
       });
     },
     openHoliday() {
-      window.open("https://x2rr.github.io/funds/holiday.json");
+      window.open("https://rabt.gitee.io/funds/holiday.json");
     },
     openGithub() {
       window.open("https://github.com/x2rr/funds");

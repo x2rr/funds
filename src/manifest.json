@@ -38,6 +38,7 @@
   "permissions": [
     "storage",
     "http://fundgz.1234567.com.cn/js/*",
-    "https://*.eastmoney.com/*"
+    "https://*.eastmoney.com/*",
+    "https://*.gitee.io/*"
   ]
 }

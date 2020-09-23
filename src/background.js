@@ -19,7 +19,7 @@ var getGuid = () => {
   });
 }
 var getHoliday = () => {
-  let url = "https://x2rr.github.io/funds/holiday.json";
+  let url = "https://rabt.gitee.io/funds/holiday.json";
   return axios.get(url);
 };
 var checkHoliday = date => {
@@ -64,7 +64,6 @@ var toNum = a => {
     c[i] = r[len] + c[i];
   }
   var res = c.join("");
-  console.log(res);
   return res;
 };
 
@@ -141,34 +140,81 @@ var setBadge = (fundcode, Realtime, type) => {
   axios
     .get(url)
     .then((res) => {
-      let data = res.data.Datas;
-
       let allAmount = 0;
       let allGains = 0;
-      data.forEach((val) => {
-
-        let slt = fundListM.filter(
-          (item) => item.code == val.FCODE
-        );
-        let num = slt[0].num;
-        allAmount += val.NAV * num;
-        var sum = 0;
-        if (val.PDATE == val.GZTIME.substr(0, 10)) {
-          sum = (val.NAV - val.NAV / (1 + val.NAVCHGRT * 0.01)) * num
-        } else {
-          let gsz = isNaN(val.GSZ) ? 0 : val.GSZ
-          sum = (gsz - val.NAV) * num
-        }
-        allGains += sum;
-
-      });
-      // console.log(allAmount)
-      // console.log(allGains)
       let textStr = null;
-      if (BadgeType == 1) {
-        textStr = (100 * allGains / allAmount).toFixed(2);
+      if (type == 1) {
+        let val = res.data.Datas[0];
+        let data = {
+          fundcode: val.FCODE,
+          name: val.SHORTNAME,
+          jzrq: val.PDATE,
+          dwjz: val.NAV,
+          gsz: isNaN(val.GSZ) ? 0 : val.GSZ,
+          gszzl: isNaN(val.GSZZL) ? 0 : val.GSZZL,
+          gztime: val.GZTIME,
+          num:0
+        };
+        let slt = fundListM.filter(
+          (item) => item.code == data.fundcode
+        );
+        data.num = slt[0].num;
+        var sum = 0;
+        
+        let num = data.num ? data.num : 0;
+
+        if (val.PDATE == val.GZTIME.substr(0, 10)) {
+          data.gsz = val.NAV;
+          data.gszzl = isNaN(val.NAVCHGRT) ? 0 : val.NAVCHGRT;
+          sum = (
+            (data.dwjz - data.dwjz / (1 + data.gszzl * 0.01)) *
+            num
+          ).toFixed(1);
+        } else {
+          sum = ((data.gsz - data.dwjz) * num).toFixed(1);
+        }
+
+
+
+
+
+        if (BadgeType == 1) {
+          textStr = data.gszzl;
+        } else {
+          if (num != 0) {
+            textStr = formatNum(sum);
+          } else {
+            textStr = "0";
+          }
+        }
+
       } else {
-        textStr = formatNum(allGains);
+        res.data.Datas.forEach((val) => {
+          let slt = fundListM.filter(
+            (item) => item.code == val.FCODE
+          );
+          let num = slt[0].num ? slt[0].num : 0;
+          allAmount += val.NAV * num;
+          var sum = 0;
+          if (val.PDATE == val.GZTIME.substr(0, 10)) {
+            sum = (val.NAV - val.NAV / (1 + val.NAVCHGRT * 0.01)) * num
+          } else {
+            let gsz = isNaN(val.GSZ) ? 0 : val.GSZ
+            sum = (gsz - val.NAV) * num
+          }
+          allGains += sum;
+
+        });
+        if (BadgeType == 1) {
+          if (allAmount == 0 || allGains == 0) {
+            textStr = "0"
+          } else {
+            textStr = (100 * allGains / allAmount).toFixed(2);
+          }
+
+        } else {
+          textStr = formatNum(allGains);
+        }
       }
 
 
@@ -218,9 +264,7 @@ var endInterval = () => {
 };
 
 var runStart = RealtimeFundcode => {
-  console.log(showBadge)
-  console.log(BadgeContent)
-  console.log(BadgeType)
+
   if (showBadge == 1 && BadgeContent == 1) {
     if (RealtimeFundcode) {
       startInterval(RealtimeFundcode);
@@ -289,7 +333,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       let slt = fundListM.filter(
         (item) => item.code == val.FCODE
       );
-      let num = slt[0].num;
+      let num = slt[0].num ? slt[0].num : 0;
       allAmount += val.NAV * num;
       var sum = 0;
       if (val.PDATE == val.GZTIME.substr(0, 10)) {
@@ -303,7 +347,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     });
     let textStr = null;
     if (BadgeType == 1) {
-      textStr = (100 * allGains / allAmount).toFixed(2);
+      if (allAmount == 0 || allGains == 0) {
+        textStr = "0"
+      } else {
+        textStr = (100 * allGains / allAmount).toFixed(2);
+      }
+
     } else {
       textStr = formatNum(allGains);
     }
@@ -338,16 +387,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         BadgeType = request.data.value;
         break;
     }
-    runStart(RealtimeFundcode);
+    getData();
   }
   if (request.type == "refreshBadge") {
     let textstr = null;
     if (BadgeType == 1) {
       textstr = request.data.gszzl;
     } else {
-      let val = request.data;
-      allgains = ((val.gsz - val.dwjz) * val.num).toFixed(1);
-      textstr = formatNum(allgains);
+
+      textstr = formatNum(val.gains);
     }
     chrome.browserAction.setBadgeText({
       text: textstr
