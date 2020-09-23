@@ -13,7 +13,9 @@
     <div
       class="content"
       v-loading="loading"
-      :element-loading-background="darkMode?'rgba(0, 0, 0, 0.9)':'rgba(255, 255, 255, 0.9)'"
+      :element-loading-background="
+        darkMode ? 'rgba(0, 0, 0, 0.9)' : 'rgba(255, 255, 255, 0.9)'
+      "
     >
       <p>qq群：{{ changelog.qqGroup }}</p>
       <p>电报群：{{ changelog.tgGroup }}</p>
@@ -65,6 +67,7 @@ export default {
     return {
       updateurl: {
         github: "https://x2rr.github.io/funds/src/common/changeLog.json",
+        gitee: "https://rabt.gitee.io/funds/src/common/changeLog.json",
       },
       centerDialogVisible: false,
       qrcode: false,
@@ -76,8 +79,7 @@ export default {
   methods: {
     getChangelog() {
       this.loading = true;
-      let url = "";
-      this.$axios.get(this.updateurl.github).then((res) => {
+      this.$axios.get(this.updateurl.gitee).then((res) => {
         this.loading = false;
         this.logList = res.data.list;
         this.qrlink = res.data.qrcode;
@@ -99,12 +101,14 @@ export default {
     },
 
     close() {
-      this.qrcode.clear();
+      if (this.qrcode) {
+        this.qrcode.clear();
+      }
       this.$refs.qrcode.innerHTML = null;
       this.centerDialogVisible = false;
 
       this.$emit("close", false);
-    }
+    },
   },
 };
 </script>
