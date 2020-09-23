@@ -64,7 +64,6 @@ var toNum = a => {
     c[i] = r[len] + c[i];
   }
   var res = c.join("");
-  console.log(res);
   return res;
 };
 
@@ -145,7 +144,6 @@ var setBadge = (fundcode, Realtime, type) => {
       let allGains = 0;
       let textStr = null;
       if (type == 1) {
-        console.log(111)
         let val = res.data.Datas[0];
         let data = {
           fundcode: val.FCODE,
@@ -160,7 +158,6 @@ var setBadge = (fundcode, Realtime, type) => {
         let slt = fundListM.filter(
           (item) => item.code == data.fundcode
         );
-        console.log(data)
         data.num = slt[0].num;
         var sum = 0;
         
