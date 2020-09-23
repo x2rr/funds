@@ -150,17 +150,20 @@ var setBadge = (fundcode, Realtime, type) => {
           name: val.SHORTNAME,
           jzrq: val.PDATE,
           dwjz: val.NAV,
-          gsz: isNaN(val.GSZ) ? 0 : val.GSZ,
+          gsz: isNaN(val.GSZ) ? null : val.GSZ,
           gszzl: isNaN(val.GSZZL) ? 0 : val.GSZZL,
           gztime: val.GZTIME,
-          num:0
+          num: 0
         };
         let slt = fundListM.filter(
           (item) => item.code == data.fundcode
         );
+        if (!slt.length) {
+          return false;
+        }
         data.num = slt[0].num;
         var sum = 0;
-        
+
         let num = data.num ? data.num : 0;
 
         if (val.PDATE == val.GZTIME.substr(0, 10)) {
@@ -171,11 +174,11 @@ var setBadge = (fundcode, Realtime, type) => {
             num
           ).toFixed(1);
         } else {
-          sum = ((data.gsz - data.dwjz) * num).toFixed(1);
+          if (data.gsz) {
+            sum = ((data.gsz - data.dwjz) * num).toFixed(1);
+          }
+
         }
-
-
-
 
 
         if (BadgeType == 1) {
@@ -199,8 +202,10 @@ var setBadge = (fundcode, Realtime, type) => {
           if (val.PDATE == val.GZTIME.substr(0, 10)) {
             sum = (val.NAV - val.NAV / (1 + val.NAVCHGRT * 0.01)) * num
           } else {
-            let gsz = isNaN(val.GSZ) ? 0 : val.GSZ
-            sum = (gsz - val.NAV) * num
+            let gsz = isNaN(val.GSZ) ? null : val.GSZ
+            if (gsz) {
+              sum = (gsz - val.NAV) * num
+            }
           }
           allGains += sum;
 
@@ -338,8 +343,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       if (val.PDATE == val.GZTIME.substr(0, 10)) {
         sum = (val.NAV - val.NAV / (1 + val.NAVCHGRT * 0.01)) * num
       } else {
-        let gsz = isNaN(val.GSZ) ? 0 : val.GSZ
-        sum = (gsz - val.NAV) * num
+        let gsz = isNaN(val.GSZ) ? null : val.GSZ;
+        if (gsz) {
+          sum = (gsz - val.NAV) * num;
+        }
+
       }
       allGains += sum;
 
@@ -359,7 +367,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     chrome.browserAction.setBadgeText({
       text: textStr
     });
-    let color = Realtime ?
+    let color = isDuringDate() ?
       allGains >= 0 ?
       "#F56C6C" :
       "#4eb61b" :

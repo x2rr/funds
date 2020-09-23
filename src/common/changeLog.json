@@ -3,6 +3,19 @@
     "tgGroup": "https://t.me/choose_funds_chat",
     "qqGroup": "951222618",
     "list": [{
+            "version": "2.0.5",
+            "type": 1,
+            "content": [{
+                    "type": 1,
+                    "content": "修复个别基金估值收益异常问题"
+                },
+                {
+                    "type": 1,
+                    "content": "界面布局对齐方式调整"
+                }
+            ]
+        },
+        {
             "version": "2.0.4",
             "type": 1,
             "content": [{
@@ -14,7 +27,8 @@
                     "content": "修复更新日志无法关闭问题。"
                 }
             ]
-        }, {
+        },
+        {
             "version": "2.0.3",
             "type": 1,
             "content": [{
