@@ -3,6 +3,14 @@
     "tgGroup": "https://t.me/choose_funds_chat",
     "qqGroup": "951222618",
     "list": [{
+            "version": "2.0.6",
+            "type": 1,
+            "content": [{
+                "type": 1,
+                "content": "修复单个基金角标颜色异常的问题。"
+            }]
+        },
+        {
             "version": "2.0.5",
             "type": 1,
             "content": [{

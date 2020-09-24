@@ -227,7 +227,7 @@ var setBadge = (fundcode, Realtime, type) => {
         text: textStr
       });
       let color = Realtime ?
-        allGains >= 0 ?
+        textStr >= 0 ?
         "#F56C6C" :
         "#4eb61b" :
         "#4285f4";
@@ -368,7 +368,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       text: textStr
     });
     let color = isDuringDate() ?
-      allGains >= 0 ?
+      textStr >= 0 ?
       "#F56C6C" :
       "#4eb61b" :
       "#4285f4";
@@ -408,7 +408,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       text: textstr
     });
     let color = isDuringDate() ?
-      request.data.gszzl >= 0 ?
+      textstr >= 0 ?
       "#F56C6C" :
       "#4eb61b" :
       "#4285f4";
