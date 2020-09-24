@@ -112,10 +112,15 @@
         <table :class="tableHeight">
           <thead>
             <tr>
-              <th>基金名称</th>
+              <th class="align-left">基金名称</th>
               <th v-if="isEdit">基金代码</th>
               <th v-if="showGSZ && !isEdit">估算净值</th>
-              <th v-if="isEdit && (showCostRate || showCost)">成本价</th>
+              <th
+                style="text-align:center"
+                v-if="isEdit && (showCostRate || showCost)"
+              >
+                成本价
+              </th>
               <th @click="sortList('amount')" v-if="showAmount" class="pointer">
                 持有额
                 <span :class="sortType.amount" class="down-arrow"></span>
@@ -146,6 +151,7 @@
               </th>
               <th v-if="!isEdit">更新时间</th>
               <th
+                style="text-align:center"
                 v-if="
                   isEdit &&
                     (showAmount || showGains || showCost || showCostRate)
@@ -169,7 +175,9 @@
               @dragend="handleDragEnd($event, el)"
             >
               <td
-                :class="isEdit ? 'fundName-noclick' : 'fundName'"
+                :class="
+                  isEdit ? 'fundName-noclick align-left' : 'fundName align-left'
+                "
                 :title="el.name"
                 @click.stop="!isEdit && fundDetail(el)"
               >
@@ -757,7 +765,7 @@ export default {
               name: val.SHORTNAME,
               jzrq: val.PDATE,
               dwjz: val.NAV,
-              gsz: isNaN(val.GSZ) ? 0 : val.GSZ,
+              gsz: isNaN(val.GSZ) ? null : val.GSZ,
               gszzl: isNaN(val.GSZZL) ? 0 : val.GSZZL,
               gztime: val.GZTIME,
             };
@@ -845,12 +853,14 @@ export default {
       return sum;
     },
     calculate(val, hasReplace) {
-      var sum;
+      var sum = 0;
       let num = val.num ? val.num : 0;
       if (hasReplace) {
         sum = ((val.dwjz - val.dwjz / (1 + val.gszzl * 0.01)) * num).toFixed(1);
       } else {
-        sum = ((val.gsz - val.dwjz) * num).toFixed(1);
+        if (val.gsz) {
+          sum = ((val.gsz - val.dwjz) * num).toFixed(1);
+        }
       }
       return sum;
     },
@@ -1106,7 +1116,10 @@ table {
   margin: 10px auto 0;
   width: 100%;
   border-collapse: collapse;
-  text-align: center;
+  text-align: right;
+}
+.align-left {
+  text-align: left;
 }
 
 .center {
