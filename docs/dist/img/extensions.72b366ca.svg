@@ -1,0 +1,32 @@
+<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+    <defs>
+        <path id="a" d="M8 20v140c0 6.6 5.4 12 12 12h152c6.6 0 12-5.4 12-12V20H8zm108 32H76c-4.42 0-8-3.58-8-8s3.58-8 8-8h40c4.42 0 8 3.58 8 8s-3.58 8-8 8z"></path>
+    </defs>
+    
+    <path clip-path="url(#b)" fill="#eee" d="M8 20h176v152H8z"></path>
+    <path fill="#fff" d="M116 36H76c-4.42 0-8 3.58-8 8s3.58 8 8 8h40c4.42 0 8-3.58 8-8s-3.58-8-8-8z" clip-path="url(#b)"></path>
+    <g clip-path="url(#b)">
+        <defs>
+            <circle id="c" cx="96" cy="160" r="76"></circle>
+        </defs>
+        
+        <path d="M32.07 84v93.27h34.01L96 125.45h76V84zm0 0v93.27h34.01L96 125.45h76V84z" clip-path="url(#d)" fill="#DB4437"></path>
+        <path d="M20 236h72.34l33.58-33.58v-25.14l-59.84-.01L20 98.24zm0 0h72.34l33.58-33.58v-25.14l-59.84-.01L20 98.24z" clip-path="url(#d)" fill="#0F9D58"></path>
+        <path d="M96 125.45l29.92 51.82L92.35 236H172V125.45zm0 0l29.92 51.82L92.35 236H172V125.45z" clip-path="url(#d)" fill="#FFCD40"></path>
+        <g clip-path="url(#d)">
+            <circle fill="#F1F1F1" cx="96" cy="160" r="34.55"></circle>
+            <circle fill="#4285F4" cx="96" cy="160" r="27.64"></circle>
+        </g>
+    </g>
+    <path clip-path="url(#b)" fill="#212121" fill-opacity=".05" d="M8 20h176v76H8z"></path>
+    <path fill="#212121" fill-opacity=".02" d="M8 95h176v1H8z"></path>
+    <path fill="#fff" fill-opacity=".05" d="M8 96h176v1H8z"></path>
+    <path fill="#212121" fill-opacity=".02" d="M116 52H76c-4.25 0-7.72-3.32-7.97-7.5-.02.17-.03.33-.03.5 0 4.42 3.58 8 8 8h40c4.42 0 8-3.58 8-8 0-.17-.01-.33-.03-.5-.25 4.18-3.72 7.5-7.97 7.5zM8 20v1h176v-1H8z"></path>
+    <path fill="#231F20" fill-opacity=".1" d="M76 36h40c4.25 0 7.72 3.32 7.97 7.5.01-.17.03-.33.03-.5 0-4.42-3.58-8-8-8H76c-4.42 0-8 3.58-8 8 0 .17.01.33.03.5.25-4.18 3.72-7.5 7.97-7.5zm96 135H20c-6.6 0-12-5.4-12-12v1c0 6.6 5.4 12 12 12h152c6.6 0 12-5.4 12-12v-1c0 6.6-5.4 12-12 12z"></path>
+    <radialGradient id="e" cx="7.502" cy="19.344" r="227.596" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#fff" stop-opacity=".1"></stop>
+        <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+    </radialGradient>
+    <path fill="url(#e)" d="M8 20v140c0 6.6 5.4 12 12 12h152c6.6 0 12-5.4 12-12V20H8zm108 32H76c-4.42 0-8-3.58-8-8s3.58-8 8-8h40c4.42 0 8 3.58 8 8s-3.58 8-8 8z"></path>
+    <path fill="none" d="M0 0h192v192H0z"></path>
+</svg>
