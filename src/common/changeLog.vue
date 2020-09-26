@@ -83,7 +83,7 @@ export default {
   mounted() {},
   methods: {
     goGitee() {
-      window.open("https://x2rr.github.io/funds/src/common/changeLog.json");
+      window.open("http://rabt.gitee.io/funds/docs/dist/index.html#/ChangeLog");
     },
     getChangelog() {
       this.loading = true;
