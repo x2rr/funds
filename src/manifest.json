@@ -9,7 +9,7 @@
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
-  "homepage_url": "https://x2rr.github.io/funds/",
+  "homepage_url": "http://rabt.gitee.io/funds/docs/dist/index.html",
   "browser_action": {
     "default_icon": {
       "19": "icons/icon19.png",
@@ -37,8 +37,6 @@
   },
   "permissions": [
     "storage",
-    "http://fundgz.1234567.com.cn/js/*",
-    "https://*.eastmoney.com/*",
-    "https://*.gitee.io/*"
+    "https://*.eastmoney.com/*"
   ]
 }

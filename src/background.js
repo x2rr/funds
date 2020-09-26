@@ -149,7 +149,7 @@ var setBadge = (fundcode, Realtime, type) => {
           fundcode: val.FCODE,
           name: val.SHORTNAME,
           jzrq: val.PDATE,
-          dwjz: val.NAV,
+          dwjz: isNaN(val.NAV) ? null : val.NAV,
           gsz: isNaN(val.GSZ) ? null : val.GSZ,
           gszzl: isNaN(val.GSZZL) ? 0 : val.GSZZL,
           gztime: val.GZTIME,
@@ -166,7 +166,7 @@ var setBadge = (fundcode, Realtime, type) => {
 
         let num = data.num ? data.num : 0;
 
-        if (val.PDATE == val.GZTIME.substr(0, 10)) {
+        if (val.PDATE != "--" && val.PDATE == val.GZTIME.substr(0, 10)) {
           data.gsz = val.NAV;
           data.gszzl = isNaN(val.NAVCHGRT) ? 0 : val.NAVCHGRT;
           sum = (
@@ -197,14 +197,15 @@ var setBadge = (fundcode, Realtime, type) => {
             (item) => item.code == val.FCODE
           );
           let num = slt[0].num ? slt[0].num : 0;
-          allAmount += val.NAV * num;
+          let NAV = isNaN(val.NAV) ? null : val.NAV;
+          allAmount += NAV * num;
           var sum = 0;
-          if (val.PDATE == val.GZTIME.substr(0, 10)) {
-            sum = (val.NAV - val.NAV / (1 + val.NAVCHGRT * 0.01)) * num
+          if (val.PDATE != "--" && val.PDATE == val.GZTIME.substr(0, 10)) {
+            sum = (NAV - NAV / (1 + val.NAVCHGRT * 0.01)) * num
           } else {
             let gsz = isNaN(val.GSZ) ? null : val.GSZ
             if (gsz) {
-              sum = (gsz - val.NAV) * num
+              sum = (gsz - NAV) * num
             }
           }
           allGains += sum;
@@ -341,7 +342,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       let num = slt[0].num ? slt[0].num : 0;
       allAmount += val.NAV * num;
       var sum = 0;
-      if (val.PDATE == val.GZTIME.substr(0, 10)) {
+      if (val.PDATE != "--" && val.PDATE == val.GZTIME.substr(0, 10)) {
         sum = (val.NAV - val.NAV / (1 + val.NAVCHGRT * 0.01)) * num
       } else {
         let gsz = isNaN(val.GSZ) ? null : val.GSZ;
@@ -403,7 +404,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       textstr = request.data.gszzl;
     } else {
 
-      textstr = formatNum(val.gains);
+      textstr = formatNum(request.data.gains);
     }
     chrome.browserAction.setBadgeText({
       text: textstr

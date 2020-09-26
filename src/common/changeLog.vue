@@ -10,6 +10,11 @@
     width="400px"
     center
   >
+    <div v-if="netError" class="btn-row">
+      网络不好？ <el-button type="primary" @click="goGitee"
+        >去官网查看</el-button
+      >
+    </div>
     <div
       class="content"
       v-loading="loading"
@@ -67,25 +72,34 @@ export default {
     return {
       updateurl: {
         github: "https://x2rr.github.io/funds/src/common/changeLog.json",
-        gitee: "https://rabt.gitee.io/funds/src/common/changeLog.json",
       },
       centerDialogVisible: false,
       qrcode: false,
       changelog: {},
       loading: true,
+      netError: false,
     };
   },
   mounted() {},
   methods: {
+    goGitee() {
+      window.open("http://rabt.gitee.io/funds/docs/dist/index.html#/ChangeLog");
+    },
     getChangelog() {
       this.loading = true;
-      this.$axios.get(this.updateurl.gitee).then((res) => {
-        this.loading = false;
-        this.logList = res.data.list;
-        this.qrlink = res.data.qrcode;
-        this.changelog = res.data;
-        this.setQrcode();
-      });
+      this.$axios
+        .get(this.updateurl.github)
+        .then((res) => {
+          this.netError = false;
+          this.loading = false;
+          this.logList = res.data.list;
+          this.qrlink = res.data.qrcode;
+          this.changelog = res.data;
+          this.setQrcode();
+        })
+        .catch((error) => {
+          this.netError = true;
+        });
     },
     init() {
       this.centerDialogVisible = true;
@@ -118,6 +132,11 @@ export default {
   /deep/ &.el-dialog {
     margin-bottom: 15px;
     border-radius: 15px;
+  }
+
+  .btn-row {
+    text-align: center;
+    padding: 30px 0;
   }
 
   #qrcode {
