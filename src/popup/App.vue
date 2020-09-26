@@ -195,9 +195,9 @@
                 />
               </td>
 
-              <td v-if="showAmount">{{ el.amount }}</td>
+              <td v-if="showAmount">{{parseFloat(el.amount).toLocaleString('zh') }}</td>
               <td v-if="showCost" :class="el.costGains >= 0 ? 'up' : 'down'">
-                {{ el.costGains }}
+                {{ parseFloat(el.costGains).toLocaleString('zh') }}
               </td>
               <td
                 v-if="showCostRate"
@@ -207,7 +207,7 @@
               </td>
               <td :class="el.gszzl >= 0 ? 'up' : 'down'">{{ el.gszzl }}%</td>
               <td v-if="showGains" :class="el.gains >= 0 ? 'up' : 'down'">
-                {{ el.gains }}
+                {{ parseFloat(el.gains).toLocaleString('zh') }}
               </td>
               <td v-if="!isEdit">
                 {{
@@ -302,7 +302,7 @@
         :title="
           allGains >= 0 ? 'd=====(￣▽￣*)b 赞一个' : '∑(っ°Д°;)っ 大事不好啦'
         "
-        :value="'当日收益：' + allGains"
+        :value="'当日收益：' + parseFloat(allGains).toLocaleString('zh')"
       />
       <input
         v-if="showCost"
@@ -314,7 +314,7 @@
             ? 'd=====(￣▽￣*)b 赞一个'
             : '∑(っ°Д°;)っ 大事不好啦'
         "
-        :value="'总持有收益：' + allCostGains"
+        :value="'总持有收益：' + parseFloat(allCostGains).toLocaleString('zh')"
       />
     </div>
     <!-- <charts @close="closeCharts" ref="charts"></charts> -->
@@ -764,12 +764,12 @@ export default {
               fundcode: val.FCODE,
               name: val.SHORTNAME,
               jzrq: val.PDATE,
-              dwjz: val.NAV,
+              dwjz: isNaN(val.NAV) ? null : val.NAV,
               gsz: isNaN(val.GSZ) ? null : val.GSZ,
               gszzl: isNaN(val.GSZZL) ? 0 : val.GSZZL,
               gztime: val.GZTIME,
             };
-            if (val.PDATE == val.GZTIME.substr(0, 10)) {
+            if (val.PDATE != "--" && val.PDATE == val.GZTIME.substr(0, 10)) {
               data.gsz = val.NAV;
               data.gszzl = isNaN(val.NAVCHGRT) ? 0 : val.NAVCHGRT;
               data.hasReplace = true;
