@@ -19,7 +19,7 @@ var getGuid = () => {
   });
 }
 var getHoliday = () => {
-  let url = "https://rabt.gitee.io/funds/holiday.json";
+  let url = "http://x2rr.github.io/funds/holiday.json";
   return axios.get(url);
 };
 var checkHoliday = date => {
@@ -311,6 +311,15 @@ var getData = () => {
           },
           () => {
             holiday = res.data;
+            runStart(RealtimeFundcode);
+          }
+        );
+      }).catch(err => {
+        chrome.storage.sync.set({
+            holiday: {}
+          },
+          () => {
+            holiday = {};
             runStart(RealtimeFundcode);
           }
         );
