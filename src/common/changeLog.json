@@ -3,6 +3,13 @@
     "tgGroup": "https://t.me/choose_funds_chat",
     "qqGroup": "951222618",
     "list": [{
+            "version": "2.0.8",
+            "type": 1,
+            "content": [{
+                "type": 1,
+                "content": "调整节假日信息链接。"
+            }]
+        }, {
             "version": "2.0.7",
             "type": 1,
             "content": [{
