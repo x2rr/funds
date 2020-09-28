@@ -23,7 +23,6 @@
     "page": "options/options.html",
     "chrome_style": false
   },
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "background": {
     "scripts": [
       "background.js"
