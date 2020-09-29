@@ -17,6 +17,7 @@
     </div>
     <div
       class="content"
+      v-show="!netError"
       v-loading="loading"
       :element-loading-background="
         darkMode ? 'rgba(0, 0, 0, 0.9)' : 'rgba(255, 255, 255, 0.9)'
@@ -92,7 +93,6 @@ export default {
         .then((res) => {
           this.netError = false;
           this.loading = false;
-          this.logList = res.data.list;
           this.qrlink = res.data.qrcode;
           this.changelog = res.data;
           this.setQrcode();

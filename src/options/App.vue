@@ -375,6 +375,7 @@ export default {
           let config = JSON.parse(event.target.result);
           chrome.storage.sync.set(config, (val) => {
             this.initOption();
+            chrome.runtime.sendMessage({ type: "refresh" });
             this.$message({
               message: "恭喜,导入配置成功！",
               type: "success",

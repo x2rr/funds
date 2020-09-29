@@ -10,6 +10,9 @@
             ref="first"
           ></charts>
         </el-tab-pane>
+        <!-- <el-tab-pane lazy label="持仓明细" name="ccmx">
+          
+        </el-tab-pane> -->
         <el-tab-pane lazy label="单位净值" name="second">
           <charts2
             :darkMode="darkMode"
