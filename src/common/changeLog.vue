@@ -93,7 +93,6 @@ export default {
         .then((res) => {
           this.netError = false;
           this.loading = false;
-          this.logList = res.data.list;
           this.qrlink = res.data.qrcode;
           this.changelog = res.data;
           this.setQrcode();
