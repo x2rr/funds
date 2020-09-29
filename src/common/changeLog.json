@@ -3,6 +3,16 @@
     "tgGroup": "https://t.me/choose_funds_chat",
     "qqGroup": "951222618",
     "list": [{
+            "version": "2.0.9",
+            "type": 1,
+            "content": [{
+                "type": 1,
+                "content": "修复角标金额上k时颜色异常问题。"
+            }, {
+                "type": 1,
+                "content": "修复导入配置后角标未更新的问题。"
+            }]
+        }, {
             "version": "2.0.8",
             "type": 1,
             "content": [{
