@@ -143,6 +143,7 @@ var setBadge = (fundcode, Realtime, type) => {
       let allAmount = 0;
       let allGains = 0;
       let textStr = null;
+      let sumNum = 0;
       if (type == 1) {
         let val = res.data.Datas[0];
         let data = {
@@ -183,10 +184,13 @@ var setBadge = (fundcode, Realtime, type) => {
 
         if (BadgeType == 1) {
           textStr = data.gszzl;
+          sumNum = textStr;
         } else {
           if (num != 0) {
+            sumNum = sum;
             textStr = formatNum(sum);
           } else {
+            sumNum = "0";
             textStr = "0";
           }
         }
@@ -213,12 +217,15 @@ var setBadge = (fundcode, Realtime, type) => {
         });
         if (BadgeType == 1) {
           if (allAmount == 0 || allGains == 0) {
+            sumNum = "0"
             textStr = "0"
           } else {
             textStr = (100 * allGains / allAmount).toFixed(2);
+            sumNum = textStr
           }
 
         } else {
+          sumNum = allGains;
           textStr = formatNum(allGains);
         }
       }
@@ -228,7 +235,7 @@ var setBadge = (fundcode, Realtime, type) => {
         text: textStr
       });
       let color = Realtime ?
-        textStr >= 0 ?
+        sumNum >= 0 ?
         "#F56C6C" :
         "#4eb61b" :
         "#4285f4";
@@ -343,6 +350,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type == "refreshBadgeAllGains") {
     let allAmount = 0;
     let allGains = 0;
+    let sumNum = 0;
     request.data.forEach((val) => {
       let slt = fundListM.filter(
         (item) => item.code == val.FCODE
@@ -366,19 +374,22 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (BadgeType == 1) {
       if (allAmount == 0 || allGains == 0) {
         textStr = "0"
+        sumNum = "0"
       } else {
         textStr = (100 * allGains / allAmount).toFixed(2);
+        sumNum = textStr
       }
 
     } else {
       textStr = formatNum(allGains);
+      sumNum = allGains;
     }
 
     chrome.browserAction.setBadgeText({
       text: textStr
     });
     let color = isDuringDate() ?
-      textStr >= 0 ?
+      sumNum >= 0 ?
       "#F56C6C" :
       "#4eb61b" :
       "#4285f4";
@@ -408,17 +419,19 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
   if (request.type == "refreshBadge") {
     let textstr = null;
+    let num = 0;
     if (BadgeType == 1) {
       textstr = request.data.gszzl;
+      num = request.data.gszzl;
     } else {
-
+      num = request.data.gains;
       textstr = formatNum(request.data.gains);
     }
     chrome.browserAction.setBadgeText({
       text: textstr
     });
     let color = isDuringDate() ?
-      textstr >= 0 ?
+      num >= 0 ?
       "#F56C6C" :
       "#4eb61b" :
       "#4285f4";
