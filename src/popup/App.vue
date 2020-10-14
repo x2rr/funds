@@ -491,7 +491,8 @@ export default {
       let bb = this.$refs.app.clientWidth;
       if (aa < bb) {
         this.zoom = {
-          zoom: aa / bb,
+          transform: "scale(" + aa / bb + ")",
+          transformOrigin: "top left",
         };
       }
     }, 10);
