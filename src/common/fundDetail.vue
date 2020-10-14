@@ -1,18 +1,14 @@
 <template>
   <div v-if="boxShadow" class="shadow" :class="darkMode ? 'darkMode' : ''">
     <div class="content-box">
-      <h5>{{fund.name}}</h5>
+      <h5>{{ fund.name }}</h5>
       <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick">
         <el-tab-pane lazy label="净值估算" name="first">
-          <charts
-            :darkMode="darkMode"
-            :fund="fund"
-            ref="first"
-          ></charts>
+          <charts :darkMode="darkMode" :fund="fund" ref="first"></charts>
         </el-tab-pane>
-        <!-- <el-tab-pane lazy label="持仓明细" name="ccmx">
-          
-        </el-tab-pane> -->
+        <el-tab-pane lazy label="持仓明细" name="ccmx">
+          <position-detail :darkMode="darkMode" :fund="fund"> </position-detail>
+        </el-tab-pane>
         <el-tab-pane lazy label="单位净值" name="second">
           <charts2
             :darkMode="darkMode"
@@ -49,10 +45,12 @@
 <script>
 import charts from "./charts";
 import charts2 from "./charts2";
+import positionDetail from "./positionDetail";
 export default {
   components: {
     charts,
     charts2,
+    positionDetail,
   },
   name: "fundDetail",
   props: {
@@ -119,10 +117,7 @@ export default {
     line-height: 34px;
   }
 }
-.main-echarts {
-  width: 100%;
-  height: 240px;
-}
+
 .btn {
   display: inline-block;
   line-height: 1;

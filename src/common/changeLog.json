@@ -1,8 +1,34 @@
 {
-    "qrcode": "https://weixin.qq.com/g/AQYAACh0XTag09uPcauQfL4dRBv5NOdUwAVH05mmMXrvrE5-GJ9NwTvOMazlcmXb",
+    "qrcode": "https://weixin.qq.com/g/AQYAAK7zrxK-xj5Ib6221klVhJVOuOls0WEZ_oLG6oMxOERbtoJ10EXa_Av2MFVz",
     "tgGroup": "https://t.me/choose_funds_chat",
     "qqGroup": "951222618",
     "list": [{
+            "version": "2.1.0",
+            "type": 2,
+            "content": [{
+                "type": 2,
+                "content": "支持查看基金的持仓明细。"
+            }, {
+                "type": 2,
+                "content": "角标内容支持选择指数。"
+            }, {
+                "type": 1,
+                "content": "走势图支持更多区间选择。"
+            }, {
+                "type": 1,
+                "content": "页面字号新增两档可调节，其他页面布局调整。"
+            }]
+        }, {
+            "version": "2.0.9",
+            "type": 1,
+            "content": [{
+                "type": 1,
+                "content": "修复角标金额上k时颜色异常问题。"
+            }, {
+                "type": 1,
+                "content": "修复导入配置后角标未更新的问题。"
+            }]
+        }, {
             "version": "2.0.8",
             "type": 1,
             "content": [{

@@ -17,7 +17,7 @@
           </div>
           <p>
             <span v-if="holiday">
-              当前版本：v{{
+              当前节假日版本：v{{
                 holiday.version
               }}&nbsp;&nbsp;&nbsp;&nbsp;最后节假日日期：{{ holiday.lastDate }}
             </span>
@@ -29,7 +29,7 @@
         </li>
         <li>
           <div class="list-title">
-            主题设置
+            主题与页面设置
           </div>
           <div class="select-row">
             <el-switch
@@ -39,6 +39,15 @@
               inactive-color="#13ce66"
               inactive-text="标准模式"
               active-text="暗色模式"
+            >
+            </el-switch>
+          </div>
+          <div class="select-row">
+            <el-switch
+              v-model="normalFontSize"
+              @change="changeFontSize"
+              inactive-text="迷你字号"
+              active-text="标准字号"
             >
             </el-switch>
           </div>
@@ -65,9 +74,10 @@
             >
               <el-radio border :label="1">单个基金</el-radio>
               <el-radio border :label="2">所有基金</el-radio>
+              <el-radio border :label="3">单个指数</el-radio>
             </el-radio-group>
           </div>
-          <div v-if="showBadge == 1" class="select-row">
+          <div v-if="showBadge == 1 && BadgeContent != 3" class="select-row">
             角标类型：
             <el-radio-group
               v-model="BadgeType"
@@ -254,6 +264,7 @@ export default {
       BadgeContent: 1,
       BadgeType: 1,
       changelogShadow: false,
+      normalFontSize: false,
       version,
     };
   },
@@ -275,11 +286,6 @@ export default {
     },
     closeChangelog() {
       this.changelogShadow = false;
-      // chrome.storage.sync.set(
-      //   {
-      //     version: this.localVersion,
-      //   }
-      // );
     },
     changeOption(val, type, sendMessage) {
       chrome.storage.sync.set(
@@ -308,6 +314,7 @@ export default {
           "showCostRate",
           "showGSZ",
           "darkMode",
+          "normalFontSize",
           "showBadge",
           "BadgeContent",
           "BadgeType",
@@ -348,6 +355,7 @@ export default {
           this.showCost = res.showCost ? res.showCost : false;
           this.showCostRate = res.showCostRate ? res.showCostRate : false;
           this.darkMode = res.darkMode ? res.darkMode : false;
+          this.normalFontSize = res.normalFontSize ? res.normalFontSize : false;
           this.showBadge = res.showBadge ? res.showBadge : 1;
           this.BadgeContent = res.BadgeContent ? res.BadgeContent : 1;
           this.BadgeType = res.BadgeType ? res.BadgeType : 1;
@@ -426,6 +434,11 @@ export default {
         darkMode: this.darkMode,
       });
     },
+    changeFontSize() {
+      chrome.storage.sync.set({
+        normalFontSize: this.normalFontSize,
+      });
+    },
   },
 };
 </script>
@@ -437,9 +450,8 @@ export default {
   text-align: center;
   padding: 15px 0;
   font-size: 13px;
-  font-family: "Helvetica Neue", Helvetica, Arial, "PingFang SC",
-    "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei",
-    sans-serif;
+  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
 }
 
 .setting-list {

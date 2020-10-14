@@ -2,15 +2,16 @@
   <div
     id="app"
     class="container"
+    ref="app"
     :class="containerClass"
-    :style="
-      diyContainer
-        ? { width: containerWidth + 'px', height: containerHeight + 'px' }
-        : ''
-    "
+    :style="zoom"
   >
     <div>
-      <div class="tab-row">
+      <div
+        class="tab-row"
+        v-loading="loadingInd"
+        :style="seciList.length > 0 ? { minHeight: '79px' } : {}"
+      >
         <div
           v-for="(el, index) in indFundData"
           :draggable="isEdit"
@@ -31,7 +32,18 @@
               >✖</span
             >
           </h5>
-          <p :class="el.f3 >= 0 ? 'up' : 'down'">{{ el.f2 }}</p>
+          <p :class="el.f3 >= 0 ? 'up' : 'down'">
+            {{ el.f2
+            }}<input
+              v-if="isEdit && BadgeContent == 3"
+              @click="sltInd(el)"
+              :class="el.f13 + '.' + el.f12 == RealtimeIndcode ? 'slt' : ''"
+              class="btn edit"
+              style="margin-left:5px"
+              value="✔"
+              type="button"
+            />
+          </p>
           <p :class="el.f3 >= 0 ? 'up' : 'down'">
             {{ el.f4 }}&nbsp;&nbsp;{{ el.f3 }}%
           </p>
@@ -108,7 +120,7 @@
       <p v-if="isEdit" class="tips center">
         部分新发基金或QDII基金可以搜索到，但可能无法获取估值情况
       </p>
-      <div class="table-row">
+      <div v-loading="loadingList" class="table-row" style="min-height:160px">
         <table :class="tableHeight">
           <thead>
             <tr>
@@ -195,9 +207,19 @@
                 />
               </td>
 
-              <td v-if="showAmount">{{parseFloat(el.amount).toLocaleString('zh') }}</td>
+              <td v-if="showAmount">
+                {{
+                  parseFloat(el.amount).toLocaleString("zh", {
+                    minimumFractionDigits: 1,
+                  })
+                }}
+              </td>
               <td v-if="showCost" :class="el.costGains >= 0 ? 'up' : 'down'">
-                {{ parseFloat(el.costGains).toLocaleString('zh') }}
+                {{
+                  parseFloat(el.costGains).toLocaleString("zh", {
+                    minimumFractionDigits: 1,
+                  })
+                }}
               </td>
               <td
                 v-if="showCostRate"
@@ -207,7 +229,11 @@
               </td>
               <td :class="el.gszzl >= 0 ? 'up' : 'down'">{{ el.gszzl }}%</td>
               <td v-if="showGains" :class="el.gains >= 0 ? 'up' : 'down'">
-                {{ parseFloat(el.gains).toLocaleString('zh') }}
+                {{
+                  parseFloat(el.gains).toLocaleString("zh", {
+                    minimumFractionDigits: 1,
+                  })
+                }}
               </td>
               <td v-if="!isEdit">
                 {{
@@ -302,7 +328,12 @@
         :title="
           allGains >= 0 ? 'd=====(￣▽￣*)b 赞一个' : '∑(っ°Д°;)っ 大事不好啦'
         "
-        :value="'当日收益：' + parseFloat(allGains).toLocaleString('zh')"
+        :value="
+          '当日收益：' +
+            parseFloat(allGains).toLocaleString('zh', {
+              minimumFractionDigits: 1,
+            })
+        "
       />
       <input
         v-if="showCost"
@@ -314,15 +345,19 @@
             ? 'd=====(￣▽￣*)b 赞一个'
             : '∑(っ°Д°;)っ 大事不好啦'
         "
-        :value="'总持有收益：' + parseFloat(allCostGains).toLocaleString('zh')"
+        :value="
+          '总持有收益：' +
+            parseFloat(allCostGains).toLocaleString('zh', {
+              minimumFractionDigits: 1,
+            })
+        "
       />
     </div>
-    <!-- <charts @close="closeCharts" ref="charts"></charts> -->
     <fund-detail
       @close="closeCharts"
       :fund="sltFund"
       :darkMode="darkMode"
-      ref="charts"
+      ref="fundDetail"
     ></fund-detail>
     <reward @close="rewardShadow = false" ref="reward"></reward>
     <change-log
@@ -361,6 +396,7 @@ export default {
       isLiveUpdate: false,
       isDuringDate: false,
       RealtimeFundcode: null,
+      RealtimeIndcode: null,
       dataList: [],
       myVar: null,
       myVar1: null,
@@ -431,6 +467,7 @@ export default {
       ],
       sltSeci: "",
       darkMode: false,
+      normalFontSize: false,
       diyContainer: false,
       containerWidth: 790,
       containerHeight: 590,
@@ -441,18 +478,35 @@ export default {
       BadgeContent: 1,
       showBadge: 1,
       userId: null,
+      loadingInd: false,
+      loadingList: false,
+      zoom: {
+        zoom: 1,
+      },
     };
   },
   mounted() {
+    setTimeout(() => {
+      let aa = window.screen.width;
+      let bb = this.$refs.app.clientWidth;
+      if (aa < bb) {
+        this.zoom = {
+          zoom: aa / bb,
+        };
+      }
+    }, 10);
+
     chrome.storage.sync.get(
       [
         "RealtimeFundcode",
+        "RealtimeIndcode",
         "fundListM",
         "showAmount",
         "showGains",
         "fundList",
         "seciList",
         "darkMode",
+        "normalFontSize",
         "isLiveUpdate",
         "showCost",
         "showCostRate",
@@ -487,10 +541,12 @@ export default {
           });
         }
         this.darkMode = res.darkMode ? res.darkMode : false;
+        this.normalFontSize = res.normalFontSize ? res.normalFontSize : false;
         this.seciList = res.seciList ? res.seciList : this.seciList;
         this.showAmount = res.showAmount ? res.showAmount : false;
         this.showGains = res.showGains ? res.showGains : false;
         this.RealtimeFundcode = res.RealtimeFundcode;
+        this.RealtimeIndcode = res.RealtimeIndcode;
         this.isLiveUpdate = res.isLiveUpdate ? res.isLiveUpdate : false;
         this.showCost = res.showCost ? res.showCost : false;
         this.showCostRate = res.showCostRate ? res.showCostRate : false;
@@ -528,6 +584,9 @@ export default {
     },
     containerClass() {
       let className = "";
+      if (this.normalFontSize) {
+        className += "normalFontSize ";
+      }
       if (this.darkMode) {
         className += "darkMode ";
       }
@@ -599,7 +658,7 @@ export default {
     fundDetail(val) {
       this.sltFund = val;
       this.detailShadow = true;
-      this.$refs.charts.init();
+      this.$refs.fundDetail.init();
     },
     closeCharts() {
       this.detailShadow = false;
@@ -735,17 +794,22 @@ export default {
       );
     },
     getIndFundData() {
+      if (this.seciList.length > 0) {
+        this.loadingInd = true;
+      }
       let seciListStr = this.seciList.join(",");
       let url =
-        "https://push2.eastmoney.com/api/qt/ulist.np/get?fltt=2&fields=f2,f3,f4,f12,f14&secids=" +
+        "https://push2.eastmoney.com/api/qt/ulist.np/get?fltt=2&fields=f2,f3,f4,f12,f13,f14&secids=" +
         seciListStr +
         "&_=" +
         new Date().getTime();
       this.$axios.get(url).then((res) => {
+        this.loadingInd = false;
         this.indFundData = res.data.data.diff;
       });
     },
     getData() {
+      this.loadingList = true;
       let fundlist = this.fundListM.map((val) => val.code).join(",");
       let url =
         "https://fundmobapi.eastmoney.com/FundMNewApi/FundMNFInfo?pageIndex=1&pageSize=50&plat=Android&appType=ttjj&product=EFund&Version=1&deviceid=" +
@@ -755,6 +819,7 @@ export default {
       this.$axios
         .get(url)
         .then((res) => {
+          this.loadingList = false;
           let data = res.data.Datas;
           this.dataList = [];
           let dataList = [];
@@ -900,6 +965,31 @@ export default {
         }
       );
     },
+    sltInd(val) {
+      let code = val.f13 + "." + val.f12;
+      console.log(code);
+      if (code == this.RealtimeIndcode) {
+        chrome.storage.sync.set(
+          {
+            RealtimeIndcode: null,
+          },
+          () => {
+            this.RealtimeIndcode = null;
+            chrome.runtime.sendMessage({ type: "endInterval" });
+          }
+        );
+      } else {
+        chrome.storage.sync.set(
+          {
+            RealtimeIndcode: code,
+          },
+          () => {
+            this.RealtimeIndcode = code;
+            chrome.runtime.sendMessage({ type: "refresh" });
+          }
+        );
+      }
+    },
     slt(id) {
       if (id == this.RealtimeFundcode) {
         chrome.storage.sync.set(
@@ -1044,14 +1134,8 @@ export default {
   padding: 10px 7px;
   box-sizing: border-box;
   font-size: 12px;
-  font-family: "Helvetica Neue", Helvetica, Arial, "PingFang SC",
-    "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei",
-    sans-serif;
-}
-
-.detail-container {
-  min-height: 450px;
-  min-width: 610px;
+  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
 }
 
 .more-height {
@@ -1073,24 +1157,23 @@ export default {
 .table-drag {
   cursor: move;
 }
-.num-all-width {
-  min-width: 520px;
-}
 
-.num-width-1 {
-  min-width: 420px;
-}
-.num-width-2 {
-  min-width: 480px;
-}
-.num-width-3 {
-  min-width: 540px;
-}
-.num-width-4 {
-  min-width: 610px;
-}
-.num-width-5 {
-  min-width: 680px;
+.container {
+  &.num-width-1 {
+    min-width: 420px;
+  }
+  &.num-width-2 {
+    min-width: 480px;
+  }
+  &.num-width-3 {
+    min-width: 540px;
+  }
+  &.num-width-4 {
+    min-width: 610px;
+  }
+  &.num-width-5 {
+    min-width: 680px;
+  }
 }
 
 .table-row {
@@ -1178,11 +1261,13 @@ tbody tr:hover {
 .btn-up {
   color: #f56c6c;
   border-color: #f56c6c;
+  font-weight: bold;
 }
 
 .btn-down {
   color: #4eb61b;
   border-color: #4eb61b;
+  font-weight: bold;
 }
 
 .slt {
@@ -1310,6 +1395,42 @@ tbody tr:hover {
   user-select: none;
 }
 
+//标准字号
+.normalFontSize {
+  min-width: 450px;
+  font-size: 14px;
+  &.num-width-1 {
+    min-width: 500px;
+  }
+  &.num-width-2 {
+    min-width: 580px;
+  }
+  &.num-width-3 {
+    min-width: 630px;
+  }
+  &.num-width-4 {
+    min-width: 690px;
+  }
+  &.num-width-5 {
+    min-width: 750px;
+  }
+
+  .btn,
+  .tips {
+    font-size: 14px;
+  }
+  .tab-col {
+    h5 {
+      font-size: 14px;
+    }
+  }
+}
+
+.detail-container {
+  min-height: 450px;
+  min-width: 610px;
+}
+
 //暗黑主题
 .container.darkMode {
   color: rgba($color: #ffffff, $alpha: 0.6);
@@ -1332,7 +1453,7 @@ tbody tr:hover {
   }
 
   /deep/ tbody tr:hover {
-    background-color: rgba($color: #ffffff, $alpha: 0.08);
+    background-color: rgba($color: #ffffff, $alpha: 0.12);
   }
 
   .slt {
