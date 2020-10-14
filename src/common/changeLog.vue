@@ -11,9 +11,8 @@
     center
   >
     <div v-if="netError" class="btn-row">
-      网络不好？ <el-button type="primary" @click="goGitee"
-        >去官网查看</el-button
-      >
+      网络不好？
+      <el-button type="primary" @click="goGitee">去官网查看</el-button>
     </div>
     <div
       class="content"
@@ -31,6 +30,9 @@
         <li v-for="el in changelog.list" :key="el.version">
           <h5>
             v{{ el.version }}
+            <span class="btn red" v-if="localVersion == el.version"
+              >当前版本</span
+            >
             <span class="btn primary" v-if="el.type == 2">重要更新</span>
           </h5>
           <ul>
@@ -54,6 +56,7 @@
 
 <script>
 var json = require("./changeLog.json");
+const { version } = require("../../package.json");
 import QRCode from "qrcodejs2";
 export default {
   props: {
@@ -66,19 +69,18 @@ export default {
       default: false,
     },
   },
-  components: {
-    QRCode,
-  },
   data() {
     return {
       updateurl: {
         github: "https://x2rr.github.io/funds/src/common/changeLog.json",
+        gitee: "https://rabt.gitee.io/funds/src/common/changeLog.json",
       },
       centerDialogVisible: false,
       qrcode: false,
       changelog: {},
       loading: true,
       netError: false,
+      localVersion: version,
     };
   },
   mounted() {},
@@ -217,6 +219,11 @@ export default {
     color: rgba($color: #ffffff, $alpha: 0.6);
     border: 1px solid rgba($color: #ffffff, $alpha: 0.6);
   }
+  .btn.red {
+    border: 1px solid rgba($color: #f56c6c, $alpha: 0.6);
+    background-color: rgba($color: #f56c6c, $alpha: 0.6);
+  }
+
   .primary {
     border: 1px solid rgba($color: #409eff, $alpha: 0.6);
     background-color: rgba($color: #409eff, $alpha: 0.6);

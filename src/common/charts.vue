@@ -1,5 +1,5 @@
 <template>
-  <div class="main-echarts" ref="mainCharts"></div>
+  <div v-loading="loading" class="main-echarts" ref="mainCharts"></div>
 </template>
 
 <script>
@@ -34,6 +34,7 @@ export default {
       interVal: null,
       option: {},
       DWJZ: 0,
+      loading:false,
       timeData: [
         "09:30",
         "09:31",
@@ -422,10 +423,12 @@ export default {
       return _aa > _bb ? _aa : _bb;
     },
     getData() {
+      this.loading = true;
       let url = `https://fundmobapi.eastmoney.com/FundMApi/FundVarietieValuationDetail.ashx?FCODE=${
         this.fund.fundcode
       }&deviceid=Wap&plat=Wap&product=EFund&version=2.0.0&_=${new Date().getTime()}`;
       this.$axios.get(url).then((res) => {
+        this.loading = false;
         let dataList = res.data.Datas.map((item) => item.split(","));
         this.option.series[0].data = dataList.map((item) =>
           (+item[2]).toFixed(2)
@@ -451,6 +454,6 @@ export default {
 <style lang="scss" scoped>
 .main-echarts {
   width: 100%;
-  height: 240px;
+  height: 260px;
 }
 </style>

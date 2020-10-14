@@ -3,6 +3,22 @@
     "tgGroup": "https://t.me/choose_funds_chat",
     "qqGroup": "951222618",
     "list": [{
+            "version": "2.1.0",
+            "type": 2,
+            "content": [{
+                "type": 2,
+                "content": "支持查看基金的持仓明细。"
+            }, {
+                "type": 2,
+                "content": "角标内容支持选择指数。"
+            }, {
+                "type": 1,
+                "content": "走势图支持更多区间选择。"
+            }, {
+                "type": 1,
+                "content": "页面字号新增两档可调节，其他页面布局调整。"
+            }]
+        }, {
             "version": "2.0.9",
             "type": 1,
             "content": [{
