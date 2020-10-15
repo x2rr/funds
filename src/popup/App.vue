@@ -197,7 +197,7 @@
               </td>
               <td v-if="isEdit">{{ el.fundcode }}</td>
               <td v-if="showGSZ && !isEdit">{{ el.gsz }}</td>
-              <td v-if="isEdit && showCost">
+              <td v-if="isEdit && (showCostRate || showCost)">
                 <input
                   class="btn num"
                   placeholder="持仓成本价"
@@ -1255,6 +1255,7 @@ tbody tr:hover {
 
 .btn.num {
   width: 75px;
+  padding: 3px 6px;
 }
 
 .btn-up {
