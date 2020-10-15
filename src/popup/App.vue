@@ -10,7 +10,7 @@
       <div
         class="tab-row"
         v-loading="loadingInd"
-        :style="seciList.length > 0 ? { minHeight: '79px' } : {}"
+        :style="seciList.length > 0 ? { minHeight: '55px' } : {}"
       >
         <div
           v-for="(el, index) in indFundData"
@@ -479,7 +479,7 @@ export default {
       showBadge: 1,
       userId: null,
       loadingInd: false,
-      loadingList: false,
+      loadingList: true,
       zoom: {
         zoom: 1,
       },
@@ -554,7 +554,9 @@ export default {
         this.showGSZ = res.showGSZ ? res.showGSZ : false;
         this.BadgeContent = res.BadgeContent ? res.BadgeContent : 1;
         this.showBadge = res.showBadge ? res.showBadge : 1;
-
+        if (this.seciList.length > 0) {
+          this.loadingInd = true;
+        }
         this.getIndFundData();
         this.getData();
         this.checkInterval(true);
@@ -795,9 +797,6 @@ export default {
       );
     },
     getIndFundData() {
-      if (this.seciList.length > 0) {
-        this.loadingInd = true;
-      }
       let seciListStr = this.seciList.join(",");
       let url =
         "https://push2.eastmoney.com/api/qt/ulist.np/get?fltt=2&fields=f2,f3,f4,f12,f13,f14&secids=" +
@@ -810,7 +809,6 @@ export default {
       });
     },
     getData() {
-      this.loadingList = true;
       let fundlist = this.fundListM.map((val) => val.code).join(",");
       let url =
         "https://fundmobapi.eastmoney.com/FundMNewApi/FundMNFInfo?pageIndex=1&pageSize=50&plat=Android&appType=ttjj&product=EFund&Version=1&deviceid=" +
@@ -1178,7 +1176,7 @@ export default {
 }
 
 .table-row {
-  max-height: 435px;
+  max-height: 425px;
   overflow-y: auto;
 }
 
@@ -1197,7 +1195,7 @@ export default {
 }
 
 table {
-  margin: 10px auto 0;
+  margin: 0 auto;
   width: 100%;
   border-collapse: collapse;
   text-align: right;

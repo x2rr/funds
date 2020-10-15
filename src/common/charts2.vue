@@ -58,7 +58,7 @@ export default {
         },
       },
       option: {},
-      loading:false
+      loading: false,
     };
   },
 
@@ -141,7 +141,9 @@ export default {
               show: true,
             };
             this.option.tooltip.formatter = (p) => {
-              return `时间：${p[0].name}<br />${p[0].seriesName}：${p[0].value}%<br />${p[1].seriesName}：${p[1].value}%`;
+              let str =
+              p.length > 1 ? `<br />${p[1].seriesName}：${p[1].value}%` : "";
+              return `时间：${p[0].name}<br />${p[0].seriesName}：${p[0].value}%${str}`;
             };
             this.option.series = [
               {
@@ -168,18 +170,28 @@ export default {
         this.$axios.get(url).then((res) => {
           this.loading = false;
           let dataList = res.data.Datas;
-          this.option.series[0].data = dataList.map(
-            (item) => +item[this.chartType]
-          );
+          this.option.series = [
+            {
+              type: "line",
+              name: "单位净值",
+              data: dataList.map((item) => +item.DWJZ),
+            },
+            {
+              type: "line",
+              name: "累计净值",
+              data: dataList.map((item) => +item.LJJZ),
+            },
+          ];
           this.option.tooltip.formatter = (p) => {
-            return `时间：${p[0].name}<br />${
-              this.chartTypeList[this.chartType].name
-            }：${p[0].value}`;
+            let str =
+              p.length > 1 ? `<br />${p[1].seriesName}：${p[1].value}` : "";
+            return `时间：${p[0].name}<br />${p[0].seriesName}：${
+              p[0].value
+            }${str}<br />日增长率：${dataList[p[0].dataIndex].JZZZL}%`;
           };
           this.option.legend = {
-            show: false,
+            show: true,
           };
-          this.option.series[0].name = this.chartTypeList[this.chartType].name;
           this.option.xAxis.data = dataList.map((item) => item.FSRQ);
           this.myChart.setOption(this.option);
         });
