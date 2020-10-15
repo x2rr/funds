@@ -9,28 +9,20 @@
         <el-tab-pane lazy label="持仓明细" name="ccmx">
           <position-detail :darkMode="darkMode" :fund="fund"> </position-detail>
         </el-tab-pane>
-        <el-tab-pane lazy label="单位净值" name="second">
+        <el-tab-pane lazy label="历史净值" name="second">
           <charts2
             :darkMode="darkMode"
             :fund="fund"
-            chartType="DWJZ"
+            chartType="JZ"
             ref="second"
           ></charts2>
         </el-tab-pane>
-        <el-tab-pane lazy label="累计净值" name="third">
-          <charts2
-            :darkMode="darkMode"
-            :fund="fund"
-            chartType="LJJZ"
-            ref="third"
-          ></charts2>
-        </el-tab-pane>
-        <el-tab-pane lazy label="累计收益" name="fourth">
+        <el-tab-pane lazy label="累计收益" name="third">
           <charts2
             :darkMode="darkMode"
             :fund="fund"
             chartType="LJSY"
-            ref="fourth"
+            ref="third"
           ></charts2>
         </el-tab-pane>
       </el-tabs>

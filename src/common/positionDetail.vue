@@ -7,8 +7,7 @@
     <table>
       <thead>
         <tr>
-          <th style="text-align: left;">股票名称</th>
-          <th>股票代码</th>
+          <th style="text-align: left;">股票名称（代码）</th>
           <th>价格</th>
           <th>涨跌幅</th>
           <th>持仓占比</th>
@@ -16,9 +15,10 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(el, ind) in dataList" :key="el.GPDM">
-          <td style="text-align: left;">{{ el.GPJC }}</td>
-          <td>{{ el.GPDM }}</td>
+        <tr v-for="(el, ind) in dataList" :key="el.GPDM" @click="openPage(el)">
+          <td class="gpcode" style="text-align: left;">
+            {{ el.GPJC + "（" + el.GPDM + "）" }}
+          </td>
           <td>{{ dataListGp[ind].f2.toFixed(2) }}</td>
           <td :class="dataListGp[ind].f3 >= 0 ? 'up' : 'down'">
             {{ dataListGp[ind].f3.toFixed(2) }}%
@@ -93,6 +93,10 @@ export default {
         }
       });
     },
+    openPage(val) {
+      let url = `https://emwap.eastmoney.com/quota/stock/index/${val.GPDM}${val.TEXCH}`;
+      window.open(url);
+    },
 
     compared(val) {
       if (val.PCTNVCHGTYPE == "新增") {
@@ -133,6 +137,11 @@ table {
       background-color: #f1f1f1;
     }
   }
+}
+
+.gpcode:hover {
+  color: #409eff;
+  cursor: pointer;
 }
 
 .darkMode table tr:nth-child(even) {
