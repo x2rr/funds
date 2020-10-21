@@ -9,7 +9,11 @@
     <div>
       <div
         class="tab-row"
+        v-if="isGetStorage"
         v-loading="loadingInd"
+        :element-loading-background="
+          darkMode ? 'rgba(0, 0, 0, 0.9)' : 'rgba(255, 255, 255, 0.9)'
+        "
         :style="seciList.length > 0 ? { minHeight: '55px' } : {}"
       >
         <div
@@ -120,7 +124,15 @@
       <p v-if="isEdit" class="tips center">
         部分新发基金或QDII基金可以搜索到，但可能无法获取估值情况
       </p>
-      <div v-loading="loadingList" class="table-row" style="min-height:160px">
+      <div
+        v-if="isGetStorage"
+        v-loading="loadingList"
+        :element-loading-background="
+          darkMode ? 'rgba(0, 0, 0, 0.9)' : 'rgba(255, 255, 255, 0.9)'
+        "
+        class="table-row"
+        style="min-height:160px"
+      >
         <table :class="tableHeight">
           <thead>
             <tr>
@@ -480,6 +492,7 @@ export default {
       userId: null,
       loadingInd: false,
       loadingList: true,
+      isGetStorage: false,
       zoom: {
         zoom: 1,
       },
@@ -556,6 +569,8 @@ export default {
         if (this.seciList.length > 0) {
           this.loadingInd = true;
         }
+
+        this.isGetStorage = true;
         this.getIndFundData();
         this.getData();
         this.checkInterval(true);
