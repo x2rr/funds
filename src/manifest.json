@@ -28,6 +28,7 @@
       "background.js"
     ]
   },
+  "content_security_policy": "script-src 'self' https://jic.talkingdata.com; object-src 'self'",
   "permissions": [
     "storage",
     "https://*.eastmoney.com/*"
