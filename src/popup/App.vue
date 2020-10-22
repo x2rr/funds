@@ -19,9 +19,10 @@
         <div
           v-for="(el, index) in indFundData"
           :draggable="isEdit"
-          class="tab-col"
+          class="tab-col indFund"
           :class="drag"
           :key="el.f12"
+          @click.stop="!isEdit && indDetail(el)"
           @dragstart="handleDragStart($event, el)"
           @dragover.prevent="handleDragOver($event, el)"
           @dragenter="handleDragEnter($event, el, index)"
@@ -222,14 +223,14 @@
               <td v-if="showAmount">
                 {{
                   parseFloat(el.amount).toLocaleString("zh", {
-                    minimumFractionDigits: 1,
+                    minimumFractionDigits: 2,
                   })
                 }}
               </td>
               <td v-if="showCost" :class="el.costGains >= 0 ? 'up' : 'down'">
                 {{
                   parseFloat(el.costGains).toLocaleString("zh", {
-                    minimumFractionDigits: 1,
+                    minimumFractionDigits: 2,
                   })
                 }}
               </td>
@@ -243,7 +244,7 @@
               <td v-if="showGains" :class="el.gains >= 0 ? 'up' : 'down'">
                 {{
                   parseFloat(el.gains).toLocaleString("zh", {
-                    minimumFractionDigits: 1,
+                    minimumFractionDigits: 2,
                   })
                 }}
               </td>
@@ -343,7 +344,7 @@
         :value="
           '当日收益：' +
             parseFloat(allGains).toLocaleString('zh', {
-              minimumFractionDigits: 1,
+              minimumFractionDigits: 2,
             })
         "
       />
@@ -360,11 +361,17 @@
         :value="
           '总持有收益：' +
             parseFloat(allCostGains).toLocaleString('zh', {
-              minimumFractionDigits: 1,
+              minimumFractionDigits: 2,
             })
         "
       />
     </div>
+    <ind-detail
+      @close="closeCharts"
+      :darkMode="darkMode"
+      ref="indDetail"
+    >
+    </ind-detail>
     <fund-detail
       @close="closeCharts"
       :fund="sltFund"
@@ -384,6 +391,7 @@
 <script>
 const { version } = require("../../package.json");
 import reward from "../common/reward";
+import indDetail from "../common/indDetail";
 import fundDetail from "../common/fundDetail";
 import changeLog from "../common/changeLog";
 //防抖
@@ -397,6 +405,7 @@ export default {
   components: {
     reward,
     fundDetail,
+    indDetail,
     changeLog,
   },
   data() {
@@ -486,6 +495,7 @@ export default {
       detailShadow: false,
       changelogShadow: false,
       sltFund: {},
+      sltIndCode:"",
       localVersion: version,
       BadgeContent: 1,
       showBadge: 1,
@@ -588,7 +598,7 @@ export default {
       this.dataList.forEach((val) => {
         allGains += parseFloat(val.gains);
       });
-      allGains = allGains.toFixed(1);
+      allGains = allGains.toFixed(2);
       return allGains;
     },
     allCostGains() {
@@ -596,7 +606,7 @@ export default {
       this.dataList.forEach((val) => {
         allCostGains += parseFloat(val.costGains);
       });
-      allCostGains = allCostGains.toFixed(1);
+      allCostGains = allCostGains.toFixed(2);
       return allCostGains;
     },
     containerClass() {
@@ -671,6 +681,11 @@ export default {
           v = c == "x" ? r : (r & 0x3) | 0x8;
         return v.toString(16);
       });
+    },
+    indDetail(val) {
+      // this.sltIndCode = val.f13 + "." + val.f12;
+      this.detailShadow = true;
+      this.$refs.indDetail.init(val);
     },
     fundDetail(val) {
       this.sltFund = val;
@@ -927,24 +942,24 @@ export default {
       });
     },
     calculateMoney(val) {
-      let sum = (val.dwjz * val.num).toFixed(1);
+      let sum = (val.dwjz * val.num).toFixed(2);
       return sum;
     },
     calculate(val, hasReplace) {
       var sum = 0;
       let num = val.num ? val.num : 0;
       if (hasReplace) {
-        sum = ((val.dwjz - val.dwjz / (1 + val.gszzl * 0.01)) * num).toFixed(1);
+        sum = ((val.dwjz - val.dwjz / (1 + val.gszzl * 0.01)) * num).toFixed(2);
       } else {
         if (val.gsz) {
-          sum = ((val.gsz - val.dwjz) * num).toFixed(1);
+          sum = ((val.gsz - val.dwjz) * num).toFixed(2);
         }
       }
       return sum;
     },
     calculateCost(val) {
       if (val.cost) {
-        let sum = ((val.dwjz - val.cost) * val.num).toFixed(1);
+        let sum = ((val.dwjz - val.cost) * val.num).toFixed(2);
         return sum;
       } else {
         return 0;
@@ -980,7 +995,6 @@ export default {
     },
     sltInd(val) {
       let code = val.f13 + "." + val.f12;
-      console.log(code);
       if (code == this.RealtimeIndcode) {
         chrome.storage.sync.set(
           {
@@ -1318,6 +1332,9 @@ tbody tr:hover {
     border: 1px solid #dcdfe6;
     border-radius: 50%;
   }
+}
+.indFund {
+  cursor: pointer;
 }
 
 .tab-row:after,

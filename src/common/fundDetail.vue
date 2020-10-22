@@ -1,13 +1,13 @@
 <template>
   <div v-if="boxShadow" class="shadow" :class="darkMode ? 'darkMode' : ''">
     <div class="content-box">
-      <h5>{{ fund.name }}</h5>
+      <h5>{{ fund.name }}({{fund.fundcode}})</h5>
       <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick">
         <el-tab-pane lazy label="净值估算" name="first">
           <charts :darkMode="darkMode" :fund="fund" ref="first"></charts>
         </el-tab-pane>
         <el-tab-pane lazy label="持仓明细" name="ccmx">
-          <position-detail :darkMode="darkMode" :fund="fund"> </position-detail>
+          <position-detail :darkMode="darkMode"  @sltStock="sltStock" :fund="fund"> </position-detail>
         </el-tab-pane>
         <el-tab-pane lazy label="历史净值" name="second">
           <charts2
@@ -31,6 +31,8 @@
         <input class="btn" type="button" value="返回列表" @click="close" />
       </div>
     </div>
+    <ind-detail mini ref="indDetail" :darkMode="darkMode">
+      </ind-detail>
   </div>
 </template>
 
@@ -38,11 +40,13 @@
 import charts from "./charts";
 import charts2 from "./charts2";
 import positionDetail from "./positionDetail";
+import indDetail from "../common/indDetail";
 export default {
   components: {
     charts,
     charts2,
     positionDetail,
+    indDetail
   },
   name: "fundDetail",
   props: {
@@ -74,6 +78,9 @@ export default {
       this.boxShadow = false;
       this.$emit("close", false);
     },
+    sltStock(val){
+      this.$refs.indDetail.init(val);
+    },
   },
 };
 </script>
@@ -98,6 +105,7 @@ export default {
   text-align: center;
   line-height: 1;
   vertical-align: middle;
+  position: relative;
   h5 {
     margin: 0;
     padding: 13px;
