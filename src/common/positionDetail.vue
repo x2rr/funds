@@ -1,5 +1,11 @@
 <template>
-  <div class="box" v-loading="loading">
+  <div
+    class="box"
+    v-loading="loading"
+    :element-loading-background="
+      darkMode ? 'rgba(0, 0, 0, 0.9)' : 'rgba(255, 255, 255, 0.9)'
+    "
+  >
     <h5>
       <span v-if="expansion">截止日期：{{ expansion }}</span>
       <span v-else>暂无数据</span>
@@ -15,7 +21,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(el, ind) in dataList" :key="el.GPDM" @click="openPage(el)">
+        <tr v-for="(el, ind) in dataList" :key="el.GPDM" @click="openPage(ind)">
           <td class="gpcode" style="text-align: left;">
             {{ el.GPJC + "（" + el.GPDM + "）" }}
           </td>
@@ -28,11 +34,16 @@
         </tr>
       </tbody>
     </table>
+    
   </div>
 </template>
 
 <script>
+// import indDetail from "../common/indDetail";
 export default {
+  components: {
+    // indDetail,
+  },
   name: "positionDetails",
   props: {
     darkMode: {
@@ -50,6 +61,7 @@ export default {
       dataListGp: [],
       expansion: null,
       loading: false,
+      sltData:{}
     };
   },
 
@@ -93,9 +105,13 @@ export default {
         }
       });
     },
-    openPage(val) {
-      let url = `https://emwap.eastmoney.com/quota/stock/index/${val.GPDM}${val.TEXCH}`;
-      window.open(url);
+    openPage(ind) {
+      let val = this.dataListGp[ind];
+      this.sltData = val;
+      this.$emit("sltStock", val);
+
+      // let url = `https://emwap.eastmoney.com/quota/stock/index/${val.GPDM}${val.TEXCH}`;
+      // window.open(url);
     },
 
     compared(val) {

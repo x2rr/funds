@@ -1,8 +1,21 @@
 {
-    "qrcode": "https://weixin.qq.com/g/AQYAAJWy2j0NV5zbcnVIBe3VXMCZOtTKUpiX_0L-Uty91yS1ioTwbyNk5YFTcCZv",
+    "qrcode": "https://weixin.qq.com/g/AQYAAFe6zZo4Q4HvNAlTTLZfVo6WTUDqHDGamUHoImKgPnV_VHwQE8qpNiObTMEF",
     "tgGroup": "https://t.me/choose_funds_chat",
     "qqGroup": "951222618",
     "list": [{
+            "version": "2.2.0",
+            "type": 2,
+            "content": [{
+                "type": 2,
+                "content": "大盘指数支持查看走势图。"
+            }, {
+                "type": 2,
+                "content": "持仓明细中可点击对应股票直接查看走势图。"
+            }, {
+                "type": 1,
+                "content": "页面布局调整，金额小数点位数调整。"
+            }]
+        }, {
             "version": "2.1.1",
             "type": 1,
             "content": [{

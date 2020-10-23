@@ -1,5 +1,11 @@
 <template>
-  <div class="box" v-loading="loading">
+  <div
+    class="box"
+    v-loading="loading"
+    :element-loading-background="
+      darkMode ? 'rgba(0, 0, 0, 0.9)' : 'rgba(255, 255, 255, 0.9)'
+    "
+  >
     <div class="main-echarts" ref="mainCharts"></div>
     <div>
       <el-radio-group v-model="sltTimeRange" @change="changeTimeRange">
@@ -71,6 +77,9 @@ export default {
   mounted() {
     this.init();
   },
+  beforeDestroy() {
+    this.myChart.clear();
+  },
   methods: {
     init() {
       this.chartEL = this.$refs.mainCharts;
@@ -99,6 +108,12 @@ export default {
         yAxis: {
           type: "value",
           scale: true,
+          axisLabel: {
+            color: this.defaultColor,
+            formatter: (val) => {
+              return val.toFixed(2) + "%";
+            },
+          },
           splitLine: {
             show: true,
             lineStyle: {
@@ -142,7 +157,7 @@ export default {
             };
             this.option.tooltip.formatter = (p) => {
               let str =
-              p.length > 1 ? `<br />${p[1].seriesName}：${p[1].value}%` : "";
+                p.length > 1 ? `<br />${p[1].seriesName}：${p[1].value}%` : "";
               return `时间：${p[0].name}<br />${p[0].seriesName}：${p[0].value}%${str}`;
             };
             this.option.series = [

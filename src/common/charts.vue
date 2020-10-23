@@ -1,5 +1,12 @@
 <template>
-  <div v-loading="loading" class="main-echarts" ref="mainCharts"></div>
+  <div
+    v-loading="loading"
+    :element-loading-background="
+      darkMode ? 'rgba(0, 0, 0, 0.9)' : 'rgba(255, 255, 255, 0.9)'
+    "
+    class="main-echarts"
+    ref="mainCharts"
+  ></div>
 </template>
 
 <script>
@@ -34,7 +41,7 @@ export default {
       interVal: null,
       option: {},
       DWJZ: 0,
-      loading:false,
+      loading: false,
       timeData: [
         "09:30",
         "09:31",
@@ -293,10 +300,16 @@ export default {
   mounted() {
     this.init();
   },
+  beforeDestroy() {
+    this.myChart.clear();
+  },
   methods: {
     init() {
       this.chartEL = this.$refs.mainCharts;
-      this.myChart = echarts.init(this.chartEL, this.darkMode?"dark":"customed");
+      this.myChart = echarts.init(
+        this.chartEL,
+        this.darkMode ? "dark" : "customed"
+      );
       this.option = {
         tooltip: {
           trigger: "axis",
@@ -385,7 +398,7 @@ export default {
           {
             name: "估算净值",
             type: "line",
-            symbol:"none",
+            symbol: "none",
             data: [],
             yAxisIndex: 1,
             lineStyle: {
@@ -415,7 +428,11 @@ export default {
       }
     },
     yAxisLabelColor(val, ind) {
-      return val > 0 ? "#f56c6c" : val == 0 ? this.defaultLabelColor : "#4eb61b";
+      return val > 0
+        ? "#f56c6c"
+        : val == 0
+        ? this.defaultLabelColor
+        : "#4eb61b";
     },
     handle_num(data) {
       var _aa = Math.abs(Math.max.apply(null, data)).toFixed(2);

@@ -223,6 +223,12 @@
               value="更新日志"
               @click="changelog"
             />
+            <input
+              class="btn"
+              type="button"
+              value="插件主页"
+              @click="openHomePage"
+            />
           </p>
           <p style="line-height:34px">
             电报群：https://t.me/choose_funds_chat
@@ -425,6 +431,9 @@ export default {
     },
     openTG() {
       window.open("https://t.me/choose_funds_chat");
+    },
+    openHomePage() {
+      window.open("http://rabt.gitee.io/funds/docs/dist/index.html");
     },
     reward(data) {
       this.$refs.reward.init();
