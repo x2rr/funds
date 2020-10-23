@@ -366,11 +366,7 @@
         "
       />
     </div>
-    <ind-detail
-      @close="closeCharts"
-      :darkMode="darkMode"
-      ref="indDetail"
-    >
+    <ind-detail @close="closeCharts" :darkMode="darkMode" ref="indDetail">
     </ind-detail>
     <fund-detail
       @close="closeCharts"
@@ -495,7 +491,7 @@ export default {
       detailShadow: false,
       changelogShadow: false,
       sltFund: {},
-      sltIndCode:"",
+      sltIndCode: "",
       localVersion: version,
       BadgeContent: 1,
       showBadge: 1,
@@ -509,17 +505,6 @@ export default {
     };
   },
   mounted() {
-    setTimeout(() => {
-      let aa = window.screen.width;
-      let bb = this.$refs.app.clientWidth;
-      if (aa < bb) {
-        this.zoom = {
-          transform: "scale(" + aa / bb + ")",
-          transformOrigin: "top left",
-        };
-      }
-    }, 10);
-
     chrome.storage.sync.get(
       [
         "RealtimeFundcode",
@@ -585,6 +570,16 @@ export default {
         this.getIndFundData();
         this.getData();
         this.checkInterval(true);
+        setTimeout(() => {
+          let aa = document.documentElement.clientWidth;
+          let bb = this.$refs.app.clientWidth;
+          if (aa < bb) {
+            this.zoom = {
+              transform: "scale(" + aa / bb + ")",
+              transformOrigin: "top left",
+            };
+          }
+        }, 100);
 
         let ver = res.version ? res.version : "1.0.0";
         if (ver != this.localVersion) {
