@@ -3,6 +3,13 @@
     "tgGroup": "https://t.me/choose_funds_chat",
     "qqGroup": "951222618",
     "list": [{
+            "version": "2.2.1",
+            "type": 2,
+            "content": [{
+                "type": 2,
+                "content": "解决火狐浏览器手机版更新日志无法点击的问题。"
+            }]
+        }, {
             "version": "2.2.0",
             "type": 2,
             "content": [{
