@@ -579,12 +579,13 @@ export default {
               transformOrigin: "top left",
             };
           }
+          setTimeout(() => {
+            let ver = res.version ? res.version : "1.0.0";
+            if (ver != this.localVersion) {
+              this.changelog();
+            }
+          }, 100);
         }, 100);
-
-        let ver = res.version ? res.version : "1.0.0";
-        if (ver != this.localVersion) {
-          this.changelog();
-        }
       }
     );
   },
