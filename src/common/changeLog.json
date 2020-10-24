@@ -4,9 +4,9 @@
     "qqGroup": "951222618",
     "list": [{
             "version": "2.2.1",
-            "type": 2,
+            "type": 1,
             "content": [{
-                "type": 2,
+                "type": 1,
                 "content": "解决火狐浏览器手机版更新日志无法点击的问题。"
             }]
         }, {
