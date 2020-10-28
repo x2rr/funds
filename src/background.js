@@ -375,6 +375,23 @@ var getData = () => {
 
 getData();
 
+chrome.contextMenus.create({
+  title: "以独立窗口模式打开",
+  contexts: ["browser_action"],
+  onclick: () => {
+    chrome.windows.create({
+      url: chrome.runtime.getURL("popup/popup.html"),
+      width: 700,
+      height: 550,
+      top:200,
+      type: "popup",
+    }, (function (e) {
+      chrome.windows.update(e.id, {
+        focused: true
+      })
+    }))
+  }
+})
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type == "DuringDate") {
