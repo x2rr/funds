@@ -321,7 +321,6 @@
         :value="isEdit ? '完成编辑' : '编辑'"
         @click="isEdit = !isEdit"
       />
-      <!-- <input class="btn" type="button" :value="isAdd ? '取消添加' : '添加'" @click="isAdd = !isAdd" /> -->
       <input class="btn" type="button" value="设置" @click="option" />
       <input class="btn" type="button" value="日志" @click="changelog" />
       <input
@@ -332,7 +331,7 @@
         @click="reward"
       />
     </div>
-    <div class="input-row">
+    <div class="input-row" v-if="showCost || showGains">
       <input
         v-if="showGains"
         class="btn"
@@ -366,11 +365,15 @@
         "
       />
     </div>
-    <ind-detail
-      @close="closeCharts"
-      :darkMode="darkMode"
-      ref="indDetail"
+    <div
+      class="refresh"
+      :class="{ isRefresh: isRefresh }"
+      title="手动刷新数据"
+      @click="refresh"
     >
+      <i class="el-icon-refresh"></i>
+    </div>
+    <ind-detail @close="closeCharts" :darkMode="darkMode" ref="indDetail">
     </ind-detail>
     <fund-detail
       @close="closeCharts"
@@ -495,7 +498,7 @@ export default {
       detailShadow: false,
       changelogShadow: false,
       sltFund: {},
-      sltIndCode:"",
+      sltIndCode: "",
       localVersion: version,
       BadgeContent: 1,
       showBadge: 1,
@@ -506,6 +509,7 @@ export default {
       zoom: {
         zoom: 1,
       },
+      isRefresh: false,
     };
   },
   mounted() {
@@ -518,79 +522,7 @@ export default {
         };
       }
     }, 10);
-
-    chrome.storage.sync.get(
-      [
-        "RealtimeFundcode",
-        "RealtimeIndcode",
-        "fundListM",
-        "showAmount",
-        "showGains",
-        "fundList",
-        "seciList",
-        "darkMode",
-        "normalFontSize",
-        "isLiveUpdate",
-        "showCost",
-        "showCostRate",
-        "showGSZ",
-        "version",
-        "showBadge",
-        "BadgeContent",
-        "userId",
-      ],
-      (res) => {
-        this.fundList = res.fundList ? res.fundList : this.fundList;
-        if (res.fundListM) {
-          this.fundListM = res.fundListM;
-        } else {
-          for (const fund of this.fundList) {
-            let val = {
-              code: fund,
-              num: 0,
-            };
-            this.fundListM.push(val);
-          }
-          chrome.storage.sync.set({
-            fundListM: this.fundListM,
-          });
-        }
-        if (res.userId) {
-          this.userId = res.userId;
-        } else {
-          this.userId = this.getGuid();
-          chrome.storage.sync.set({
-            userId: this.userId,
-          });
-        }
-        this.darkMode = res.darkMode ? res.darkMode : false;
-        this.normalFontSize = res.normalFontSize ? res.normalFontSize : false;
-        this.seciList = res.seciList ? res.seciList : this.seciList;
-        this.showAmount = res.showAmount ? res.showAmount : false;
-        this.showGains = res.showGains ? res.showGains : false;
-        this.RealtimeFundcode = res.RealtimeFundcode;
-        this.RealtimeIndcode = res.RealtimeIndcode;
-        this.isLiveUpdate = res.isLiveUpdate ? res.isLiveUpdate : false;
-        this.showCost = res.showCost ? res.showCost : false;
-        this.showCostRate = res.showCostRate ? res.showCostRate : false;
-        this.showGSZ = res.showGSZ ? res.showGSZ : false;
-        this.BadgeContent = res.BadgeContent ? res.BadgeContent : 1;
-        this.showBadge = res.showBadge ? res.showBadge : 1;
-        if (this.seciList.length > 0) {
-          this.loadingInd = true;
-        }
-
-        this.isGetStorage = true;
-        this.getIndFundData();
-        this.getData();
-        this.checkInterval(true);
-
-        let ver = res.version ? res.version : "1.0.0";
-        if (ver != this.localVersion) {
-          this.changelog();
-        }
-      }
-    );
+    this.init();
   },
   computed: {
     allGains() {
@@ -673,6 +605,87 @@ export default {
     },
   },
   methods: {
+    refresh() {
+      this.init();
+      this.isRefresh = true;
+      setTimeout(() => {
+        this.isRefresh = false;
+      }, 1500);
+    },
+    init() {
+      chrome.storage.sync.get(
+        [
+          "RealtimeFundcode",
+          "RealtimeIndcode",
+          "fundListM",
+          "showAmount",
+          "showGains",
+          "fundList",
+          "seciList",
+          "darkMode",
+          "normalFontSize",
+          "isLiveUpdate",
+          "showCost",
+          "showCostRate",
+          "showGSZ",
+          "version",
+          "showBadge",
+          "BadgeContent",
+          "userId",
+        ],
+        (res) => {
+          this.fundList = res.fundList ? res.fundList : this.fundList;
+          if (res.fundListM) {
+            this.fundListM = res.fundListM;
+          } else {
+            for (const fund of this.fundList) {
+              let val = {
+                code: fund,
+                num: 0,
+              };
+              this.fundListM.push(val);
+            }
+            chrome.storage.sync.set({
+              fundListM: this.fundListM,
+            });
+          }
+          if (res.userId) {
+            this.userId = res.userId;
+          } else {
+            this.userId = this.getGuid();
+            chrome.storage.sync.set({
+              userId: this.userId,
+            });
+          }
+          this.darkMode = res.darkMode ? res.darkMode : false;
+          this.normalFontSize = res.normalFontSize ? res.normalFontSize : false;
+          this.seciList = res.seciList ? res.seciList : this.seciList;
+          this.showAmount = res.showAmount ? res.showAmount : false;
+          this.showGains = res.showGains ? res.showGains : false;
+          this.RealtimeFundcode = res.RealtimeFundcode;
+          this.RealtimeIndcode = res.RealtimeIndcode;
+          this.isLiveUpdate = res.isLiveUpdate ? res.isLiveUpdate : false;
+          this.showCost = res.showCost ? res.showCost : false;
+          this.showCostRate = res.showCostRate ? res.showCostRate : false;
+          this.showGSZ = res.showGSZ ? res.showGSZ : false;
+          this.BadgeContent = res.BadgeContent ? res.BadgeContent : 1;
+          this.showBadge = res.showBadge ? res.showBadge : 1;
+          if (this.seciList.length > 0) {
+            this.loadingInd = true;
+          }
+
+          this.isGetStorage = true;
+          this.getIndFundData();
+          this.getData();
+          this.checkInterval(true);
+
+          let ver = res.version ? res.version : "1.0.0";
+          if (ver != this.localVersion) {
+            this.changelog();
+          }
+        }
+      );
+    },
     getGuid() {
       return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(
         c
@@ -1160,9 +1173,37 @@ export default {
   overflow-y: auto;
   padding: 10px 7px;
   box-sizing: border-box;
+  position: relative;
   font-size: 12px;
   font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
     "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+}
+
+.refresh {
+  position: absolute;
+  right: 10px;
+  width: 18px;
+  bottom: 12px;
+
+  cursor: pointer;
+  i {
+    color: #409eff;
+    font-size: 18px;
+    font-weight: bold;
+  }
+}
+
+.refresh.isRefresh {
+  animation: changDeg 1.5s linear 0s infinite;
+}
+
+@keyframes changDeg {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
 }
 
 .more-height {
@@ -1466,6 +1507,9 @@ tbody tr:hover {
 .container.darkMode {
   color: rgba($color: #ffffff, $alpha: 0.6);
   background-color: #121212;
+  .refresh {
+    color: rgba($color: #409eff, $alpha: 0.6);
+  }
   .btn {
     background-color: rgba($color: #ffffff, $alpha: 0.16);
     color: rgba($color: #ffffff, $alpha: 0.6);

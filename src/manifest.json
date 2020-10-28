@@ -31,6 +31,7 @@
   "content_security_policy": "script-src 'self' https://jic.talkingdata.com; object-src 'self'",
   "permissions": [
     "storage",
+    "contextMenus",
     "https://*.eastmoney.com/*"
   ]
 }

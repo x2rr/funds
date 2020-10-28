@@ -191,11 +191,16 @@ export default {
               show: true,
               label: {
                 formatter: (p) => {
-                  var _p =
-                    (
-                      this.dataList[p.seriesData[0].dataIndex][2] / 10000
-                    ).toFixed(3) + "万";
-                  return _p;
+                  if (
+                    p.seriesData[0] &&
+                    this.dataList[p.seriesData[0].dataIndex]
+                  ) {
+                    var _p =
+                      (
+                        this.dataList[p.seriesData[0].dataIndex][2] / 10000
+                      ).toFixed(3) + "万";
+                    return _p;
+                  }
                 },
               },
             },

@@ -12,7 +12,8 @@ import {
   RadioGroup,
   Dialog,
   Button,
-  Loading
+  Loading,
+  Icon
 } from 'element-ui';
 
 Vue.prototype.$axios = axios;
@@ -31,6 +32,7 @@ Vue.use(RadioGroup)
 Vue.use(Dialog)
 Vue.use(Button)
 Vue.use(Loading)
+Vue.use(Icon)
 
 /* eslint-disable no-new */
 new Vue({

@@ -3,6 +3,19 @@
     "tgGroup": "https://t.me/choose_funds_chat",
     "qqGroup": "951222618",
     "list": [{
+            "version": "2.3.0",
+            "type": 2,
+            "content": [{
+                "type": 2,
+                "content": "新增独立窗口模式，右击插件图标，选择进入即可。"
+            }, {
+                "type": 1,
+                "content": "添加手动刷新按钮。"
+            }, {
+                "type": 1,
+                "content": "修复大盘与股票走势图中，鼠标移出时卡死的问题。"
+            }]
+        }, {
             "version": "2.2.1",
             "type": 1,
             "content": [{
