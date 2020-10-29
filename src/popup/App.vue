@@ -709,6 +709,8 @@ export default {
       this.detailShadow = false;
     },
     checkInterval(isFirst) {
+      clearInterval(this.myVar);
+      clearInterval(this.myVar1);
       chrome.runtime.sendMessage({ type: "DuringDate" }, (response) => {
         this.isDuringDate = response.farewell;
         if (this.isLiveUpdate && this.isDuringDate) {
