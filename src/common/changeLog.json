@@ -3,6 +3,13 @@
     "tgGroup": "https://t.me/choose_funds_chat",
     "qqGroup": "951222618",
     "list": [{
+            "version": "2.3.1",
+            "type": 1,
+            "content": [{
+                "type": 1,
+                "content": "修复一个影响性能的定时任务问题。"
+            }]
+        }, {
             "version": "2.3.0",
             "type": 2,
             "content": [{
