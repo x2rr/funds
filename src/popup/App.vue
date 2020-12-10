@@ -283,6 +283,53 @@
             </tr>
           </tbody>
         </table>
+        <!-- <table :class="tableHeight" class="detailTable">
+          <thead>
+            <tr>
+              <th class="align-left">
+                <div>基金名称</div>
+                <p>基金编码</p>
+              </th>
+              <th>
+                <div>估算收益</div>
+                <p>估算涨幅</p>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="(el, index) in dataList"
+              :key="el.fundcode"
+              :draggable="isEdit"
+              :class="drag"
+              @dragstart="handleDragStart($event, el)"
+              @dragover.prevent="handleDragOver($event, el)"
+              @dragenter="handleDragEnter($event, el, index)"
+              @dragend="handleDragEnd($event, el)"
+            >
+              <td
+                :class="
+                  isEdit ? 'fundName-noclick align-left' : 'fundName align-left'
+                "
+                :title="el.name"
+                @click.stop="!isEdit && fundDetail(el)"
+              >
+                <div>{{ el.name }}</div>
+                <p>{{ el.fundcode }}</p>
+              </td>
+              <td v-if="showGains" :class="el.gszzl >= 0 ? 'up' : 'down'">
+                <div>
+                  {{
+                    parseFloat(el.gains).toLocaleString("zh", {
+                      minimumFractionDigits: 2,
+                    })
+                  }}
+                </div>
+                <p>{{ el.gsz }}</p>
+              </td>
+            </tr>
+          </tbody>
+        </table> -->
       </div>
     </div>
     <p v-if="isEdit" class="tips">
@@ -855,7 +902,7 @@ export default {
     getData() {
       let fundlist = this.fundListM.map((val) => val.code).join(",");
       let url =
-        "https://fundmobapi.eastmoney.com/FundMNewApi/FundMNFInfo?pageIndex=1&pageSize=50&plat=Android&appType=ttjj&product=EFund&Version=1&deviceid=" +
+        "https://fundmobapi.eastmoney.com/FundMNewApi/FundMNFInfo?pageIndex=1&pageSize=100&plat=Android&appType=ttjj&product=EFund&Version=1&deviceid=" +
         this.userId +
         "&Fcodes=" +
         fundlist;
@@ -1503,6 +1550,18 @@ tbody tr:hover {
 .detail-container {
   min-height: 450px;
   min-width: 610px;
+}
+
+.detailTable {
+  th,
+  td {
+    div {
+    }
+    p {
+      margin: 2px 0;
+      color: rgba($color: #000000, $alpha: 0.6);
+    }
+  }
 }
 
 //暗黑主题

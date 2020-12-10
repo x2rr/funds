@@ -159,7 +159,7 @@ var setBadge = (fundcode, Realtime, type) => {
     }
 
     let url =
-      "https://fundmobapi.eastmoney.com/FundMNewApi/FundMNFInfo?pageIndex=1&pageSize=50&plat=Android&appType=ttjj&product=EFund&Version=1&deviceid=" + userId + "&Fcodes=" +
+      "https://fundmobapi.eastmoney.com/FundMNewApi/FundMNFInfo?pageIndex=1&pageSize=100&plat=Android&appType=ttjj&product=EFund&Version=1&deviceid=" + userId + "&Fcodes=" +
       fundStr;
     axios
       .get(url)
@@ -382,7 +382,7 @@ chrome.contextMenus.create({
       url: chrome.runtime.getURL("popup/popup.html"),
       width: 700,
       height: 550,
-      top:200,
+      top: 200,
       type: "popup",
     }, (function (e) {
       chrome.windows.update(e.id, {
@@ -401,6 +401,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
   if (request.type == "refresh") {
     getData();
+  }
+  if (request.type == "refreshHoliday") {
+    holiday = request.data;
   }
   if (request.type == "refreshBadgeAllGains") {
     let allAmount = 0;

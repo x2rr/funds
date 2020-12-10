@@ -418,6 +418,10 @@ export default {
           },
           () => {
             this.holiday = res.data;
+            chrome.runtime.sendMessage({
+              type: "refreshHoliday",
+              data: res.data,
+            });
             this.disabled = false;
           }
         );
