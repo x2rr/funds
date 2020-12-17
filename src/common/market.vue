@@ -1,84 +1,44 @@
 <template>
   <div v-if="boxShadow" class="shadow" :class="darkMode ? 'darkMode' : ''">
     <div class="content-box">
-      <h5>{{ fund.name }}({{ fund.fundcode }})</h5>
+      <h5>行情中心</h5>
       <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick">
-        <el-tab-pane lazy label="基金概况" name="info">
-          <fund-info
-            :darkMode="darkMode"
-            :fund="fund"
-            ref="info"
-            @showManager="showManager"
-          ></fund-info>
+        
+        <el-tab-pane lazy label="大盘沪深资金流向" name="first">
+          <market-line :darkMode="darkMode" ref="first"></market-line>
         </el-tab-pane>
-        <el-tab-pane lazy label="净值估算" name="first">
-          <charts :darkMode="darkMode" :fund="fund" ref="first"></charts>
+        <el-tab-pane lazy label="行业板块资金流向" name="second">
+          <market-bar :darkMode="darkMode" ref="second"></market-bar>
         </el-tab-pane>
-        <el-tab-pane lazy label="持仓明细" name="ccmx">
-          <position-detail
-            :darkMode="darkMode"
-            @sltStock="sltStock"
-            :fund="fund"
-          >
-          </position-detail>
-        </el-tab-pane>
-        <el-tab-pane lazy label="历史净值" name="second">
-          <charts2
-            :darkMode="darkMode"
-            :fund="fund"
-            chartType="JZ"
-            ref="second"
-          ></charts2>
-        </el-tab-pane>
-        <el-tab-pane lazy label="累计收益" name="third">
-          <charts2
-            :darkMode="darkMode"
-            :fund="fund"
-            chartType="LJSY"
-            ref="third"
-          ></charts2>
-        </el-tab-pane>
+        
       </el-tabs>
 
       <div class="tab-row">
         <input class="btn" type="button" value="返回列表" @click="close" />
       </div>
     </div>
-    <ind-detail mini ref="indDetail" :darkMode="darkMode"> </ind-detail>
-    <manager-detail ref="managerDetail" :darkMode="darkMode"> </manager-detail>
   </div>
 </template>
 
 <script>
-import charts from "./charts";
-import charts2 from "./charts2";
-import positionDetail from "./positionDetail";
-import indDetail from "../common/indDetail";
-import fundInfo from "../common/fundInfo";
-import managerDetail from "../common/managerDetail";
+import marketLine from "./marketLine";
+import marketBar from "./marketBar";
+// import charts2 from "./charts2";
 export default {
   components: {
-    charts,
-    charts2,
-    positionDetail,
-    indDetail,
-    fundInfo,
-    managerDetail
+    marketLine,
+    marketBar
   },
-  name: "fundDetail",
+  name: "market",
   props: {
     darkMode: {
       type: Boolean,
       default: false,
-    },
-    fund: {
-      type: Object,
-      required: true,
-    },
+    }
   },
   data() {
     return {
-      activeName: "info",
+      activeName: "first",
       boxShadow: false,
     };
   },
@@ -94,13 +54,7 @@ export default {
     close() {
       this.boxShadow = false;
       this.$emit("close", false);
-    },
-    showManager(val) {
-      this.$refs.managerDetail.init(val);
-    },
-    sltStock(val) {
-      this.$refs.indDetail.init(val);
-    },
+    }
   },
 };
 </script>

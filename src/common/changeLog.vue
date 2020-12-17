@@ -4,6 +4,7 @@
     :custom-class="darkMode ? 'changelog darkMode' : 'changelog'"
     :show-close="false"
     :close-on-click-modal="false"
+    :modal-append-to-body="false"
     :close-on-press-escape="false"
     :modal-append-to-body="false"
     :visible.sync="centerDialogVisible"
