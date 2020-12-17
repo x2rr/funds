@@ -111,7 +111,11 @@ export default {
           axisLabel: {
             color: this.defaultColor,
             formatter: (val) => {
-              return val.toFixed(2) + "%";
+              if (this.chartType == "LJSY") {
+                return val.toFixed(2) + "%";
+              } else {
+                return val.toFixed(2);
+              }
             },
           },
           splitLine: {

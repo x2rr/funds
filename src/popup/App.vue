@@ -4,7 +4,7 @@
     class="container"
     ref="app"
     :class="containerClass"
-    :style="zoom"
+    :style="[zoom, grayscale, opacity]"
   >
     <div>
       <div
@@ -283,6 +283,7 @@
             </tr>
           </tbody>
         </table>
+
         <!-- <table :class="tableHeight" class="detailTable">
           <thead>
             <tr>
@@ -291,8 +292,12 @@
                 <p>基金编码</p>
               </th>
               <th>
-                <div>估算收益</div>
-                <p>估算涨幅</p>
+                <div>持有收益率</div>
+                <p>持有收益</p>
+              </th>
+              <th>
+                <div>估算涨幅</div>
+                <p>估算收益</p>
               </th>
             </tr>
           </thead>
@@ -317,15 +322,25 @@
                 <div>{{ el.name }}</div>
                 <p>{{ el.fundcode }}</p>
               </td>
-              <td v-if="showGains" :class="el.gszzl >= 0 ? 'up' : 'down'">
-                <div>
+              <td :class="el.costGains >= 0 ? 'up' : 'down'">
+                <div>{{ el.cost > 0 ? el.costGainsRate + "%" : "" }}</div>
+                <p>
+                  {{
+                  parseFloat(el.costGains).toLocaleString("zh", {
+                    minimumFractionDigits: 2,
+                  })
+                }}
+                </p>
+              </td>
+              <td :class="el.gszzl >= 0 ? 'up' : 'down'">
+                <div>{{ el.gszzl }}%</div>
+                <p>
                   {{
                     parseFloat(el.gains).toLocaleString("zh", {
                       minimumFractionDigits: 2,
                     })
                   }}
-                </div>
-                <p>{{ el.gsz }}</p>
+                </p>
               </td>
             </tr>
           </tbody>
@@ -336,7 +351,7 @@
       特别关注功能介绍：指定一个基金，在程序图标中以角标的形式实时更新，请在设置中选择角标类型与内容。
     </p>
 
-    <div v-show="isEdit" class="input-row">
+    <div v-show="isEdit" class="input-row gear-input-row">
       <el-switch
         v-model="darkMode"
         @change="changeDarkMode"
@@ -346,11 +361,27 @@
         active-text="暗色模式"
       >
       </el-switch>
+      <span class="slider-title">界面灰度：</span>
+      <el-slider
+        class="slider"
+        v-model="grayscaleValue"
+        @change="changeGrayscaleValue"
+        :format-tooltip="formatTooltip"
+      ></el-slider>
+      <span class="slider-title">透明度：</span>
+      <el-slider
+        class="slider"
+        :max="90"
+        v-model="opacityValue"
+        @change="changeOpacityValue"
+        :format-tooltip="formatTooltip"
+      ></el-slider>
       <!-- <input v-model="containerWidth" type="number" />
       <input v-model="containerHeight" type="number" /> -->
     </div>
 
     <div class="input-row">
+      <input class="btn" type="button" @click="market" value="行情中心" />
       <input
         class="btn"
         v-if="isDuringDate"
@@ -382,33 +413,35 @@
       <input
         v-if="showGains"
         class="btn"
-        :class="allGains >= 0 ? 'btn-up' : 'btn-down'"
+        :class="allGains[0] >= 0 ? 'btn-up' : 'btn-down'"
         type="button"
         :title="
-          allGains >= 0 ? 'd=====(￣▽￣*)b 赞一个' : '∑(っ°Д°;)っ 大事不好啦'
+          allGains[0] >= 0 ? 'd=====(￣▽￣*)b 赞一个' : '∑(っ°Д°;)っ 大事不好啦'
         "
         :value="
-          '当日收益：' +
-            parseFloat(allGains).toLocaleString('zh', {
+          '日收益：' +
+            parseFloat(allGains[0]).toLocaleString('zh', {
               minimumFractionDigits: 2,
-            })
+            }) +
+            (isNaN(allGains[1]) ? '' : '（' + allGains[1] + '%）')
         "
       />
       <input
         v-if="showCost"
         class="btn"
-        :class="allCostGains >= 0 ? 'btn-up' : 'btn-down'"
+        :class="allCostGains[0] >= 0 ? 'btn-up' : 'btn-down'"
         type="button"
         :title="
-          allCostGains >= 0
+          allCostGains[0] >= 0
             ? 'd=====(￣▽￣*)b 赞一个'
             : '∑(っ°Д°;)っ 大事不好啦'
         "
         :value="
-          '总持有收益：' +
-            parseFloat(allCostGains).toLocaleString('zh', {
+          '持有收益：' +
+            parseFloat(allCostGains[0]).toLocaleString('zh', {
               minimumFractionDigits: 2,
-            })
+            }) +
+            (isNaN(allCostGains[1]) ? '' : '（' + allCostGains[1] + '%）')
         "
       />
     </div>
@@ -420,6 +453,7 @@
     >
       <i class="el-icon-refresh"></i>
     </div>
+    <market :darkMode="darkMode" ref="marketShadow"></market>
     <ind-detail @close="closeCharts" :darkMode="darkMode" ref="indDetail">
     </ind-detail>
     <fund-detail
@@ -444,6 +478,7 @@ import reward from "../common/reward";
 import indDetail from "../common/indDetail";
 import fundDetail from "../common/fundDetail";
 import changeLog from "../common/changeLog";
+import market from "../common/market";
 //防抖
 let timeout = null;
 function debounce(fn, wait = 700) {
@@ -457,6 +492,7 @@ export default {
     fundDetail,
     indDetail,
     changeLog,
+    market,
   },
   data() {
     return {
@@ -556,7 +592,12 @@ export default {
       zoom: {
         zoom: 1,
       },
+      grayscale: {},
+      grayscaleValue: 0,
+      opacity: {},
+      opacityValue: 0,
       isRefresh: false,
+      marketShadow: false,
     };
   },
   mounted() {
@@ -574,19 +615,25 @@ export default {
   computed: {
     allGains() {
       let allGains = 0;
+      let allNum = 0;
       this.dataList.forEach((val) => {
         allGains += parseFloat(val.gains);
+        allNum += parseFloat(val.amount);
       });
       allGains = allGains.toFixed(2);
-      return allGains;
+      let allGainsRate = ((allGains * 100) / allNum).toFixed(2);
+      return [allGains, allGainsRate];
     },
     allCostGains() {
       let allCostGains = 0;
+      let allNum = 0;
       this.dataList.forEach((val) => {
         allCostGains += parseFloat(val.costGains);
+        allNum += parseFloat(val.amount);
       });
       allCostGains = allCostGains.toFixed(2);
-      return allCostGains;
+      let allCostGainsRate = ((allCostGains * 100) / allNum).toFixed(2);
+      return [allCostGains, allCostGainsRate];
     },
     containerClass() {
       let className = "";
@@ -659,6 +706,25 @@ export default {
         this.isRefresh = false;
       }, 1500);
     },
+    formatTooltip(val) {
+      return val + "%";
+    },
+    changeGrayscaleValue(val) {
+      this.grayscale = {
+        filter: "grayscale(" + val / 100 + ")",
+      };
+      chrome.storage.sync.set({
+        grayscaleValue: this.grayscaleValue,
+      });
+    },
+    changeOpacityValue(val) {
+      this.opacity = {
+        opacity: 1 - val / 100,
+      };
+      chrome.storage.sync.set({
+        opacityValue: this.opacityValue,
+      });
+    },
     init() {
       chrome.storage.sync.get(
         [
@@ -679,6 +745,8 @@ export default {
           "showBadge",
           "BadgeContent",
           "userId",
+          "grayscaleValue",
+          "opacityValue",
         ],
         (res) => {
           this.fundList = res.fundList ? res.fundList : this.fundList;
@@ -717,9 +785,18 @@ export default {
           this.showGSZ = res.showGSZ ? res.showGSZ : false;
           this.BadgeContent = res.BadgeContent ? res.BadgeContent : 1;
           this.showBadge = res.showBadge ? res.showBadge : 1;
+          this.grayscaleValue = res.grayscaleValue ? res.grayscaleValue : 0;
+          this.opacityValue = res.opacityValue ? res.opacityValue : 0;
           if (this.seciList.length > 0) {
             this.loadingInd = true;
           }
+
+          this.grayscale = {
+            filter: "grayscale(" + this.grayscaleValue / 100 + ")",
+          };
+          this.opacity = {
+            opacity: 1 - this.opacityValue / 100,
+          };
 
           this.isGetStorage = true;
           this.getIndFundData();
@@ -754,6 +831,10 @@ export default {
     },
     closeCharts() {
       this.detailShadow = false;
+    },
+    market() {
+      this.detailShadow = true;
+      this.$refs.marketShadow.init();
     },
     checkInterval(isFirst) {
       clearInterval(this.myVar);
@@ -806,6 +887,7 @@ export default {
         this.searchOptions = [];
       }
     },
+
     option() {
       chrome.tabs.create({ url: "/options/options.html" });
     },
@@ -902,7 +984,7 @@ export default {
     getData() {
       let fundlist = this.fundListM.map((val) => val.code).join(",");
       let url =
-        "https://fundmobapi.eastmoney.com/FundMNewApi/FundMNFInfo?pageIndex=1&pageSize=100&plat=Android&appType=ttjj&product=EFund&Version=1&deviceid=" +
+        "https://fundmobapi.eastmoney.com/FundMNewApi/FundMNFInfo?pageIndex=1&pageSize=200&plat=Android&appType=ttjj&product=EFund&Version=1&deviceid=" +
         this.userId +
         "&Fcodes=" +
         fundlist;
@@ -1397,6 +1479,19 @@ tbody tr:hover {
 .input-row {
   text-align: center;
   margin-top: 10px;
+}
+.gear-input-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .slider-title {
+    font-size: 14px;
+    margin: 0 5px 0 15px;
+  }
+  .slider {
+    display: inline-block;
+    width: 20%;
+  }
 }
 
 .tab-col {

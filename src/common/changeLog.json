@@ -3,6 +3,22 @@
     "tgGroup": "https://t.me/choose_funds_chat",
     "qqGroup": "951222618",
     "list": [{
+            "version": "2.4.0",
+            "type": 2,
+            "content": [{
+                "type": 2,
+                "content": "增加行情中心，支持查看大盘资金流向、行业版块资金流向。"
+            }, {
+                "type": 2,
+                "content": "基金详情页添加基金概况信息，支持查看基金经理详情。"
+            }, {
+                "type": 2,
+                "content": "编辑页面支持调节页面灰度与透明度。"
+            }, {
+                "type": 1,
+                "content": "页面布局调整，修复历史遗留问题。"
+            }]
+        }, {
             "version": "2.3.1",
             "type": 1,
             "content": [{
