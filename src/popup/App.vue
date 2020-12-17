@@ -453,7 +453,7 @@
     >
       <i class="el-icon-refresh"></i>
     </div>
-    <market :darkMode="darkMode" ref="marketShadow"></market>
+    <market :darkMode="darkMode" @close="closeCharts" ref="marketShadow"></market>
     <ind-detail @close="closeCharts" :darkMode="darkMode" ref="indDetail">
     </ind-detail>
     <fund-detail
