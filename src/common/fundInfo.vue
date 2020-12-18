@@ -9,27 +9,27 @@
     <div v-if="infoData.FCODE" class="content-box">
       <div class="hisrank-row">
         <div>
-          <div>近1月</div>
+          <div>近1月(排名)</div>
           <p :class="infoData.SYL_Y > 0 ? 'up' : 'down'">
-            {{ infoData.SYL_Y }}% {{ infoData.RANKM }}
+            {{ infoData.SYL_Y }}%（{{ infoData.RANKM }}）
           </p>
         </div>
         <div>
-          <div>近3月</div>
+          <div>近3月(排名)</div>
           <p :class="infoData.SYL_3Y > 0 ? 'up' : 'down'">
-            {{ infoData.SYL_3Y }}% {{ infoData.RANKM }}
+            {{ infoData.SYL_3Y }}%（{{ infoData.RANKQ }}）
           </p>
         </div>
         <div>
-          <div>近6月</div>
+          <div>近6月(排名)</div>
           <p :class="infoData.SYL_6Y > 0 ? 'up' : 'down'">
-            {{ infoData.SYL_6Y }}% {{ infoData.RANKM }}
+            {{ infoData.SYL_6Y }}%（{{ infoData.RANKHY }}）
           </p>
         </div>
         <div>
-          <div>近1年</div>
+          <div>近1年(排名)</div>
           <p :class="infoData.SYL_1N > 0 ? 'up' : 'down'">
-            {{ infoData.SYL_1N }}% {{ infoData.RANKM }}
+            {{ infoData.SYL_1N }}%（{{ infoData.RANKY }}）
           </p>
         </div>
       </div>
@@ -152,8 +152,7 @@ export default {
     & > div {
       text-align: center;
       margin: 0 10px;
-      div {
-      }
+      
       p {
         margin: 0;
       }
