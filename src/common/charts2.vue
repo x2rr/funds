@@ -99,6 +99,7 @@ export default {
         grid: {
           top: 30,
           bottom: 30,
+          left: 60
         },
         xAxis: {
           type: "category",
@@ -112,9 +113,9 @@ export default {
             color: this.defaultColor,
             formatter: (val) => {
               if (this.chartType == "LJSY") {
-                return val.toFixed(2) + "%";
+                return val.toFixed(1) + "%";
               } else {
-                return val.toFixed(2);
+                return val.toFixed(3);
               }
             },
           },

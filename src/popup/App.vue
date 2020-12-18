@@ -1650,8 +1650,7 @@ tbody tr:hover {
 .detailTable {
   th,
   td {
-    div {
-    }
+    
     p {
       margin: 2px 0;
       color: rgba($color: #000000, $alpha: 0.6);
