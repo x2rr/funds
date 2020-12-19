@@ -105,3 +105,4 @@ dist-zip
 .tern-port
 dev.md
 src/popup/App copy.vue
+.DS_Store
