@@ -3,14 +3,6 @@
     <div class="content-box">
       <h5>{{ fund.name }}({{ fund.fundcode }})</h5>
       <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick">
-        <el-tab-pane lazy label="基金概况" name="info">
-          <fund-info
-            :darkMode="darkMode"
-            :fund="fund"
-            ref="info"
-            @showManager="showManager"
-          ></fund-info>
-        </el-tab-pane>
         <el-tab-pane lazy label="净值估算" name="first">
           <charts :darkMode="darkMode" :fund="fund" ref="first"></charts>
         </el-tab-pane>
@@ -38,6 +30,14 @@
             ref="third"
           ></charts2>
         </el-tab-pane>
+        <el-tab-pane lazy label="基金概况" name="info">
+          <fund-info
+            :darkMode="darkMode"
+            :fund="fund"
+            ref="info"
+            @showManager="showManager"
+          ></fund-info>
+        </el-tab-pane>
       </el-tabs>
 
       <div class="tab-row">
@@ -63,7 +63,7 @@ export default {
     positionDetail,
     indDetail,
     fundInfo,
-    managerDetail
+    managerDetail,
   },
   name: "fundDetail",
   props: {
@@ -78,7 +78,7 @@ export default {
   },
   data() {
     return {
-      activeName: "info",
+      activeName: "first",
       boxShadow: false,
     };
   },

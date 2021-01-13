@@ -102,7 +102,7 @@ export default {
             type: "slider",
             show: true,
             xAxisIndex: [0],
-            start: 1,
+            start: 0,
             end: 30,
           },
           {

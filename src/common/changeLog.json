@@ -1,8 +1,29 @@
 {
-    "qrcode": "https://weixin.qq.com/g/AQYAAFtLELpPutFMb3i2i8ZPEvCbnvEzkflyv7sEoGcyB4jV2Of-FxyWfD73PxMx",
+    "qrcode": "https://weixin.qq.com/g/AQYAAAuSen9VC-fBEu3CofUJGbzjEAzgzaiKdh1swmAYuWP-7-hsKXX3mx20s3Xt",
     "tgGroup": "https://t.me/choose_funds_chat",
     "qqGroup": "951222618",
+    "tip":"冬季疫情反弹，请诸位响应号召，戴口罩，不聚集，作者已自费集中隔离。祝大家身体健康！藁城加油！",
     "list": [{
+            "version": "2.4.2",
+            "type": 1,
+            "content": [{
+                "type": 1,
+                "content": "支持以文本的方式导入导出配置信息。"
+            }, {
+                "type": 1,
+                "content": "行情中心支持查看北向资金、南向资金信息。"
+            }, {
+                "type": 1,
+                "content": "问题修复与优化。"
+            }]
+        }, {
+            "version": "2.4.1",
+            "type": 1,
+            "content": [{
+                "type": 1,
+                "content": "修复新版本出现的问题。"
+            }]
+        }, {
             "version": "2.4.0",
             "type": 2,
             "content": [{
