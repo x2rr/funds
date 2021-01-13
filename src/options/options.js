@@ -7,15 +7,20 @@ import {
   Radio,
   RadioGroup,
   Button,
+  Input,
   Loading,
   Dialog
 } from 'element-ui';
+
+import VueClipboard from "vue-clipboard2";
+Vue.use(VueClipboard)
 
 
 Vue.use(Switch)
 Vue.use(Radio)
 Vue.use(RadioGroup)
 Vue.use(Button)
+Vue.use(Input)
 Vue.use(Dialog)
 Vue.use(Loading)
 

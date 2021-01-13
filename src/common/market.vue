@@ -3,14 +3,18 @@
     <div class="content-box">
       <h5>行情中心</h5>
       <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick">
-        
-        <el-tab-pane lazy label="大盘沪深资金流向" name="first">
+        <el-tab-pane lazy label="大盘资金" name="first">
           <market-line :darkMode="darkMode" ref="first"></market-line>
         </el-tab-pane>
-        <el-tab-pane lazy label="行业板块资金流向" name="second">
+        <el-tab-pane lazy label="行业板块" name="second">
           <market-bar :darkMode="darkMode" ref="second"></market-bar>
         </el-tab-pane>
-        
+        <el-tab-pane lazy label="北向资金" name="third">
+          <market-S2N :darkMode="darkMode" ref="third"></market-S2N>
+        </el-tab-pane>
+        <el-tab-pane lazy label="南向资金" name="fourth">
+          <market-N2S :darkMode="darkMode" ref="fourth"></market-N2S>
+        </el-tab-pane>
       </el-tabs>
 
       <div class="tab-row">
@@ -23,18 +27,22 @@
 <script>
 import marketLine from "./marketLine";
 import marketBar from "./marketBar";
+import marketS2N from "./marketS2N";
+import marketN2S from "./marketN2S";
 // import charts2 from "./charts2";
 export default {
   components: {
     marketLine,
-    marketBar
+    marketBar,
+    marketS2N,
+    marketN2S,
   },
   name: "market",
   props: {
     darkMode: {
       type: Boolean,
       default: false,
-    }
+    },
   },
   data() {
     return {
@@ -54,7 +62,7 @@ export default {
     close() {
       this.boxShadow = false;
       this.$emit("close", false);
-    }
+    },
   },
 };
 </script>
@@ -70,8 +78,8 @@ export default {
   left: 0;
   background-color: rgba(0, 0, 0, 0.7);
 }
-
 .content-box {
+  max-width: 600px;
   background: #ffffff;
   border-radius: 15px;
   padding: 0 10px;
@@ -84,14 +92,12 @@ export default {
     margin: 0;
     padding: 13px;
   }
-
   /deep/ .el-tabs__item {
     padding: 0 15px;
     height: 34px;
     line-height: 34px;
   }
 }
-
 .btn {
   display: inline-block;
   line-height: 1;
@@ -108,17 +114,14 @@ export default {
 .tab-row {
   padding: 12px 0;
 }
-
 .tab-row:after,
 .tab-row:before {
   display: table;
   content: "";
 }
-
 .tab-row:after {
   clear: both;
 }
-
 .shadow.darkMode {
   .content-box {
     background-color: #373737;
@@ -128,14 +131,12 @@ export default {
     color: rgba($color: #ffffff, $alpha: 0.6);
     border: 1px solid rgba($color: #ffffff, $alpha: 0.6);
   }
-
   /deep/ .el-tabs--border-card {
     background-color: #373737;
     border: 1px solid rgba($color: #ffffff, $alpha: 0.37);
     .el-tabs__header {
       background-color: rgba($color: #ffffff, $alpha: 0.16);
       border-bottom: 1px solid rgba($color: #ffffff, $alpha: 0.37);
-
       .el-tabs__item.is-active {
         background-color: rgba($color: #409eff, $alpha: 0.6);
         color: rgba($color: #ffffff, $alpha: 0.6);
@@ -144,13 +145,11 @@ export default {
       }
     }
   }
-
   /deep/ .el-radio-button--mini .el-radio-button__inner {
     background-color: rgba($color: #ffffff, $alpha: 0.16);
     color: rgba($color: #ffffff, $alpha: 0.6);
     border: 1px solid rgba($color: #ffffff, $alpha: 0.37);
   }
-
   /deep/ .el-radio-button__orig-radio:checked + .el-radio-button__inner {
     background-color: rgba($color: #409eff, $alpha: 0.6);
     color: rgba($color: #ffffff, $alpha: 0.6);
