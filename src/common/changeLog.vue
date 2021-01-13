@@ -6,7 +6,6 @@
     :close-on-click-modal="false"
     :modal-append-to-body="false"
     :close-on-press-escape="false"
-    :modal-append-to-body="false"
     :visible.sync="centerDialogVisible"
     :top="top + 'px'"
     width="400px"
