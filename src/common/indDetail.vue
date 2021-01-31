@@ -575,6 +575,7 @@ export default {
   text-align: center;
   line-height: 1;
   vertical-align: middle;
+  z-index: 200;
   h5 {
     margin: 0;
     padding: 13px;
