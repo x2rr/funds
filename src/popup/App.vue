@@ -130,19 +130,21 @@
         v-model="defaultTabsValue"
         :editable="isEdit"
         :class="darkMode ? 'darkMode' : ''"
+        :tab-position="tabPosition"
+        @tab-add="createFolder"
       >
         <el-tab-pane
-          v-for="(item, index) in folder"
-          :key="item.name"
-          :label="item.name"
+          v-for="(folder, index) in folders"
+          :key="folder.name"
+          :label="folder.name"
           :name="`${index}`"
         >
           <span slot="label" style="width: auto">
-            <el-tooltip class="item" effect="dark" :content="item.desc" placement="top">
+            <el-tooltip class="item" effect="dark" :content="folder.desc" placement="top">
               <span>
               <i class="el-icon-star-on"></i>
               {{
-                item.name + ' ' + moneyRateInFolder(item)
+                folder.name + ' ' + moneyRateInFolder(folder)
               }}
               </span>
             </el-tooltip>
@@ -150,9 +152,9 @@
           <span ><i class="el-icon-medal"></i>
             该组日收益：
             {{
-              parseFloat(allGains(item)[0]).toLocaleString('zh', {
+              parseFloat(allGains(folder)[0]).toLocaleString('zh', {
               minimumFractionDigits: 2
-               }) + (isNaN(allGains(item)[1]) ? '' : '（' + allGains(item)[1] + '%）')
+               }) + (isNaN(allGains(folder)[1]) ? '' : '（' + allGains(folder)[1] + '%）')
             }}
           </span>
           <br/>
@@ -160,10 +162,10 @@
           <span ><i class="el-icon-bank-card"></i>
             该组总金额：
             {{
-              parseFloat(allAmount(item)).toLocaleString('zh', {
+              parseFloat(allAmount(folder)).toLocaleString('zh', {
               minimumFractionDigits: 2 })
               +
-              '（' +moneyRateInFolder(item) +')'
+              '（' +moneyRateInFolder(folder) +')'
             }}
           </span>
 
@@ -239,15 +241,16 @@
                   </th>
                   <th v-if="isEdit && BadgeContent == 1">特别关注</th>
                   <th v-if="isEdit">删除</th>
+                  <th v-if="isEdit">分组</th>
                 </tr>
               </thead>
               <tbody>
                 <tr
                   v-for="(el, index) in dataList.filter(d => {
-                     if (item.funds === -1) {
+                     if (folder.funds === -1) {
                         return dataList
                      } else {
-                        return item.funds.includes(d.fundcode)
+                        return folder.funds.includes(d.fundcode)
                      }
                   })"
                   :key="el.fundcode"
@@ -348,6 +351,25 @@
                       type="button"
                     />
                   </td>
+                  <td v-if="isEdit">
+                    <el-select
+                            size="mini"
+                            :popper-append-to-body="true"
+                            v-model="el.targetFolder"
+                            value-key="name"
+                            style="width:110px"
+                            placeholder="请选择"
+                            clearable
+                            @change="add2Folder(el)"
+                    >
+                      <el-option
+                              v-for="(item, p) in folders"
+                              :key="p"
+                              :label="item.name"
+                              :value="item"
+                      ></el-option>
+                    </el-select>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -431,6 +453,7 @@
         active-text="暗色模式"
       >
       </el-switch>
+
       <span class="slider-title">界面灰度：</span>
       <el-slider
         class="slider"
@@ -479,6 +502,15 @@
         value="打赏"
         @click="reward"
       />
+      <el-switch
+              v-model="leftMode"
+              @change="changeTabMode"
+              active-color="#484848"
+              inactive-color="#13ce66"
+              inactive-text="顶部"
+              active-text="左侧"
+      >
+      </el-switch>
     </div>
     <div class="input-row" v-if="showCost || showGains">
       <input
@@ -540,6 +572,12 @@
       ref="changelog"
       :top="40"
     ></change-log>
+    <create-folder
+      @close="closeCreateFolder"
+      :darkMode="darkMode"
+      ref="createfolder"
+      :top="40"
+    ></create-folder>
   </div>
 </template>
 
@@ -549,6 +587,7 @@ import reward from '../common/reward'
 import indDetail from '../common/indDetail'
 import fundDetail from '../common/fundDetail'
 import changeLog from '../common/changeLog'
+import createFolder from '../common/createFolder'
 import market from '../common/market'
 //防抖
 let timeout = null;
@@ -564,6 +603,7 @@ export default {
     fundDetail,
     indDetail,
     changeLog,
+    createFolder,
     market
   },
   data() {
@@ -589,6 +629,12 @@ export default {
       showGSZ: false,
       fundList: ["001618"],
       fundListM: [],
+      folders: [],
+      defaultFolder : {
+        "name": "默认自选",
+        "funds": -1,
+        "desc": "你的全部自选基金"
+      },
       sortType: {
         gszzl: "none",
         amount: "none",
@@ -647,12 +693,14 @@ export default {
       ],
       sltSeci: "",
       darkMode: false,
+      leftMode: false,
       normalFontSize: false,
       diyContainer: false,
       containerWidth: 790,
       containerHeight: 590,
       detailShadow: false,
       changelogShadow: false,
+      createfolderShadow: false,
       sltFund: {},
       sltIndCode: "",
       localVersion: version,
@@ -686,6 +734,10 @@ export default {
     this.init();
   },
   computed: {
+    tabPosition() {
+      return this.leftMode ? 'left' : 'top'
+    },
+
     allAmount() {
       return function(folder){
         let allAmount = 0
@@ -747,7 +799,9 @@ export default {
       if (this.darkMode) {
         className += "darkMode ";
       }
-      if (this.changelogShadow) {
+      if (this.createfolderShadow) {
+        className += "createfolder-container";
+      } if (this.changelogShadow) {
         className += "changelog-container";
       } else if (this.rewardShadow) {
         className += "more-height";
@@ -803,6 +857,33 @@ export default {
     }
   },
   methods: {
+    createFolder(){
+      this.createfolderShadow = true;
+      this.$refs.createfolder.init();
+    },
+
+    closeCreateFolder(folder) {
+      this.createfolderShadow = false;
+      if (this.folders.map(f => f.name).indexOf(folder.name) ===-1) {
+        this.folders.push(Object.assign({ funds: []},folder))
+      }
+      chrome.storage.sync.set({ folders: this.folders, }, () => {});
+    },
+
+    add2Folder(el){
+      //分组是互斥的，不是多对对关系
+      //首先从所有组中删除该基金代码
+      //默认组是-1,先排除
+      this.folders.filter(f => f.funds !== -1).forEach(f => {
+        f.funds = f.funds.filter(ff => ff !== el.fundcode)
+      })
+      //然后把该基金加入选择的组
+      this.folders.filter(f => f.funds !== -1).filter(f => f.name === el.targetFolder.name ).forEach(i => {
+        i.funds.push(el.fundcode)
+      })
+      chrome.storage.sync.set({ folders: this.folders, }, () => {});
+    },
+
     moneyRateInFolder(folder){
       let rateInAll = (this.allAmount(folder) *  100 / this.allAmount(null)).toFixed(2)
       return isNaN(rateInAll) ? '' : rateInAll + '%'
@@ -834,6 +915,7 @@ export default {
       });
     },
     init() {
+      // chrome.storage.sync.clear()
       chrome.storage.sync.get(
         [
           "RealtimeFundcode",
@@ -844,6 +926,7 @@ export default {
           "fundList",
           "seciList",
           "darkMode",
+          "leftMode",
           "normalFontSize",
           "isLiveUpdate",
           "showCost",
@@ -855,7 +938,7 @@ export default {
           "userId",
           "grayscaleValue",
           "opacityValue",
-          "folder"
+          "folders"
         ],
         res => {
           this.fundList = res.fundList ? res.fundList : this.fundList;
@@ -881,16 +964,13 @@ export default {
               userId: this.userId
             });
           }
-          let defaultFolder = {
-            "name": "全部自选",
-            "funds": -1,
-            "desc": "你的全部自选基金"
-          }
-          this.folder = [defaultFolder]
-          if (res.folder) {
-            this.folder = this.folder.concat(res.folder)
+
+          this.folders = [this.defaultFolder]
+          if (res.folders) {
+            this.folders = res.folders
           }
           this.darkMode = res.darkMode ? res.darkMode : false;
+          this.leftMode = res.leftMode ? res.leftMode : false;
           this.normalFontSize = res.normalFontSize ? res.normalFontSize : false;
           this.seciList = res.seciList ? res.seciList : this.seciList;
           this.showAmount = res.showAmount ? res.showAmount : false;
@@ -1056,6 +1136,11 @@ export default {
         darkMode: this.darkMode,
       });
     },
+    changeTabMode() {
+      chrome.storage.sync.set({
+        leftMode: this.leftMode,
+      });
+    },
     changeLiveUpdate() {
       chrome.storage.sync.set(
         {
@@ -1142,6 +1227,18 @@ export default {
             data.gains = this.calculate(data, data.hasReplace);
             data.costGains = this.calculateCost(data);
             data.costGainsRate = this.calculateCostRate(data);
+            this.folders.filter(i => i.funds !== -1).every(f => {
+              if ( f.funds.includes(data.fundcode)){
+                data.targetFolder = f
+                return false
+              } else {
+                return true
+              }
+            })
+            if (!data.targetFolder){
+              data.targetFolder = this.defaultFolder
+            }
+
 
             if (data.fundcode == this.RealtimeFundcode) {
               if (this.showBadge == 1) {
@@ -1467,6 +1564,11 @@ export default {
 }
 
 .changelog-container {
+  min-height: 550px;
+  min-width: 500px;
+}
+
+.createfolder-container {
   min-height: 550px;
   min-width: 500px;
 }
