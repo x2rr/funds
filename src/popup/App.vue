@@ -143,23 +143,35 @@
             <el-tooltip class="item" effect="dark" :content="folder.desc" placement="top">
               <span>
               <i class="el-icon-star-on"></i>
-              {{
-                folder.name + ' ' + moneyRateInFolder(folder)
-              }}
+                <span :class="allGains(folder)[0] >= 0 ? 'up' : 'down'">{{ folder.name + ' '}}</span>
+                {{moneyRateInFolder(folder)}}
               </span>
             </el-tooltip>
           </span>
           <span ><i class="el-icon-medal"></i>
             该组日收益：
+            <span :class="allGains(folder)[0] >= 0 ? 'up' : 'down'">
             {{
               parseFloat(allGains(folder)[0]).toLocaleString('zh', {
               minimumFractionDigits: 2
                }) + (isNaN(allGains(folder)[1]) ? '' : '（' + allGains(folder)[1] + '%）')
             }}
+            </span>
+          </span>
+          <br/>
+          <span ><i class="el-icon-medal"></i>
+            该组持有收益：
+            <span :class="allCostGains(folder)[0] >= 0 ? 'up' : 'down'">
+            {{
+              parseFloat(allCostGains(folder)[0]).toLocaleString('zh', {
+              minimumFractionDigits: 2
+               }) + (isNaN(allCostGains(folder)[1]) ? '' : '（' + allCostGains(folder)[1] + '%）')
+            }}
+            </span>
           </span>
           <br/>
 
-          <span ><i class="el-icon-bank-card"></i>
+          <span  v-if="showCost"><i class="el-icon-bank-card"></i>
             该组总金额：
             {{
               parseFloat(allAmount(folder)).toLocaleString('zh', {
@@ -532,19 +544,19 @@
       <input
         v-if="showCost"
         class="btn"
-        :class="allCostGains[0] >= 0 ? 'btn-up' : 'btn-down'"
+        :class="allCostGains(null)[0] >= 0 ? 'btn-up' : 'btn-down'"
         type="button"
         :title="
-          allCostGains[0] >= 0
+          allCostGains(null)[0] >= 0
             ? 'd=====(￣▽￣*)b 赞一个'
             : '∑(っ°Д°;)っ 大事不好啦'
         "
         :value="
           '持有收益：' +
-            parseFloat(allCostGains[0]).toLocaleString('zh', {
+            parseFloat(allCostGains(null)[0]).toLocaleString('zh', {
               minimumFractionDigits: 2,
             }) +
-            (isNaN(allCostGains[1]) ? '' : '（' + allCostGains[1] + '%）')
+            (isNaN(allCostGains(null)[1]) ? '' : '（' + allCostGains(null)[1] + '%）')
         "
       />
     </div>
@@ -781,15 +793,27 @@ export default {
       }
     },
     allCostGains() {
-      let allCostGains = 0;
-      let allNum = 0;
-      this.dataList.forEach(val => {
-        allCostGains += parseFloat(val.costGains);
-        allNum += parseFloat(val.amount);
-      });
-      allCostGains = allCostGains.toFixed(2);
-      let allCostGainsRate = ((allCostGains * 100) / allNum).toFixed(2);
-      return [allCostGains, allCostGainsRate];
+      return function(folder){
+        let allCostGains = 0;
+        let allNum = 0;
+        this.dataList.filter(d => {
+          if (folder) {
+            if (folder.funds === -1) {
+              return this.dataList
+            } else {
+              return folder.funds.includes(d.fundcode)
+            }
+          } else {
+            return this.dataList
+          }
+        }).forEach(val => {
+          allCostGains += parseFloat(val.costGains);
+          allNum += parseFloat(val.amount);
+        });
+        allCostGains = allCostGains.toFixed(2);
+        let allCostGainsRate = ((allCostGains * 100) / allNum).toFixed(2);
+        return [allCostGains, allCostGainsRate];
+      }
     },
     containerClass() {
       let className = "";
