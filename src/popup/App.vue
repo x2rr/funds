@@ -132,6 +132,7 @@
         :class="darkMode ? 'darkMode' : ''"
         :tab-position="tabPosition"
         @tab-add="createFolder"
+        @tab-remove="removeFolder"
       >
         <el-tab-pane
           v-for="(folder, index) in folders"
@@ -140,7 +141,7 @@
           :name="`${index}`"
         >
           <span slot="label" style="width: auto">
-            <el-tooltip class="item" effect="dark" :content="folder.desc" placement="top">
+            <el-tooltip class="item" :effect="darkMode ? 'dark' : 'light'" :content="folder.desc" placement="top" :disabled="!folder.desc">
               <span>
               <i class="el-icon-star-on"></i>
                 <span :class="allGains(folder)[0] >= 0 ? 'up' : 'down'">{{ folder.name + ' '}}</span>
@@ -842,6 +843,9 @@ export default {
           this.showGSZ,
         ];
         let num = 0;
+        if (this.leftMode) {
+          num = 5
+        }
         tablist.forEach((val) => {
           if (val) {
             num++;
@@ -881,17 +885,25 @@ export default {
     }
   },
   methods: {
+    removeFolder(index){
+      this.folders.splice(index,1)
+      chrome.storage.sync.set({ folders: this.folders, }, () => {});
+    },
+
     createFolder(){
       this.createfolderShadow = true;
       this.$refs.createfolder.init();
     },
 
     closeCreateFolder(folder) {
-      this.createfolderShadow = false;
-      if (this.folders.map(f => f.name).indexOf(folder.name) ===-1) {
-        this.folders.push(Object.assign({ funds: []},folder))
+      //只有有名字的文件，才保存
+      if (folder && folder.name){
+        this.createfolderShadow = false;
+        if (this.folders.map(f => f.name).indexOf(folder.name) ===-1) {
+          this.folders.push(Object.assign({ funds: []},folder))
+        }
+        chrome.storage.sync.set({ folders: this.folders, }, () => {});
       }
-      chrome.storage.sync.set({ folders: this.folders, }, () => {});
     },
 
     add2Folder(el){
@@ -1619,6 +1631,21 @@ export default {
   }
   &.num-width-5 {
     min-width: 680px;
+  }
+  &.num-width-6 {
+    min-width: 720px;
+  }
+  &.num-width-7 {
+    min-width: 820px;
+  }
+  &.num-width-8 {
+    min-width: 920px;
+  }
+  &.num-width-9 {
+    min-width: 920px;
+  }
+  &.num-width-10 {
+    min-width: 920px;
   }
 }
 

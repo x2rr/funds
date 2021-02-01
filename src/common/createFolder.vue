@@ -57,8 +57,7 @@ export default {
     close() {
       this.centerDialogVisible = false;
       this.$emit("close", this.folder);
-      this.folder.name = ''
-      this.folder.desc = ''
+      this.folder = {}
     },
   },
 };
