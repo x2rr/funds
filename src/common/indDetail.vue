@@ -565,6 +565,7 @@ export default {
   top: 0;
   left: 0;
   background-color: rgba(0, 0, 0, 0.7);
+  z-index: 200;
 }
 
 .content-box {
@@ -575,6 +576,7 @@ export default {
   text-align: center;
   line-height: 1;
   vertical-align: middle;
+
   h5 {
     margin: 0;
     padding: 13px;

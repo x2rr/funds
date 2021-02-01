@@ -13,7 +13,9 @@ import {
   Dialog,
   Button,
   Loading,
-  Icon
+  Icon,
+  Tooltip,
+  Input
 } from 'element-ui';
 
 Vue.prototype.$axios = axios;
@@ -33,6 +35,8 @@ Vue.use(Dialog)
 Vue.use(Button)
 Vue.use(Loading)
 Vue.use(Icon)
+Vue.use(Tooltip)
+Vue.use(Input)
 
 /* eslint-disable no-new */
 new Vue({

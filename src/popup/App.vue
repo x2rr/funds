@@ -125,227 +125,332 @@
       <p v-if="isEdit" class="tips center">
         部分新发基金或QDII基金可以搜索到，但可能无法获取估值情况
       </p>
-      <div
-        v-if="isGetStorage"
-        v-loading="loadingList"
-        :element-loading-background="
-          darkMode ? 'rgba(0, 0, 0, 0.9)' : 'rgba(255, 255, 255, 0.9)'
-        "
-        class="table-row"
-        style="min-height:160px"
+      <el-tabs
+        type="border-card"
+        v-model="defaultTabsValue"
+        :editable="isEdit"
+        :class="darkMode ? 'darkMode' : ''"
+        :tab-position="tabPosition"
+        @tab-add="createFolder"
+        @tab-remove="removeFolder"
       >
-        <table :class="tableHeight">
-          <thead>
-            <tr>
-              <th class="align-left">基金名称</th>
-              <th v-if="isEdit">基金代码</th>
-              <th v-if="showGSZ && !isEdit">估算净值</th>
-              <th
-                style="text-align:center"
-                v-if="isEdit && (showCostRate || showCost)"
-              >
-                成本价
-              </th>
-              <th @click="sortList('amount')" v-if="showAmount" class="pointer">
-                持有额
-                <span :class="sortType.amount" class="down-arrow"></span>
-              </th>
-              <th
-                @click="sortList('costGains')"
-                v-if="showCost"
-                class="pointer"
-              >
-                持有收益
-                <span :class="sortType.costGains" class="down-arrow"></span>
-              </th>
-              <th
-                @click="sortList('costGainsRate')"
-                v-if="showCostRate"
-                class="pointer"
-              >
-                持有收益率
-                <span :class="sortType.costGainsRate" class="down-arrow"></span>
-              </th>
-              <th @click="sortList('gszzl')" class="pointer">
-                涨跌幅
-                <span :class="sortType.gszzl" class="down-arrow"></span>
-              </th>
-              <th @click="sortList('gains')" v-if="showGains" class="pointer">
-                估算收益
-                <span :class="sortType.gains" class="down-arrow"></span>
-              </th>
-              <th v-if="!isEdit">更新时间</th>
-              <th
-                style="text-align:center"
-                v-if="
-                  isEdit &&
-                    (showAmount || showGains || showCost || showCostRate)
-                "
-              >
-                持有份额
-              </th>
-              <th v-if="isEdit && BadgeContent == 1">特别关注</th>
-              <th v-if="isEdit">删除</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="(el, index) in dataList"
-              :key="el.fundcode"
-              :draggable="isEdit"
-              :class="drag"
-              @dragstart="handleDragStart($event, el)"
-              @dragover.prevent="handleDragOver($event, el)"
-              @dragenter="handleDragEnter($event, el, index)"
-              @dragend="handleDragEnd($event, el)"
-            >
-              <td
-                :class="
-                  isEdit ? 'fundName-noclick align-left' : 'fundName align-left'
-                "
-                :title="el.name"
-                @click.stop="!isEdit && fundDetail(el)"
-              >
-                {{ el.name }}
-              </td>
-              <td v-if="isEdit">{{ el.fundcode }}</td>
-              <td v-if="showGSZ && !isEdit">{{ el.gsz }}</td>
-              <td v-if="isEdit && (showCostRate || showCost)">
-                <input
-                  class="btn num"
-                  placeholder="持仓成本价"
-                  v-model="el.cost"
-                  @input="changeCost(el, index)"
-                  type="text"
-                />
-              </td>
+        <el-tab-pane
+          v-for="(folder, index) in folders"
+          :key="folder.name"
+          :label="folder.name"
+          :name="`${index}`"
+        >
+          <span slot="label" style="width: auto">
+            <el-tooltip class="item" :effect="darkMode ? 'dark' : 'light'" :content="folder.desc" placement="top" :disabled="!folder.desc">
+              <span>
+              <i class="el-icon-star-on"></i>
+                <span :class="allGains(folder)[0] >= 0 ? 'up' : 'down'">{{ folder.name + ' '}}</span>
+                {{moneyRateInFolder(folder)}}
+              </span>
+            </el-tooltip>
+          </span>
+          <span ><i class="el-icon-medal"></i>
+            该组日收益：
+            <span :class="allGains(folder)[0] >= 0 ? 'up' : 'down'">
+            {{
+              parseFloat(allGains(folder)[0]).toLocaleString('zh', {
+              minimumFractionDigits: 2
+               }) + (isNaN(allGains(folder)[1]) ? '' : '（' + allGains(folder)[1] + '%）')
+            }}
+            </span>
+          </span>
+          <br/>
+          <span ><i class="el-icon-medal"></i>
+            该组持有收益：
+            <span :class="allCostGains(folder)[0] >= 0 ? 'up' : 'down'">
+            {{
+              parseFloat(allCostGains(folder)[0]).toLocaleString('zh', {
+              minimumFractionDigits: 2
+               }) + (isNaN(allCostGains(folder)[1]) ? '' : '（' + allCostGains(folder)[1] + '%）')
+            }}
+            </span>
+          </span>
+          <br/>
 
-              <td v-if="showAmount">
-                {{
-                  parseFloat(el.amount).toLocaleString("zh", {
-                    minimumFractionDigits: 2,
-                  })
-                }}
-              </td>
-              <td v-if="showCost" :class="el.costGains >= 0 ? 'up' : 'down'">
-                {{
-                  parseFloat(el.costGains).toLocaleString("zh", {
-                    minimumFractionDigits: 2,
-                  })
-                }}
-              </td>
-              <td
-                v-if="showCostRate"
-                :class="el.costGainsRate >= 0 ? 'up' : 'down'"
-              >
-                {{ el.cost > 0 ? el.costGainsRate + "%" : "" }}
-              </td>
-              <td :class="el.gszzl >= 0 ? 'up' : 'down'">{{ el.gszzl }}%</td>
-              <td v-if="showGains" :class="el.gains >= 0 ? 'up' : 'down'">
-                {{
-                  parseFloat(el.gains).toLocaleString("zh", {
-                    minimumFractionDigits: 2,
-                  })
-                }}
-              </td>
-              <td v-if="!isEdit">
-                {{
-                  el.hasReplace ? el.gztime.substr(5, 5) : el.gztime.substr(5)
-                }}
-                <span class="hasReplace-tip" v-if="el.hasReplace">✔</span>
-              </td>
-              <th v-if="isEdit && (showAmount || showGains || showCost)">
-                <input
-                  class="btn num"
-                  placeholder="输入持有份额"
-                  v-model="el.num"
-                  @input="changeNum(el, index)"
-                  type="text"
-                />
-              </th>
-              <td v-if="isEdit && BadgeContent == 1">
-                <input
-                  @click="slt(el.fundcode)"
-                  :class="el.fundcode == RealtimeFundcode ? 'slt' : ''"
-                  class="btn edit"
-                  value="✔"
-                  type="button"
-                />
-              </td>
-              <td v-if="isEdit">
-                <input
-                  @click="dlt(el.fundcode)"
-                  class="btn red edit"
-                  value="✖"
-                  type="button"
-                />
-              </td>
-            </tr>
-          </tbody>
-        </table>
+          <span  v-if="showCost"><i class="el-icon-bank-card"></i>
+            该组总金额：
+            {{
+              parseFloat(allAmount(folder)).toLocaleString('zh', {
+              minimumFractionDigits: 2 })
+              +
+              '（' +moneyRateInFolder(folder) +')'
+            }}
+          </span>
 
-        <!-- <table :class="tableHeight" class="detailTable">
-          <thead>
-            <tr>
-              <th class="align-left">
-                <div>基金名称</div>
-                <p>基金编码</p>
-              </th>
-              <th>
-                <div>持有收益率</div>
-                <p>持有收益</p>
-              </th>
-              <th>
-                <div>估算涨幅</div>
-                <p>估算收益</p>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="(el, index) in dataList"
-              :key="el.fundcode"
-              :draggable="isEdit"
-              :class="drag"
-              @dragstart="handleDragStart($event, el)"
-              @dragover.prevent="handleDragOver($event, el)"
-              @dragenter="handleDragEnter($event, el, index)"
-              @dragend="handleDragEnd($event, el)"
-            >
-              <td
-                :class="
-                  isEdit ? 'fundName-noclick align-left' : 'fundName align-left'
-                "
-                :title="el.name"
-                @click.stop="!isEdit && fundDetail(el)"
-              >
-                <div>{{ el.name }}</div>
-                <p>{{ el.fundcode }}</p>
-              </td>
-              <td :class="el.costGains >= 0 ? 'up' : 'down'">
-                <div>{{ el.cost > 0 ? el.costGainsRate + "%" : "" }}</div>
-                <p>
-                  {{
-                  parseFloat(el.costGains).toLocaleString("zh", {
-                    minimumFractionDigits: 2,
-                  })
-                }}
-                </p>
-              </td>
-              <td :class="el.gszzl >= 0 ? 'up' : 'down'">
-                <div>{{ el.gszzl }}%</div>
-                <p>
-                  {{
-                    parseFloat(el.gains).toLocaleString("zh", {
-                      minimumFractionDigits: 2,
-                    })
-                  }}
-                </p>
-              </td>
-            </tr>
-          </tbody>
-        </table> -->
-      </div>
+          <div
+            v-if="isGetStorage"
+            v-loading="loadingList"
+            :element-loading-background="
+              darkMode ? 'rgba(0, 0, 0, 0.9)' : 'rgba(255, 255, 255, 0.9)'
+            "
+            class="table-row"
+            style="min-height:160px"
+          >
+            <table :class="tableHeight">
+              <thead>
+                <tr>
+                  <th class="align-left">基金名称</th>
+                  <th v-if="isEdit">基金代码</th>
+                  <th v-if="showGSZ && !isEdit">估算净值</th>
+                  <th
+                    style="text-align:center"
+                    v-if="isEdit && (showCostRate || showCost)"
+                  >
+                    成本价
+                  </th>
+                  <th
+                    @click="sortList('amount')"
+                    v-if="showAmount"
+                    class="pointer"
+                  >
+                    持有额
+                    <span :class="sortType.amount" class="down-arrow"></span>
+                  </th>
+                  <th
+                    @click="sortList('costGains')"
+                    v-if="showCost"
+                    class="pointer"
+                  >
+                    持有收益
+                    <span :class="sortType.costGains" class="down-arrow"></span>
+                  </th>
+                  <th
+                    @click="sortList('costGainsRate')"
+                    v-if="showCostRate"
+                    class="pointer"
+                  >
+                    持有收益率
+                    <span
+                      :class="sortType.costGainsRate"
+                      class="down-arrow"
+                    ></span>
+                  </th>
+                  <th @click="sortList('gszzl')" class="pointer">
+                    涨跌幅
+                    <span :class="sortType.gszzl" class="down-arrow"></span>
+                  </th>
+                  <th
+                    @click="sortList('gains')"
+                    v-if="showGains"
+                    class="pointer"
+                  >
+                    估算收益
+                    <span :class="sortType.gains" class="down-arrow"></span>
+                  </th>
+                  <th v-if="!isEdit">更新时间</th>
+                  <th
+                    style="text-align:center"
+                    v-if="
+                      isEdit &&
+                        (showAmount || showGains || showCost || showCostRate)
+                    "
+                  >
+                    持有份额
+                  </th>
+                  <th v-if="isEdit && BadgeContent == 1">特别关注</th>
+                  <th v-if="isEdit">删除</th>
+                  <th v-if="isEdit">分组</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="(el, index) in dataList.filter(d => {
+                     if (folder.funds === -1) {
+                        return dataList
+                     } else {
+                        return folder.funds.includes(d.fundcode)
+                     }
+                  })"
+                  :key="el.fundcode"
+                  :draggable="isEdit"
+                  :class="drag"
+                  @dragstart="handleDragStart($event, el)"
+                  @dragover.prevent="handleDragOver($event, el)"
+                  @dragenter="handleDragEnter($event, el, index)"
+                  @dragend="handleDragEnd($event, el)"
+                >
+                  <td
+                    :class="
+                      isEdit
+                        ? 'fundName-noclick align-left'
+                        : 'fundName align-left'
+                    "
+                    :title="el.name"
+                    @click.stop="!isEdit && fundDetail(el)"
+                  >
+                    {{ el.name }}
+                  </td>
+                  <td v-if="isEdit">{{ el.fundcode }}</td>
+                  <td v-if="showGSZ && !isEdit">{{ el.gsz }}</td>
+                  <td v-if="isEdit && (showCostRate || showCost)">
+                    <input
+                      class="btn num"
+                      placeholder="持仓成本价"
+                      v-model="el.cost"
+                      @input="changeCost(el, index)"
+                      type="text"
+                    />
+                  </td>
+
+                  <td v-if="showAmount">
+                    {{
+                      parseFloat(el.amount).toLocaleString("zh", {
+                        minimumFractionDigits: 2
+                      })
+                    }}
+                  </td>
+                  <td
+                    v-if="showCost"
+                    :class="el.costGains >= 0 ? 'up' : 'down'"
+                  >
+                    {{
+                      parseFloat(el.costGains).toLocaleString("zh", {
+                        minimumFractionDigits: 2
+                      })
+                    }}
+                  </td>
+                  <td
+                    v-if="showCostRate"
+                    :class="el.costGainsRate >= 0 ? 'up' : 'down'"
+                  >
+                    {{ el.cost > 0 ? el.costGainsRate + "%" : "" }}
+                  </td>
+                  <td :class="el.gszzl >= 0 ? 'up' : 'down'">
+                    {{ el.gszzl }}%
+                  </td>
+                  <td v-if="showGains" :class="el.gains >= 0 ? 'up' : 'down'">
+                    {{
+                      parseFloat(el.gains).toLocaleString("zh", {
+                        minimumFractionDigits: 2
+                      })
+                    }}
+                  </td>
+                  <td v-if="!isEdit">
+                    {{
+                      el.hasReplace
+                        ? el.gztime.substr(5, 5)
+                        : el.gztime.substr(5)
+                    }}
+                    <span class="hasReplace-tip" v-if="el.hasReplace">✔</span>
+                  </td>
+                  <th v-if="isEdit && (showAmount || showGains || showCost)">
+                    <input
+                      class="btn num"
+                      placeholder="输入持有份额"
+                      v-model="el.num"
+                      @input="changeNum(el, index)"
+                      type="text"
+                    />
+                  </th>
+                  <td v-if="isEdit && BadgeContent == 1">
+                    <input
+                      @click="slt(el.fundcode)"
+                      :class="el.fundcode == RealtimeFundcode ? 'slt' : ''"
+                      class="btn edit"
+                      value="✔"
+                      type="button"
+                    />
+                  </td>
+                  <td v-if="isEdit">
+                    <input
+                      @click="dlt(el.fundcode)"
+                      class="btn red edit"
+                      value="✖"
+                      type="button"
+                    />
+                  </td>
+                  <td v-if="isEdit">
+                    <el-select
+                            size="mini"
+                            :popper-append-to-body="true"
+                            v-model="el.targetFolder"
+                            value-key="name"
+                            style="width:110px"
+                            placeholder="请选择"
+                            clearable
+                            @change="add2Folder(el)"
+                    >
+                      <el-option
+                              v-for="(item, p) in folders"
+                              :key="p"
+                              :label="item.name"
+                              :value="item"
+                      ></el-option>
+                    </el-select>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- <table :class="tableHeight" class="detailTable">
+                          <thead>
+                            <tr>
+                              <th class="align-left">
+                                <div>基金名称</div>
+                                <p>基金编码</p>
+                              </th>
+                              <th>
+                                <div>持有收益率</div>
+                                <p>持有收益</p>
+                              </th>
+                              <th>
+                                <div>估算涨幅</div>
+                                <p>估算收益</p>
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr
+                              v-for="(el, index) in dataList"
+                              :key="el.fundcode"
+                              :draggable="isEdit"
+                              :class="drag"
+                              @dragstart="handleDragStart($event, el)"
+                              @dragover.prevent="handleDragOver($event, el)"
+                              @dragenter="handleDragEnter($event, el, index)"
+                              @dragend="handleDragEnd($event, el)"
+                            >
+                              <td
+                                :class="
+                                  isEdit ? 'fundName-noclick align-left' : 'fundName align-left'
+                                "
+                                :title="el.name"
+                                @click.stop="!isEdit && fundDetail(el)"
+                              >
+                                <div>{{ el.name }}</div>
+                                <p>{{ el.fundcode }}</p>
+                              </td>
+                              <td :class="el.costGains >= 0 ? 'up' : 'down'">
+                                <div>{{ el.cost > 0 ? el.costGainsRate + "%" : "" }}</div>
+                                <p>
+                                  {{
+                                  parseFloat(el.costGains).toLocaleString("zh", {
+                                    minimumFractionDigits: 2,
+                                  })
+                                }}
+                                </p>
+                              </td>
+                              <td :class="el.gszzl >= 0 ? 'up' : 'down'">
+                                <div>{{ el.gszzl }}%</div>
+                                <p>
+                                  {{
+                                    parseFloat(el.gains).toLocaleString("zh", {
+                                      minimumFractionDigits: 2,
+                                    })
+                                  }}
+                                </p>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table> -->
+          </div>
+        </el-tab-pane>
+      </el-tabs>
     </div>
     <p v-if="isEdit" class="tips">
       特别关注功能介绍：指定一个基金，在程序图标中以角标的形式实时更新，请在设置中选择角标类型与内容。
@@ -361,6 +466,7 @@
         active-text="暗色模式"
       >
       </el-switch>
+
       <span class="slider-title">界面灰度：</span>
       <el-slider
         class="slider"
@@ -400,6 +506,7 @@
         @click="isEdit = !isEdit"
       />
       <input class="btn" type="button" value="设置" @click="option" />
+      <input class="btn" type="button" value="窗口模式" @click="newTab" />
       <input class="btn" type="button" value="日志" @click="changelog" />
       <input
         class="btn primary"
@@ -408,40 +515,49 @@
         value="打赏"
         @click="reward"
       />
+      <el-switch
+              v-model="leftMode"
+              @change="changeTabMode"
+              active-color="#484848"
+              inactive-color="#13ce66"
+              inactive-text="顶部"
+              active-text="左侧"
+      >
+      </el-switch>
     </div>
     <div class="input-row" v-if="showCost || showGains">
       <input
         v-if="showGains"
         class="btn"
-        :class="allGains[0] >= 0 ? 'btn-up' : 'btn-down'"
+        :class="allGains(null)[0] >= 0 ? 'btn-up' : 'btn-down'"
         type="button"
         :title="
-          allGains[0] >= 0 ? 'd=====(￣▽￣*)b 赞一个' : '∑(っ°Д°;)っ 大事不好啦'
+          allGains(null)[0] >= 0 ? 'd=====(￣▽￣*)b 赞一个' : '∑(っ°Д°;)っ 大事不好啦'
         "
         :value="
           '日收益：' +
-            parseFloat(allGains[0]).toLocaleString('zh', {
-              minimumFractionDigits: 2,
+            parseFloat(allGains(null)[0]).toLocaleString('zh', {
+              minimumFractionDigits: 2
             }) +
-            (isNaN(allGains[1]) ? '' : '（' + allGains[1] + '%）')
+            (isNaN(allGains(null)[1]) ? '' : '（' + allGains(null)[1] + '%）')
         "
       />
       <input
         v-if="showCost"
         class="btn"
-        :class="allCostGains[0] >= 0 ? 'btn-up' : 'btn-down'"
+        :class="allCostGains(null)[0] >= 0 ? 'btn-up' : 'btn-down'"
         type="button"
         :title="
-          allCostGains[0] >= 0
+          allCostGains(null)[0] >= 0
             ? 'd=====(￣▽￣*)b 赞一个'
             : '∑(っ°Д°;)っ 大事不好啦'
         "
         :value="
           '持有收益：' +
-            parseFloat(allCostGains[0]).toLocaleString('zh', {
+            parseFloat(allCostGains(null)[0]).toLocaleString('zh', {
               minimumFractionDigits: 2,
             }) +
-            (isNaN(allCostGains[1]) ? '' : '（' + allCostGains[1] + '%）')
+            (isNaN(allCostGains(null)[1]) ? '' : '（' + allCostGains(null)[1] + '%）')
         "
       />
     </div>
@@ -469,18 +585,26 @@
       ref="changelog"
       :top="40"
     ></change-log>
+    <create-folder
+      @close="closeCreateFolder"
+      :darkMode="darkMode"
+      ref="createfolder"
+      :top="40"
+    ></create-folder>
   </div>
 </template>
 
 <script>
 const { version } = require("../../package.json");
-import reward from "../common/reward";
-import indDetail from "../common/indDetail";
-import fundDetail from "../common/fundDetail";
-import changeLog from "../common/changeLog";
-import market from "../common/market";
+import reward from '../common/reward'
+import indDetail from '../common/indDetail'
+import fundDetail from '../common/fundDetail'
+import changeLog from '../common/changeLog'
+import createFolder from '../common/createFolder'
+import market from '../common/market'
 //防抖
 let timeout = null;
+
 function debounce(fn, wait = 700) {
   if (timeout !== null) clearTimeout(timeout);
   timeout = setTimeout(fn, wait);
@@ -492,10 +616,12 @@ export default {
     fundDetail,
     indDetail,
     changeLog,
-    market,
+    createFolder,
+    market
   },
   data() {
     return {
+      defaultTabsValue:'0',
       isEdit: false,
       fundcode: "",
       isAdd: false,
@@ -516,6 +642,12 @@ export default {
       showGSZ: false,
       fundList: ["001618"],
       fundListM: [],
+      folders: [],
+      defaultFolder : {
+        "name": "默认自选",
+        "funds": -1,
+        "desc": "你的全部自选基金"
+      },
       sortType: {
         gszzl: "none",
         amount: "none",
@@ -574,12 +706,14 @@ export default {
       ],
       sltSeci: "",
       darkMode: false,
+      leftMode: false,
       normalFontSize: false,
       diyContainer: false,
       containerWidth: 790,
       containerHeight: 590,
       detailShadow: false,
       changelogShadow: false,
+      createfolderShadow: false,
       sltFund: {},
       sltIndCode: "",
       localVersion: version,
@@ -606,34 +740,81 @@ export default {
       let bb = this.$refs.app.clientWidth;
       if (aa < bb) {
         this.zoom = {
-          zoom: aa / bb,
+          zoom: aa / bb
         };
       }
     }, 10);
     this.init();
   },
   computed: {
+    tabPosition() {
+      return this.leftMode ? 'left' : 'top'
+    },
+
+    allAmount() {
+      return function(folder){
+        let allAmount = 0
+        this.dataList.filter(d => {
+          if (folder) {
+            if (folder.funds === -1) {
+              return this.dataList
+            } else {
+              return folder.funds.includes(d.fundcode)
+            }
+          } else {
+            return this.dataList
+          }
+        }).forEach(val => {
+          allAmount += parseFloat(val.amount);
+        });
+        return allAmount
+      }
+    },
     allGains() {
-      let allGains = 0;
-      let allNum = 0;
-      this.dataList.forEach((val) => {
-        allGains += parseFloat(val.gains);
-        allNum += parseFloat(val.amount);
-      });
-      allGains = allGains.toFixed(2);
-      let allGainsRate = ((allGains * 100) / allNum).toFixed(2);
-      return [allGains, allGainsRate];
+      return function(folder){
+        let allGains = 0;
+        let allNum = 0;
+        this.dataList.filter(d => {
+          if (folder) {
+            if (folder.funds === -1) {
+              return this.dataList
+            } else {
+              return folder.funds.includes(d.fundcode)
+            }
+          } else {
+            return this.dataList
+          }
+        }).forEach(val => {
+          allGains += parseFloat(val.gains);
+          allNum += parseFloat(val.amount);
+        });
+        allGains = allGains.toFixed(2);
+        let allGainsRate = ((allGains * 100) / allNum).toFixed(2);
+        return [allGains, allGainsRate];
+      }
     },
     allCostGains() {
-      let allCostGains = 0;
-      let allNum = 0;
-      this.dataList.forEach((val) => {
-        allCostGains += parseFloat(val.costGains);
-        allNum += parseFloat(val.amount);
-      });
-      allCostGains = allCostGains.toFixed(2);
-      let allCostGainsRate = ((allCostGains * 100) / allNum).toFixed(2);
-      return [allCostGains, allCostGainsRate];
+      return function(folder){
+        let allCostGains = 0;
+        let allNum = 0;
+        this.dataList.filter(d => {
+          if (folder) {
+            if (folder.funds === -1) {
+              return this.dataList
+            } else {
+              return folder.funds.includes(d.fundcode)
+            }
+          } else {
+            return this.dataList
+          }
+        }).forEach(val => {
+          allCostGains += parseFloat(val.costGains);
+          allNum += parseFloat(val.amount);
+        });
+        allCostGains = allCostGains.toFixed(2);
+        let allCostGainsRate = ((allCostGains * 100) / allNum).toFixed(2);
+        return [allCostGains, allCostGainsRate];
+      }
     },
     containerClass() {
       let className = "";
@@ -643,14 +824,16 @@ export default {
       if (this.darkMode) {
         className += "darkMode ";
       }
-      if (this.changelogShadow) {
+      if (this.createfolderShadow) {
+        className += "createfolder-container";
+      } if (this.changelogShadow) {
         className += "changelog-container";
       } else if (this.rewardShadow) {
         className += "more-height";
       } else if (this.detailShadow) {
         className += "detail-container";
       } else if (this.isEdit) {
-        className += "more-width";
+        // className += "more-width";
       } else {
         let tablist = [
           this.showAmount,
@@ -660,6 +843,9 @@ export default {
           this.showGSZ,
         ];
         let num = 0;
+        if (this.leftMode) {
+          num = 5
+        }
         tablist.forEach((val) => {
           if (val) {
             num++;
@@ -696,9 +882,48 @@ export default {
       } else {
         this.checkInterval();
       }
-    },
+    }
   },
   methods: {
+    removeFolder(index){
+      this.folders.splice(index,1)
+      chrome.storage.sync.set({ folders: this.folders, }, () => {});
+    },
+
+    createFolder(){
+      this.createfolderShadow = true;
+      this.$refs.createfolder.init();
+    },
+
+    closeCreateFolder(folder) {
+      //只有有名字的文件，才保存
+      if (folder && folder.name){
+        this.createfolderShadow = false;
+        if (this.folders.map(f => f.name).indexOf(folder.name) ===-1) {
+          this.folders.push(Object.assign({ funds: []},folder))
+        }
+        chrome.storage.sync.set({ folders: this.folders, }, () => {});
+      }
+    },
+
+    add2Folder(el){
+      //分组是互斥的，不是多对对关系
+      //首先从所有组中删除该基金代码
+      //默认组是-1,先排除
+      this.folders.filter(f => f.funds !== -1).forEach(f => {
+        f.funds = f.funds.filter(ff => ff !== el.fundcode)
+      })
+      //然后把该基金加入选择的组
+      this.folders.filter(f => f.funds !== -1).filter(f => f.name === el.targetFolder.name ).forEach(i => {
+        i.funds.push(el.fundcode)
+      })
+      chrome.storage.sync.set({ folders: this.folders, }, () => {});
+    },
+
+    moneyRateInFolder(folder){
+      let rateInAll = (this.allAmount(folder) *  100 / this.allAmount(null)).toFixed(2)
+      return isNaN(rateInAll) ? '' : rateInAll + '%'
+    },
     refresh() {
       this.init();
       this.isRefresh = true;
@@ -726,6 +951,7 @@ export default {
       });
     },
     init() {
+      // chrome.storage.sync.clear()
       chrome.storage.sync.get(
         [
           "RealtimeFundcode",
@@ -736,6 +962,7 @@ export default {
           "fundList",
           "seciList",
           "darkMode",
+          "leftMode",
           "normalFontSize",
           "isLiveUpdate",
           "showCost",
@@ -747,8 +974,9 @@ export default {
           "userId",
           "grayscaleValue",
           "opacityValue",
+          "folders"
         ],
-        (res) => {
+        res => {
           this.fundList = res.fundList ? res.fundList : this.fundList;
           if (res.fundListM) {
             this.fundListM = res.fundListM;
@@ -769,10 +997,16 @@ export default {
           } else {
             this.userId = this.getGuid();
             chrome.storage.sync.set({
-              userId: this.userId,
+              userId: this.userId
             });
           }
+
+          this.folders = [this.defaultFolder]
+          if (res.folders) {
+            this.folders = res.folders
+          }
           this.darkMode = res.darkMode ? res.darkMode : false;
+          this.leftMode = res.leftMode ? res.leftMode : false;
           this.normalFontSize = res.normalFontSize ? res.normalFontSize : false;
           this.seciList = res.seciList ? res.seciList : this.seciList;
           this.showAmount = res.showAmount ? res.showAmount : false;
@@ -891,6 +1125,9 @@ export default {
     option() {
       chrome.tabs.create({ url: "/options/options.html" });
     },
+    newTab() {
+      chrome.tabs.create({ url: "/popup/popup.html" });
+    },
     reward() {
       this.rewardShadow = true;
       this.$refs.reward.init();
@@ -933,6 +1170,11 @@ export default {
     changeDarkMode() {
       chrome.storage.sync.set({
         darkMode: this.darkMode,
+      });
+    },
+    changeTabMode() {
+      chrome.storage.sync.set({
+        leftMode: this.leftMode,
       });
     },
     changeLiveUpdate() {
@@ -1021,6 +1263,18 @@ export default {
             data.gains = this.calculate(data, data.hasReplace);
             data.costGains = this.calculateCost(data);
             data.costGainsRate = this.calculateCostRate(data);
+            this.folders.filter(i => i.funds !== -1).every(f => {
+              if ( f.funds.includes(data.fundcode)){
+                data.targetFolder = f
+                return false
+              } else {
+                return true
+              }
+            })
+            if (!data.targetFolder){
+              data.targetFolder = this.defaultFolder
+            }
+
 
             if (data.fundcode == this.RealtimeFundcode) {
               if (this.showBadge == 1) {
@@ -1342,10 +1596,15 @@ export default {
 }
 
 .more-width {
-  width: 785px;
+  width: 1000px;
 }
 
 .changelog-container {
+  min-height: 550px;
+  min-width: 500px;
+}
+
+.createfolder-container {
   min-height: 550px;
   min-width: 500px;
 }
@@ -1372,6 +1631,21 @@ export default {
   }
   &.num-width-5 {
     min-width: 680px;
+  }
+  &.num-width-6 {
+    min-width: 720px;
+  }
+  &.num-width-7 {
+    min-width: 820px;
+  }
+  &.num-width-8 {
+    min-width: 920px;
+  }
+  &.num-width-9 {
+    min-width: 920px;
+  }
+  &.num-width-10 {
+    min-width: 920px;
   }
 }
 
@@ -1650,7 +1924,6 @@ tbody tr:hover {
 .detailTable {
   th,
   td {
-    
     p {
       margin: 2px 0;
       color: rgba($color: #000000, $alpha: 0.6);
@@ -1684,6 +1957,23 @@ tbody tr:hover {
 
   /deep/ tbody tr:hover {
     background-color: rgba($color: #ffffff, $alpha: 0.12);
+  }
+
+  /deep/ .el-tabs--border-card {
+    background-color: #373737;
+    border: 1px solid rgba($color: #ffffff, $alpha: 0.37);
+
+    .el-tabs__header {
+      background-color: rgba($color: #ffffff, $alpha: 0.16);
+      border-bottom: 1px solid rgba($color: #ffffff, $alpha: 0.37);
+
+      .el-tabs__item.is-active {
+        background-color: rgba($color: #409eff, $alpha: 0.6);
+        color: rgba($color: #ffffff, $alpha: 0.6);
+        border-right-color: rgba($color: #ffffff, $alpha: 0.37);
+        border-left-color: rgba($color: #ffffff, $alpha: 0.37);
+      }
+    }
   }
 
   .slt {

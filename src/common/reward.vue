@@ -87,6 +87,7 @@ export default {
   line-height: 1;
   vertical-align: middle;
   font-size: 0;
+  z-index: 200;
 }
 
 .reward-box button {

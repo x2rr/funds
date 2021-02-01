@@ -118,6 +118,7 @@ export default {
 }
 
 .content-box {
+  z-index: 200;
   background: #ffffff;
   border-radius: 15px;
   padding: 0 10px;

@@ -48,7 +48,7 @@
         }}份
       </div>
     </div>
-    
+
   </div>
 </template>
 
@@ -73,7 +73,7 @@ export default {
     return {
       infoData: {},
       loading: false,
-      
+
     };
   },
 
@@ -102,7 +102,7 @@ export default {
         // let dataList = res.data.Datas.fundStocks;
       });
     },
-    
+
     numberFormat(value) {
       var param = {};
       var k = 10000,
@@ -136,6 +136,7 @@ export default {
   min-height: 260px;
 }
 .content-box {
+  z-index: 200;
   text-align: left;
   & > div {
     padding: 0 20px;
@@ -152,7 +153,7 @@ export default {
     & > div {
       text-align: center;
       margin: 0 10px;
-      
+
       p {
         margin: 0;
       }

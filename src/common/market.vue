@@ -88,6 +88,7 @@ export default {
   line-height: 1;
   vertical-align: middle;
   position: relative;
+  z-index: 200;
   h5 {
     margin: 0;
     padding: 13px;
