@@ -137,7 +137,7 @@
         <table :class="tableHeight">
           <thead>
             <tr>
-              <th class="align-left">基金名称</th>
+              <th class="align-left">基金名称（{{dataList.length}}）</th>
               <th v-if="isEdit">基金代码</th>
               <th v-if="showGSZ && !isEdit">估算净值</th>
               <th
@@ -254,7 +254,13 @@
                 }}
                 <span class="hasReplace-tip" v-if="el.hasReplace">✔</span>
               </td>
-              <th v-if="isEdit && (showAmount || showGains || showCost)">
+              <th
+                style="text-align:center"
+                v-if="
+                  isEdit &&
+                    (showAmount || showGains || showCost || showCostRate)
+                "
+              >
                 <input
                   class="btn num"
                   placeholder="输入持有份额"
@@ -453,7 +459,11 @@
     >
       <i class="el-icon-refresh"></i>
     </div>
-    <market :darkMode="darkMode" @close="closeCharts" ref="marketShadow"></market>
+    <market
+      :darkMode="darkMode"
+      @close="closeCharts"
+      ref="marketShadow"
+    ></market>
     <ind-detail @close="closeCharts" :darkMode="darkMode" ref="indDetail">
     </ind-detail>
     <fund-detail
@@ -467,7 +477,7 @@
       @close="closeChangelog"
       :darkMode="darkMode"
       ref="changelog"
-      :top="40"
+      :top="30"
     ></change-log>
   </div>
 </template>
@@ -505,6 +515,7 @@ export default {
       RealtimeFundcode: null,
       RealtimeIndcode: null,
       dataList: [],
+      dataListDft: [],
       myVar: null,
       myVar1: null,
       rewardShadow: false,
@@ -522,6 +533,10 @@ export default {
         gains: "none",
         costGains: "none",
         costGainsRate: "none",
+      },
+      sortTypeObj: {
+        name: null,
+        value: null,
       },
       searchOptions: [],
       value: [],
@@ -693,6 +708,12 @@ export default {
       if (val) {
         clearInterval(this.myVar);
         clearInterval(this.myVar1);
+        this.dataList = [...this.dataListDft];
+        for (const key in this.sortType) {
+          if (this.sortType.hasOwnProperty(key)) {
+            this.sortType[key] = "none";
+          }
+        }
       } else {
         this.checkInterval();
       }
@@ -747,6 +768,7 @@ export default {
           "userId",
           "grayscaleValue",
           "opacityValue",
+          "sortTypeObj",
         ],
         (res) => {
           this.fundList = res.fundList ? res.fundList : this.fundList;
@@ -787,6 +809,8 @@ export default {
           this.showBadge = res.showBadge ? res.showBadge : 1;
           this.grayscaleValue = res.grayscaleValue ? res.grayscaleValue : 0;
           this.opacityValue = res.opacityValue ? res.opacityValue : 0;
+          this.sortTypeObj = res.sortTypeObj ? res.sortTypeObj : {};
+
           if (this.seciList.length > 0) {
             this.loadingInd = true;
           }
@@ -913,10 +937,26 @@ export default {
           }
         }
       }
-      this.sortType[type] = this.sortType[type] == "desc" ? "asc" : "desc";
-      this.dataList = this.dataList.sort(
-        this.compare(type, this.sortType[type])
-      );
+      this.sortType[type] =
+        this.sortType[type] == "desc"
+          ? "asc"
+          : this.sortType[type] == "asc"
+          ? "none"
+          : "desc";
+      if (this.sortType[type] == "none") {
+        this.dataList = [...this.dataListDft];
+      } else {
+        this.dataList = this.dataList.sort(
+          this.compare(type, this.sortType[type])
+        );
+      }
+      this.sortTypeObj = {
+        name: type,
+        type: this.sortType[type],
+      };
+      chrome.storage.sync.set({
+        sortTypeObj: this.sortTypeObj,
+      });
     },
     compare(property, type) {
       return function(obj1, obj2) {
@@ -1043,7 +1083,16 @@ export default {
               });
             }
           }
-          this.dataList = dataList;
+
+          this.dataListDft = [...dataList];
+          if (this.sortTypeObj.type != "none") {
+            this.sortType[this.sortTypeObj.name] = this.sortTypeObj.type;
+            this.dataList = dataList.sort(
+              this.compare(this.sortTypeObj.name, this.sortTypeObj.type)
+            );
+          } else {
+            this.dataList = dataList;
+          }
         })
         .catch((error) => {});
     },
@@ -1338,16 +1387,16 @@ export default {
 }
 
 .more-height {
-  height: 450px;
+  min-height: 450px;
 }
 
 .more-width {
-  width: 785px;
+  min-width: 785px;
 }
 
 .changelog-container {
-  min-height: 550px;
-  min-width: 500px;
+  min-height: 575px;
+  min-width: 550px;
 }
 
 .table-more-height {
@@ -1650,7 +1699,6 @@ tbody tr:hover {
 .detailTable {
   th,
   td {
-    
     p {
       margin: 2px 0;
       color: rgba($color: #000000, $alpha: 0.6);
