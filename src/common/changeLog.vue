@@ -30,7 +30,7 @@
       <p>微信群二维码</p>
       <div ref="qrcode" id="qrcode"></div>
       <p v-if="changelog.tip">{{ changelog.tip }}</p>
-      <div v-if="changelog.htmlTip" v-html="htmlTip"></div>
+      <div v-if="changelog.htmlTip" v-html="changelog.htmlTip"></div>
       <ul>
         <li v-for="el in changelog.list" :key="el.version">
           <h5>
