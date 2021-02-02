@@ -72,6 +72,7 @@ export default {
   width: 100%;
   height: 100%;
   padding: 20px 40px;
+  z-index: 1001;
   box-sizing: border-box;
   top: 0;
   left: 0;

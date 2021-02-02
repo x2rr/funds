@@ -112,6 +112,7 @@ export default {
   height: 100%;
   padding: 20px;
   box-sizing: border-box;
+  z-index: 1001;
   top: 0;
   left: 0;
   background-color: rgba(0, 0, 0, 0.7);

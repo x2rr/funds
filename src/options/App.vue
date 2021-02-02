@@ -4,56 +4,6 @@
       <ul class="setting-list">
         <li>
           <div class="list-title">
-            节假日信息
-            <button
-              :disabled="disabled"
-              @click="getHoliday"
-              title="点击更新节假日信息"
-              class="btn"
-            >
-              更新
-            </button>
-            <span class="loading" v-if="disabled">更新中。。。</span>
-          </div>
-          <p>
-            <span v-if="holiday">
-              当前节假日版本：v{{
-                holiday.version
-              }}&nbsp;&nbsp;&nbsp;&nbsp;最后节假日日期：{{ holiday.lastDate }}
-            </span>
-          </p>
-          <p>
-            tips：更新节假日信息，可以在节假日暂停更新估值，节假日信息会不定时更新。
-            <a href="#" @click="openHoliday">查看最新版</a>
-          </p>
-        </li>
-        <li>
-          <div class="list-title">
-            主题与页面设置
-          </div>
-          <div class="select-row">
-            <el-switch
-              v-model="darkMode"
-              @change="changeDarkMode"
-              active-color="#484848"
-              inactive-color="#13ce66"
-              inactive-text="标准模式"
-              active-text="暗色模式"
-            >
-            </el-switch>
-          </div>
-          <div class="select-row">
-            <el-switch
-              v-model="normalFontSize"
-              @change="changeFontSize"
-              inactive-text="迷你字号"
-              active-text="标准字号"
-            >
-            </el-switch>
-          </div>
-        </li>
-        <li>
-          <div class="list-title">
             角标展示设置
           </div>
           <div class="select-row">
@@ -90,6 +40,31 @@
           <p style="margin-top:5px">
             tips：若选择单个基金，请打开编辑按钮中的特别关注选项；若要计算收益额，需要先打开显示持有金额开关，在编辑中填写基金对应的持有额。
           </p>
+        </li>
+        <li>
+          <div class="list-title">
+            主题与页面设置
+          </div>
+          <div class="select-row">
+            <el-switch
+              v-model="darkMode"
+              @change="changeDarkMode"
+              active-color="#484848"
+              inactive-color="#13ce66"
+              inactive-text="标准模式"
+              active-text="暗色模式"
+            >
+            </el-switch>
+          </div>
+          <div class="select-row">
+            <el-switch
+              v-model="normalFontSize"
+              @change="changeFontSize"
+              inactive-text="迷你字号"
+              active-text="标准字号"
+            >
+            </el-switch>
+          </div>
         </li>
 
         <li>
@@ -173,15 +148,32 @@
               @click="openConfigBox"
             />
           </div>
+          <div style="padding:8px 0 10px">
+            <input
+              class="btn"
+              type="button"
+              value="导出基金列表Excel"
+              :disabled="loadingFundList"
+              @click="getFundData"
+            />
+            <a href="javascript:;" class="uploadFile btn"
+              >导入基金列表Excel
+              <input
+                ref="importExcel"
+                type="file"
+                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+                @change="importExcel"
+              />
+            </a>
+          </div>
           <p>
-            tips：插件本身支持跟随浏览器账号自动同步，若想手动同步可使用导入导出功能。
+            tips：插件本身支持跟随浏览器账号自动同步，若想手动同步可使用导入导出功能，Excel导入时不用填写基金名称。
           </p>
         </li>
         <li>
           <div class="list-title">请作者喝杯咖啡</div>
           <p style="line-height:34px">
-            如果你觉得此插件对你有所帮助，或者想要支持一下我
-            <input
+            开源不易，本插件是一个完全开源的项目，也衍生出许多同类产品，您的支持是对作者最大的鼓励。如果你觉得此插件对你有所帮助，或者想要支持一下我<input
               class="btn primary"
               type="button"
               title="φ(>ω<*)"
@@ -219,10 +211,35 @@
         </li>
         <li>
           <div class="list-title">
+            节假日信息
+            <button
+              :disabled="disabled"
+              @click="getHoliday"
+              title="点击更新节假日信息"
+              class="btn"
+            >
+              更新
+            </button>
+            <span class="loading" v-if="disabled">更新中。。。</span>
+          </div>
+          <p>
+            <span v-if="holiday">
+              当前节假日版本：v{{
+                holiday.version
+              }}&nbsp;&nbsp;&nbsp;&nbsp;最后节假日日期：{{ holiday.lastDate }}
+            </span>
+          </p>
+          <p>
+            tips：更新节假日信息，可以在节假日暂停更新估值，节假日信息会不定时更新。
+            <a href="#" @click="openHoliday">查看最新版</a>
+          </p>
+        </li>
+        <li>
+          <div class="list-title">
             关于插件
           </div>
           <p style="line-height:34px">
-            当前版本：v{{ version }}
+            当前插件版本：v{{ version }}
             <input
               class="btn"
               type="button"
@@ -244,7 +261,7 @@
             @close="closeChangelog"
             :darkMode="darkMode"
             ref="changelog"
-            :top="40"
+            :top="20"
           ></change-log>
           <config-box
             @success="successInput"
@@ -264,6 +281,7 @@ import reward from "../common/reward";
 import changeLog from "../common/changeLog";
 import configBox from "../common/configBox";
 const { version } = require("../../package.json");
+import { export_json_to_excel } from "../common/js/vendor/Export2Excel";
 export default {
   components: {
     reward,
@@ -272,6 +290,8 @@ export default {
   },
   data() {
     return {
+      fundListM: null,
+      userId: null,
       configHref: null,
       holiday: null,
       disabled: false,
@@ -286,6 +306,7 @@ export default {
       BadgeType: 1,
       changelogShadow: false,
       normalFontSize: false,
+      loadingFundList: false,
       version,
     };
   },
@@ -301,6 +322,98 @@ export default {
     },
   },
   methods: {
+    getFundData() {
+      this.loadingFundList = true;
+      this.$message({
+        message: "正在导出中，请稍候......",
+        type: "success",
+        center: true,
+      });
+      let fundlist = this.fundListM.map((val) => val.code).join(",");
+      let url =
+        "https://fundmobapi.eastmoney.com/FundMNewApi/FundMNFInfo?pageIndex=1&pageSize=200&plat=Android&appType=ttjj&product=EFund&Version=1&deviceid=" +
+        this.userId +
+        "&Fcodes=" +
+        fundlist;
+      this.$axios
+        .get(url)
+        .then((res) => {
+          let data = res.data.Datas;
+          this.dataList = [];
+          let dataList = [];
+
+          data.forEach((val) => {
+            let data = {
+              code: val.FCODE,
+              name: val.SHORTNAME,
+            };
+
+            let slt = this.fundListM.filter((item) => item.code == data.code);
+            data.num = slt[0].num;
+            data.cost = slt[0].cost;
+
+            dataList.push(data);
+          });
+          this.dataList = dataList;
+          this.downloadData();
+          this.loadingFundList = false;
+        })
+        .catch((error) => {});
+    },
+    downloadData() {
+      var tHeader = ["基金代码", "基金名称", "持有份额", "成本价"];
+      var filterVal = ["code", "name", "num", "cost"];
+      var data = this.formatJson(filterVal, this.dataList);
+      export_json_to_excel(tHeader, data, "自选基金助手-基金配置");
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map((v) => filterVal.map((j) => v[j]));
+    },
+    importExcel(e) {
+      var files = e.target.files;
+      let fileReader = new FileReader();
+      fileReader.onload = (event) => {
+        try {
+          let data = event.target.result;
+          let workbook = XLSX.read(data, {
+            type: "binary",
+          });
+          // excel读取出的数据
+          let excelData = XLSX.utils.sheet_to_json(
+            workbook.Sheets[workbook.SheetNames[0]]
+          );
+          // 将上面数据转换成 table需要的数据
+          let arr = [];
+          excelData.forEach((item) => {
+            let obj = {};
+            obj.code = item["基金代码"];
+            obj.num = item["持有份额"];
+            obj.cost = item["成本价"];
+            arr.push(obj);
+          });
+          chrome.storage.sync.set({ fundListM: arr }, (val) => {
+            this.initOption();
+            chrome.runtime.sendMessage({ type: "refresh" });
+            this.$message({
+              message: "恭喜,导入基金列表成功！",
+              type: "success",
+              center: true,
+            });
+            this.$refs.importExcel.value = null;
+          });
+        } catch (e) {
+          this.$message({
+            message: "导入失败！",
+            type: "error",
+            center: true,
+          });
+          return false;
+        }
+      };
+      // 读取文件 成功后执行上面的回调函数
+      fileReader.readAsBinaryString(files[0]);
+    },
+
     changelog() {
       this.changelogShadow = true;
       this.$refs.changelog.init();
@@ -339,6 +452,8 @@ export default {
           "showBadge",
           "BadgeContent",
           "BadgeType",
+          "userId",
+          "fundListM",
         ],
         (res) => {
           if (res.showNum) {
@@ -369,9 +484,19 @@ export default {
 
           if (res.holiday) {
             this.holiday = res.holiday;
+            console.log(this.holiday);
           } else {
             this.getHoliday();
           }
+          if (res.userId) {
+            this.userId = res.userId;
+          } else {
+            this.userId = this.getGuid();
+            chrome.storage.sync.set({
+              userId: this.userId,
+            });
+          }
+          this.fundListM = res.fundListM ? res.fundListM : [];
           this.showGSZ = res.showGSZ ? res.showGSZ : false;
           this.showCost = res.showCost ? res.showCost : false;
           this.showCostRate = res.showCostRate ? res.showCostRate : false;
@@ -412,7 +537,6 @@ export default {
             });
             this.$refs.importInput.value = null;
           });
-          return config;
         } catch (e) {
           this.$message({
             message: "导入失败！",

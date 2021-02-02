@@ -129,7 +129,7 @@ export default {
   width: 100%;
   height: 100%;
   padding: 30px;
-  z-index: 1000;
+  z-index: 1001;
   box-sizing: border-box;
   top: 0;
   left: 0;

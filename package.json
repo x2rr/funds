@@ -1,6 +1,6 @@
 {
   "name": "choose-funds",
-  "version": "2.4.2",
+  "version": "2.5.0",
   "description": "A Vue.js web extension",
   "author": "LiuRabt",
   "license": "GPL-3.0",
@@ -20,9 +20,11 @@
     "axios": "^0.19.0",
     "echarts": "^4.9.0",
     "element-ui": "^2.13.2",
+    "file-saver": "^2.0.5",
     "qrcodejs2": "0.0.2",
     "vue": "^2.6.10",
-    "vue-clipboard2": "^0.3.1"
+    "vue-clipboard2": "^0.3.1",
+    "xlsx": "^0.16.9"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
@@ -42,6 +44,7 @@
     "mini-css-extract-plugin": "^0.9.0",
     "node-sass": "^4.9.3",
     "sass-loader": "^7.1.0",
+    "script-loader": "^0.7.2",
     "vue-loader": "^15.4.2",
     "vue-template-compiler": "^2.6.10",
     "webpack": "^4.20.2",

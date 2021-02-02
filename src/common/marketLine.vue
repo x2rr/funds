@@ -6,6 +6,21 @@
       darkMode ? 'rgba(0, 0, 0, 0.9)' : 'rgba(255, 255, 255, 0.9)'
     "
   >
+    <div class="turnover" v-if="turnoverData[1]">
+      两市合计成交额：
+      <span
+        >{{
+          ((turnoverData[0].f6 + turnoverData[1].f6) / 100000000).toFixed(2)
+        }}亿元
+      </span>
+      上涨：
+      <span class="up">{{ turnoverData[0].f104 + turnoverData[1].f104 }}</span>
+      平盘：<span>{{ turnoverData[0].f106 + turnoverData[1].f106 }}</span>
+      下跌：
+      <span class="down">{{
+        turnoverData[0].f105 + turnoverData[1].f105
+      }}</span>
+    </div>
     <div class="main-echarts" ref="mainCharts"></div>
   </div>
 </template>
@@ -36,6 +51,7 @@ export default {
       minVal: null,
       option: {},
       loading: false,
+      turnoverData: [],
       timeData: [
         "09:30",
         "09:31",
@@ -289,6 +305,7 @@ export default {
     },
   },
   mounted() {
+    this.getTurnover();
     this.init();
   },
   beforeDestroy() {
@@ -304,16 +321,16 @@ export default {
       this.option = {
         tooltip: {
           trigger: "axis",
-            // formatter: (p) => {
-            //   return `时间：${p[0].name}<br />${
-            //     this.chartTypeList[this.chartType].name
-            //   }：${p[0].value}`;
-            // },
+          // formatter: (p) => {
+          //   return `时间：${p[0].name}<br />${
+          //     this.chartTypeList[this.chartType].name
+          //   }：${p[0].value}`;
+          // },
         },
         grid: {
           top: 55,
           bottom: 30,
-          right:30
+          right: 30,
         },
         xAxis: {
           type: "category",
@@ -328,11 +345,10 @@ export default {
         },
         yAxis: {
           type: "value",
-          name:"单位：亿元",
+          name: "单位：亿元",
           scale: true,
           axisLabel: {
             color: this.defaultColor,
-            
           },
           splitLine: {
             show: true,
@@ -352,6 +368,12 @@ export default {
       };
       this.getData();
     },
+    getTurnover() {
+      let url = `https://push2.eastmoney.com/api/qt/ulist.np/get?fltt=2&secids=1.000001,0.399001&fields=f1,f2,f3,f4,f6,f12,f13,f104,f105,f106&_=${new Date().getTime()}`;
+      this.$axios.get(url).then((res) => {
+        this.turnoverData = res.data.data.diff;
+      });
+    },
 
     getData() {
       this.loading = true;
@@ -368,11 +390,11 @@ export default {
         if (dataList) {
           dataList.forEach((el) => {
             let arr = el.split(",");
-            data1.push((arr[1]/100000000).toFixed(4));
-            data2.push((arr[2]/100000000).toFixed(4));
-            data3.push((arr[3]/100000000).toFixed(4));
-            data4.push((arr[4]/100000000).toFixed(4));
-            data5.push((arr[5]/100000000).toFixed(4));
+            data1.push((arr[1] / 100000000).toFixed(4));
+            data2.push((arr[2] / 100000000).toFixed(4));
+            data3.push((arr[3] / 100000000).toFixed(4));
+            data4.push((arr[4] / 100000000).toFixed(4));
+            data5.push((arr[5] / 100000000).toFixed(4));
           });
           this.option.legend = {
             show: true,
@@ -432,9 +454,24 @@ export default {
 .box {
   width: 100%;
   height: 100%;
+  .turnover {
+    padding: 0 0 8px;
+    span {
+      font-weight: bold;
+      margin-right: 10px;
+      margin-left: -5px;
+    }
+    .up {
+      color: #f56c6c;
+    }
+
+    .down {
+      color: #4eb61b;
+    }
+  }
 }
 .main-echarts {
   width: 100%;
-  height: 260px;
+  height: 240px;
 }
 </style>

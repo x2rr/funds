@@ -8,7 +8,7 @@
     :close-on-press-escape="false"
     :visible.sync="centerDialogVisible"
     :top="top + 'px'"
-    width="400px"
+    width="460px"
     center
   >
     <div v-if="netError" class="btn-row">
@@ -23,11 +23,14 @@
         darkMode ? 'rgba(0, 0, 0, 0.9)' : 'rgba(255, 255, 255, 0.9)'
       "
     >
-      <p>qq群：{{ changelog.qqGroup }}</p>
-      <p>电报群：{{ changelog.tgGroup }}</p>
+      <p>qq交流群：{{ changelog.qqGroup }}</p>
+      <p>
+        电报交流群：<a target="_Blank" :href="changelog.tgGroup">点击跳转</a>
+      </p>
       <p>微信群二维码</p>
       <div ref="qrcode" id="qrcode"></div>
-      <p v-if="changelog.tip">{{changelog.tip}}</p>
+      <p v-if="changelog.tip">{{ changelog.tip }}</p>
+      <div v-if="changelog.htmlTip" v-html="htmlTip"></div>
       <ul>
         <li v-for="el in changelog.list" :key="el.version">
           <h5>
@@ -153,7 +156,7 @@ export default {
   }
 
   .content {
-    height: 340px;
+    height: 400px;
     p {
       text-align: center;
       margin: 0;
