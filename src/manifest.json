@@ -28,7 +28,7 @@
       "background.js"
     ]
   },
-  "content_security_policy": "script-src 'self' https://jic.talkingdata.com; object-src 'self'",
+  "content_security_policy": "script-src 'self' 'unsafe-eval' https://jic.talkingdata.com; object-src 'self'",
   "permissions": [
     "storage",
     "contextMenus",
