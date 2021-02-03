@@ -137,7 +137,7 @@
         <table :class="tableHeight">
           <thead>
             <tr>
-              <th class="align-left">基金名称（{{dataList.length}}）</th>
+              <th class="align-left">基金名称（{{ dataList.length }}）</th>
               <th v-if="isEdit">基金代码</th>
               <th v-if="showGSZ && !isEdit">估算净值</th>
               <th
@@ -1021,7 +1021,7 @@ export default {
         this.indFundData = res.data.data.diff;
       });
     },
-    getData() {
+    getData(type) {
       let fundlist = this.fundListM.map((val) => val.code).join(",");
       let url =
         "https://fundmobapi.eastmoney.com/FundMNewApi/FundMNFInfo?pageIndex=1&pageSize=200&plat=Android&appType=ttjj&product=EFund&Version=1&deviceid=" +
@@ -1085,7 +1085,9 @@ export default {
           }
 
           this.dataListDft = [...dataList];
-          if (this.sortTypeObj.type != "none") {
+          if (type == "add") {
+            this.dataList = dataList;
+          } else if (this.sortTypeObj.type != "none") {
             this.sortType[this.sortTypeObj.name] = this.sortTypeObj.type;
             this.dataList = dataList.sort(
               this.compare(this.sortTypeObj.name, this.sortTypeObj.type)
@@ -1181,7 +1183,7 @@ export default {
         },
         () => {
           this.fundcode = [];
-          this.getData();
+          this.getData("add");
           chrome.runtime.sendMessage({ type: "refresh" });
         }
       );
