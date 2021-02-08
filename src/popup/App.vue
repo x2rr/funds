@@ -206,7 +206,7 @@
                 :title="el.name"
                 @click.stop="!isEdit && fundDetail(el)"
               >
-                {{ el.name }}
+                <span class="hasReplace-tip" v-if="el.hasReplace">✔</span>{{ el.name }}
               </td>
               <td v-if="isEdit">{{ el.fundcode }}</td>
               <td v-if="showGSZ && !isEdit">{{ el.gsz }}</td>
@@ -250,9 +250,9 @@
               </td>
               <td v-if="!isEdit">
                 {{
-                  el.hasReplace ? el.gztime.substr(5, 5) : el.gztime.substr(5)
+                  el.hasReplace ? el.gztime.substr(5, 5) : el.gztime.substr(10)
                 }}
-                <span class="hasReplace-tip" v-if="el.hasReplace">✔</span>
+                
               </td>
               <th
                 style="text-align:center"
@@ -1438,7 +1438,7 @@ export default {
 .hasReplace-tip {
   display: inline-block;
   padding: 0 2px;
-  margin-left: 2px;
+  margin-right: 2px;
   border-radius: 2px;
   line-height: 12px;
   color: #409eff;

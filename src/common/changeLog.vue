@@ -27,8 +27,19 @@
       <p>
         电报交流群：<a target="_Blank" :href="changelog.tgGroup">点击跳转</a>
       </p>
-      <p>微信群二维码</p>
-      <div ref="qrcode" id="qrcode"></div>
+      <div class="qrcode-row">
+        <div class="qrcode-list">
+          <p>微信群二维码</p>
+          <div ref="qrcode" id="qrcode"></div>
+        </div>
+        <div class="qrcode-list">
+          <p>小程序二维码</p>
+          <div class="mpcode">
+            <img :src="'./../icons/qrcode/mp.jpg'" />
+          </div>
+        </div>
+      </div>
+
       <p v-if="changelog.tip">{{ changelog.tip }}</p>
       <div v-if="changelog.htmlTip" v-html="changelog.htmlTip"></div>
       <ul>
@@ -151,8 +162,30 @@ export default {
     width: 160px;
     height: 160px;
     padding: 6px;
-    margin: 0 auto;
     background-color: #fff;
+  }
+  .qrcode-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    .qrcode-list {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 10px;
+      p {
+        padding-bottom: 5px;
+      }
+    }
+    .mpcode {
+      width: 172px;
+      height: 172px;
+      img {
+        width: 172px;
+        height: 172px;
+      }
+    }
   }
 
   .content {
