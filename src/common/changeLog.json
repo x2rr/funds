@@ -1,10 +1,20 @@
 {
-    "qrcode": "https://weixin.qq.com/g/AQYAAKRfEJgTge2_JoNJMyV1sQeLEsiOoEv5L0knYKMZ166ZLqZEHikXYk_Smx9N",
+    "qrcode": "https://weixin.qq.com/g/AQYAAFsNfTayNzcy7nMNgaBmg8jeYSFcsi7mIo0rQKkR8MEAg-_cuJslrOOVRzXP",
     "tgGroup": "https://t.me/choose_funds_chat",
     "qqGroup": "951222618",
     "tip": null,
-    "htmlTip": "<div>本插件是一个开源项目，您的支持是我开发的动力，期待5星好评！</div>去商店评价→ <a target='_Blank' href='https://chrome.google.com/webstore/detail/dhdelcemeednchdmijiocipbjlknndff'>chrome商店</a>&nbsp;&nbsp;&nbsp;&nbsp;<a target='_Blank' href='https://microsoftedge.microsoft.com/addons/detail/kophadiajpobbfoobhclbobddkoindoi'>Microsoft Edge商店</a>&nbsp;&nbsp;&nbsp;&nbsp;<a target='_Blank' href='https://addons.mozilla.org/zh-CN/firefox/addon/choose-funds/'>Firefox商店</a>",
+    "htmlTip": "<div>插件小程序版“韭菜计算助手”已上线，欢迎使用！</div><div>本插件是一个开源项目，您的支持是我开发的动力，期待5星好评！</div>去商店评价→ <a target='_Blank' href='https://chrome.google.com/webstore/detail/dhdelcemeednchdmijiocipbjlknndff'>chrome商店</a>&nbsp;&nbsp;&nbsp;&nbsp;<a target='_Blank' href='https://microsoftedge.microsoft.com/addons/detail/kophadiajpobbfoobhclbobddkoindoi'>Microsoft Edge商店</a>&nbsp;&nbsp;&nbsp;&nbsp;<a target='_Blank' href='https://addons.mozilla.org/zh-CN/firefox/addon/choose-funds/'>Firefox商店</a>",
     "list": [{
+            "version": "2.5.2",
+            "type": 1,
+            "content": [{
+                "type": 1,
+                "content": "新增配套微信小程序‘韭菜计算助手’,欢迎使用。"
+            },{
+                "type": 1,
+                "content": "调整更新净值显示布局。"
+            }]
+        }, {
             "version": "2.5.1",
             "type": 1,
             "content": [{
