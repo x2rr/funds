@@ -41,6 +41,10 @@
 
 插件已上架火狐Firefox扩展商店：[点击跳转至火狐Firefox扩展商店](https://addons.mozilla.org/zh-CN/firefox/addon/choose-funds/)
 
+插件推出小程序版‘韭菜计算助手’欢迎使用！
+
+![小程序](https://gitee.com/rabt/Picture/raw/master/img/mp.jpg)
+
 ![主界面1](https://gitee.com/rabt/Picture/raw/master/img/20200717165330.png)
 
 ![主界面2](https://gitee.com/rabt/Picture/raw/master/img/20200916120011.png)
