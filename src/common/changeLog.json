@@ -5,12 +5,31 @@
     "tip": null,
     "htmlTip": "<div>插件小程序版“韭菜计算助手”已上线，欢迎使用！</div><div>本插件是一个开源项目，您的支持是我开发的动力，期待5星好评！</div>去商店评价→ <a target='_Blank' href='https://chrome.google.com/webstore/detail/dhdelcemeednchdmijiocipbjlknndff'>chrome商店</a>&nbsp;&nbsp;&nbsp;&nbsp;<a target='_Blank' href='https://microsoftedge.microsoft.com/addons/detail/kophadiajpobbfoobhclbobddkoindoi'>Microsoft Edge商店</a>&nbsp;&nbsp;&nbsp;&nbsp;<a target='_Blank' href='https://addons.mozilla.org/zh-CN/firefox/addon/choose-funds/'>Firefox商店</a>",
     "list": [{
+            "version": "3.0.0",
+            "type": 2,
+            "content": [{
+                "type": 2,
+                "content": "支持账号登录功能，方便跨平台同步（对应的增加了阿里云bspapp.com访问权限）。"
+            }, {
+                "type": 2,
+                "content": "支持手动加仓减仓功能。"
+            }, {
+                "type": 2,
+                "content": "编辑基金信息时支持份额金额二选一输入。"
+            }, {
+                "type": 1,
+                "content": "修复基金累计收益曲线异常问题、基金持有收益率计算问题。"
+            }, {
+                "type": 1,
+                "content": "其他问题修复与优化。"
+            }]
+        }, {
             "version": "2.5.2",
             "type": 1,
             "content": [{
                 "type": 1,
                 "content": "新增配套微信小程序‘韭菜计算助手’,欢迎使用。"
-            },{
+            }, {
                 "type": 1,
                 "content": "调整更新净值显示布局。"
             }]
