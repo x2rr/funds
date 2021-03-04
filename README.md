@@ -41,7 +41,7 @@
 
 插件已上架Microsoft Edge扩展商店：[点击跳转至Microsoft Edge扩展商店](https://microsoftedge.microsoft.com/addons/detail/kophadiajpobbfoobhclbobddkoindoi)
 
-插件已上架火狐Firefox扩展商店：[点击跳转至火狐Firefox扩展商店](https://addons.mozilla.org/zh-CN/firefox/addon/choose-funds/)
+插件已上架火狐Firefox扩展商店：[点击跳转至火狐Firefox扩展商店](https://addons.mozilla.org/zh-CN/firefox/addon/funds/)
 
 插件推出小程序版‘韭菜计算助手’欢迎使用！
 
