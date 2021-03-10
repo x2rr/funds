@@ -647,7 +647,10 @@ export default {
         allNum += parseFloat(val.amount);
       });
       allCostGains = allCostGains.toFixed(2);
-      let allCostGainsRate = ((allCostGains * 100) / allNum).toFixed(2);
+      let allCostGainsRate = (
+        (allCostGains * 100) /
+        (allNum - allCostGains)
+      ).toFixed(2);
       return [allCostGains, allCostGainsRate];
     },
     containerClass() {

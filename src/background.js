@@ -233,7 +233,7 @@ var setBadge = (fundcode, Realtime, type) => {
               sum = (NAV - NAV / (1 + NAVCHGRT * 0.01)) * num
             } else {
               let gsz = isNaN(val.GSZ) ? null : val.GSZ
-              if (gsz) {
+              if (gsz && NAV) {
                 sum = (gsz - NAV) * num
               }
             }
@@ -415,14 +415,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         (item) => item.code == val.FCODE
       );
       let num = slt[0].num ? slt[0].num : 0;
-      allAmount += val.NAV * num;
+      let NAV = isNaN(val.NAV) ? null : val.NAV;
+      allAmount += NAV * num;
       var sum = 0;
       if (val.PDATE != "--" && val.PDATE == val.GZTIME.substr(0, 10)) {
-        sum = (val.NAV - val.NAV / (1 + val.NAVCHGRT * 0.01)) * num
+        let NAVCHGRT = isNaN(val.NAVCHGRT) ? 0 : val.NAVCHGRT;
+        sum = (NAV - NAV / (1 + NAVCHGRT * 0.01)) * num
       } else {
         let gsz = isNaN(val.GSZ) ? null : val.GSZ;
-        if (gsz) {
-          sum = (gsz - val.NAV) * num;
+        if (gsz != null && NAV != null) {
+          sum = (gsz - NAV) * num;
         }
 
       }
