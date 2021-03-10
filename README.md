@@ -6,9 +6,9 @@
 
 ## 介绍
 
-买了基金后，一直想找一款pc端的chrome扩展插件，毕竟股票的交易时间都是在工作日进行的，可惜找不到，便打算自己写一个，忍痛花费5美刀上架扩展商店。扩展的形式很适合上班族，不用打开网站，仅以小窗口的形式展示，不会引起BOSS的注意，方便上班摸鱼。
+买了基金后，一直想找一款 pc 端的 chrome 扩展插件，毕竟股票的交易时间都是在工作日进行的，可惜找不到，便打算自己写一个，忍痛花费 5 美刀上架扩展商店。扩展的形式很适合上班族，不用打开网站，仅以小窗口的形式展示，不会引起 BOSS 的注意，方便上班摸鱼。
 
-首先输入基金代码添加基金，将基金添加特别关注后，可以以角标的形式展示在浏览器中，更加简便直观。可以在设置中单独开启显示份额与收益选项，在编辑中输入持有的份额，可以计算出每个基金的实时估值与收益，以及总收益。
+首先输入基金代码添加基金，涨跌幅信息和收益信息可以以角标的形式展示在浏览器中，更加简便直观。可以在设置中单独开启显示份额与收益选项，在编辑中输入持有的份额，可以计算出每个基金的实时估值与收益，以及总收益。
 
 ## 主要功能
 
@@ -35,13 +35,13 @@
 
 ## 如何使用
 
-**强烈推荐使用 Chrome 商店安装**（这样才能获得自动更新）：[点击跳转至Chrome扩展商店](https://chrome.google.com/webstore/detail/dhdelcemeednchdmijiocipbjlknndff)
+**强烈推荐使用 Chrome 商店安装**（这样才能获得自动更新）：[点击跳转至 Chrome 扩展商店](https://chrome.google.com/webstore/detail/dhdelcemeednchdmijiocipbjlknndff)
 
-若因网络问题，可以下载CRX文件手动安装（非常不建议）：[下载地址1](https://github.com/x2rr/funds/releases)　　[下载地址2](https://gitee.com/rabt/funds/releases)
+若因网络问题，可以下载 CRX 文件手动安装（无法自动更新最新版）：[下载地址 1](https://github.com/x2rr/funds/releases)　[下载地址 2](https://gitee.com/rabt/funds/releases)
 
-插件已上架Microsoft Edge扩展商店：[点击跳转至Microsoft Edge扩展商店](https://microsoftedge.microsoft.com/addons/detail/kophadiajpobbfoobhclbobddkoindoi)
+插件已上架 Microsoft Edge 扩展商店：[点击跳转至 Microsoft Edge 扩展商店](https://microsoftedge.microsoft.com/addons/detail/kophadiajpobbfoobhclbobddkoindoi)
 
-插件已上架火狐Firefox扩展商店：[点击跳转至火狐Firefox扩展商店](https://addons.mozilla.org/zh-CN/firefox/addon/funds/)
+插件已上架火狐 Firefox 扩展商店：[点击跳转至火狐 Firefox 扩展商店](https://addons.mozilla.org/zh-CN/firefox/addon/funds/)
 
 插件推出小程序版‘韭菜计算助手’欢迎使用！
 
@@ -57,6 +57,26 @@
 
 ![主界面5](https://gitee.com/rabt/Picture/raw/master/img/20200907111226.png)
 
+## 框架介绍
+
+基于[Vue](https://github.com/vuejs/vue) + [Webpack](https://github.com/webpack/webpack)构建的 vue 项目，使用了[vue-web-extension](https://github.com/Kocal/vue-web-extension/tree/v1)模板快速构建Chrome扩展项目，用到了[Element UI](https://github.com/ElemeFE/element)样式库与[ECharts](https://github.com/apache/echarts)图表库。
+
+## 运行调试开发
+
+需要 node 环境，先执行
+`npm i`
+安装依赖
+
+调试模式执行
+`npm run watch:dev`
+生成 dist 文件夹，浏览器选择“加载已解压的扩展程序”
+
+打包与发布先执行
+`npm run build`
+生成 dist 文件夹，再执行
+`npm run build-zip`
+通过从 manifest.json 文件中读取 name 和 version 字段,构建{name}-v{version}.zip 这种格式的压缩文件。
+
 ## 更新说明
 
 ### v3.0.3
@@ -70,7 +90,7 @@
 
 ### v3.0.0
 
-- 支持账号登录功能，方便跨平台同步（对应的增加了阿里云bspapp.com访问权限）。
+- 支持账号登录功能，方便跨平台同步（对应的增加了阿里云 bspapp.com 访问权限）。
 - 支持手动加仓减仓功能。
 - 编辑基金信息时支持份额金额二选一输入。
 - 修复基金累计收益曲线异常问题、基金持有收益率计算问题。
@@ -78,11 +98,11 @@
 
 ### v2.5.1
 
-- 修复基金信息的Excel导入导出功能。
+- 修复基金信息的 Excel 导入导出功能。
 
 ### v2.5.0
 
-- 支持基金信息的Excel导入导出功能。
+- 支持基金信息的 Excel 导入导出功能。
 - 支持锁定并保持基金的排序方式。
 - 行情中心支持查看当日交易额与涨跌数量信息。
 - 问题修复与优化。
@@ -139,7 +159,7 @@
 
 ### v2.0.9
 
-- 修复角标金额上k时颜色异常问题。
+- 修复角标金额上 k 时颜色异常问题。
 - 修复导入配置后角标未更新的问题。
 
 ### v2.0.8
@@ -161,21 +181,21 @@
 
 ### v2.0.4
 
-- 修复角标NAN问题。
+- 修复角标 NAN 问题。
 - 修复更新日志无法关闭问题。
 
 ### v2.0.3
 
-- 修复一系列bug,优化代码。
+- 修复一系列 bug,优化代码。
 - 添加交流群，欢迎交流与反馈。
 
 ### v2.0.2
 
-- 修复个别基金数据异常的bug。
+- 修复个别基金数据异常的 bug。
 
 ### v2.0.0
 
-- 调整基金接口，支持当日实际净值，已更新的基金会有√提示。
+- 调整基金接口，支持当日实际净值，已更新的基金会有 √ 提示。
 - 角标支持自定义功能，单个、全部、收益率、收益额，随心所欲。
 - 支持查看历史更新日志功能。
 
@@ -183,12 +203,12 @@
 
 - 新增查看基金详情功能，点击基金名称即可查看估值图、走势图等相关信息。
 - 新增基金配置信息的导入导出功能。
-- 修复页面布局中的bug。
+- 修复页面布局中的 bug。
 
 ### v1.7.1
 
 - 新增查看持有收益功能，添加持仓成本后，可以统计持仓总收益。
-- 修复设置页面中的bug。
+- 修复设置页面中的 bug。
 
 ### v1.7.0
 
@@ -210,14 +230,14 @@
 
 ### v1.5.5
 
-- 改个名字，φ(>ω<*) 听说名字越长越厉害。
+- 改个名字，φ(>ω<\*) 听说名字越长越厉害。
 - 优化滚动条效果，调整页面布局。
 - 优化基金名称过长时的显示效果。
 
 ### v1.5.4
 
 - 有小伙伴反馈找不到设置入口，现在主页面增加设置入口，主页面布局调整。
-- 设置页增加源码入口，感兴趣的小伙伴可以帮忙点个star。
+- 设置页增加源码入口，感兴趣的小伙伴可以帮忙点个 star。
 
 ### v1.5.3
 
@@ -245,7 +265,7 @@
 
 ### v1.4.2
 
-- 修复休市中角标颜色异常的bug。
+- 修复休市中角标颜色异常的 bug。
 
 ### v1.4.1
 
