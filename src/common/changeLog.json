@@ -11,7 +11,7 @@
             "content": [
                 {
                     "type": 2,
-                    "content": "升级插件至Manifest V3版本。"
+                    "content": "升级插件至Manifest V3版本，提高安全性、性能、隐私。权限与API有变更，需重新授权。"
                 },{
                     "type": 2,
                     "content": "优化网络请求速度。"
