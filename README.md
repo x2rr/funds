@@ -292,5 +292,3 @@
 
 [点击跳转](https://x2rr.github.io/funds/privacy.html)  
 
-
-[![Powered by DartNode]( https://dartnode.com/branding/DN-Open-Source-sm.png)]( https://dartnode.com "Powered by DartNode - Free VPS for Open Source")
