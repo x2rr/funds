@@ -37,7 +37,7 @@
 
 **强烈推荐使用 Chrome 商店安装**（这样才能获得自动更新）：[点击跳转至 Chrome 扩展商店](https://chrome.google.com/webstore/detail/dhdelcemeednchdmijiocipbjlknndff)
 
-若因网络问题，可以下载 CRX 文件手动安装（无法自动更新最新版）：[下载地址 1](https://github.com/x2rr/funds/releases)　[下载地址 2](https://gitee.com/rabt/funds/releases)
+若因网络问题，可以下载 CRX 文件手动安装（无法自动更新最新版）：[下载地址 1](https://github.com/x2rr/funds/releases)　[下载地址 2](https://github.com/x2rr/funds/releases)
 
 插件已上架 Microsoft Edge 扩展商店：[点击跳转至 Microsoft Edge 扩展商店](https://microsoftedge.microsoft.com/addons/detail/kophadiajpobbfoobhclbobddkoindoi)
 
@@ -45,17 +45,17 @@
 
 插件推出小程序版‘韭菜计算助手’欢迎使用！
 
-![小程序](https://gitee.com/rabt/Picture/raw/master/img/mp.jpg)
+![小程序](https://github.com/x2rr/Picture/raw/master/img/mp.jpg)
 
-![主界面1](https://gitee.com/rabt/Picture/raw/master/img/20200717165330.png)
+![主界面1](https://github.com/x2rr/Picture/raw/master/img/20200717165330.png)
 
-![主界面2](https://gitee.com/rabt/Picture/raw/master/img/20200916120011.png)
+![主界面2](https://github.com/x2rr/Picture/raw/master/img/20200916120011.png)
 
-![主界面3](https://gitee.com/rabt/Picture/raw/master/img/20200916120012.png)
+![主界面3](https://github.com/x2rr/Picture/raw/master/img/20200916120012.png)
 
-![主界面4](https://gitee.com/rabt/Picture/raw/master/img/20200907111218.png)
+![主界面4](https://github.com/x2rr/Picture/raw/master/img/20200907111218.png)
 
-![主界面5](https://gitee.com/rabt/Picture/raw/master/img/20200907111226.png)
+![主界面5](https://github.com/x2rr/Picture/raw/master/img/20200907111226.png)
 
 ## 框架介绍
 
