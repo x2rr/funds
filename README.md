@@ -56,7 +56,7 @@
 ```
 4. 将AI返回的json文本复制回软件的设置-导入导出文本-导入(JSON文本)中，点击提交即可完成批量添加基金。
 
-![截图识别导入功能](https://github.com/x2rr/Picture/raw/master/img/ai_screenshot_import.jpg)
+![截图识别导入功能](https://github.com/x2rr/Picture/raw/master/img/ai_screenshot_import.png)
 
 ## 如何使用
 
