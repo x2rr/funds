@@ -33,6 +33,18 @@
 - 添加基金时支持按拼音、汉字、编码模糊搜索，支持批量添加
 - 行情中心展示，两市资金、行业板块、北向资金、南向资金
 
+## 截图识别导入功能推荐：
+1. 在设置-导入导出文本-导出(JSON文本)，复制配置文本到剪贴板。  
+2. 打开任意支持图片识别的AI大模型(截图是DeepSeek)，发送以下文本与截图：  
+
+```
+帮我提取图片列表中的基金代码，合并到fundListM数组中，如果是原数组没有的新基金，则新基金其他字段默认为0，然后去重后返回导入后的json：
+(这里粘贴配置文本)
+```
+3. 将AI返回的json文本复制回软件的设置-导入导出文本-导入(JSON文本)中，点击提交即可完成批量添加基金。
+
+![截图识别导入功能](https://github.com/x2rr/Picture/raw/master/img/ai_screenshot_import.jpg)
+
 ## 如何使用
 
 **强烈推荐使用 Chrome 商店安装**（这样才能获得自动更新）：[点击跳转至 Chrome 扩展商店](https://chrome.google.com/webstore/detail/dhdelcemeednchdmijiocipbjlknndff)
