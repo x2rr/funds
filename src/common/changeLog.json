@@ -6,6 +6,21 @@
     "htmlTip": "<div>插件小程序版“韭菜计算助手”已上线，欢迎使用！</div><div>本插件是一个开源项目，您的支持是我开发的动力，期待5星好评！</div>去商店评价→ <a target='_Blank' href='https://chrome.google.com/webstore/detail/dhdelcemeednchdmijiocipbjlknndff'>chrome商店</a>&nbsp;&nbsp;&nbsp;&nbsp;<a target='_Blank' href='https://microsoftedge.microsoft.com/addons/detail/kophadiajpobbfoobhclbobddkoindoi'>Microsoft Edge商店</a>",
     "list": [
         {
+            "version": "3.3.0",
+            "type": 2,
+            "content": [
+                {
+                    "type": 2,
+                    "content": "增加分组功能。"
+                },{
+                    "type": 2,
+                    "content": "增加更多指数，增加最大可展示指数数量。"
+                },{
+                    "type": 1,
+                    "content": "增加总金额展示。"
+                }
+            ]
+        },{
             "version": "3.2.3",
             "type": 1,
             "content": [
