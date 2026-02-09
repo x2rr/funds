@@ -26,6 +26,7 @@
 - 支持查看估值走势图，净值、收益等走势图
 - 支持支持查看基金的股票持仓明细
 - 支持查看基金基本信息与基金经理信息
+- 支持基金分组功能
 - 自定义顶部指数内容
 - 自定义基金列表展示内容
 - 指数与基金拖拽排序功能
@@ -38,27 +39,20 @@
 2. 打开任意支持图片识别的AI大模型(截图是DeepSeek)，发送以下文本与包含”基金代码“的截图：  
 
 ```
-帮我提取图片列表中的基金代码，合并到fundListM数组中，如果是原数组没有的新基金，则新基金其他字段默认为0，然后去重后返回导入后的json：
+帮我提取图片列表中的基金代码code，并在fundListGroup数组中，添加新分组{"funds": [],"name": "分组名称"}，funds子元素格式：{"code": "","cost": "0","num": "0"}，然后返回提取后的json。
+以下是原有json数据：
 (这里粘贴配置文本)
 ```
-
 3. 进阶：如果截图内同时包含”基金代码“和“持有份额”和“持有成本”，可完美导入：  
 
 ```
-帮我提取图片列表中的基金代码，合并到fundListM数组中。要求：
-1.基金代码作为唯一标识去重
-2.如果代码重复，优先使用图片中的数据（覆盖原有数据）
-3.如果图片中没有该基金，则保留原有基金数据
-4."基金代码"对应code字段，"持有份额"对应num字段，"持有成本"对应cost字段
-然后返回导入后的json。
+帮我提取图片列表中的基金代码，并在fundListGroup数组中，添加新分组{"funds": [],"name": "分组名称"}，funds子元素格式：{"code": "","cost": "0","num": "0"}。"基金代码"对应code字段，"持有份额"对应num字段，"持有成本"对应cost字段。
+然后返回提取后的json。
 以下是原有json数据：
 (这里粘贴配置文本)
 ```
 4. 将AI返回的json文本复制回软件的设置-导入导出文本-导入(JSON文本)中，点击提交即可完成批量添加基金。
 
-<img src="https://github.com/x2rr/Picture/raw/master/img/ai_screenshot_import.png"
-     alt="截图识别导入功能"
-     style="width:450px;max-width:80%">
 
 ## 如何使用
 
@@ -68,7 +62,7 @@
 
 插件已上架 Microsoft Edge 扩展商店：[点击跳转至 Microsoft Edge 扩展商店](https://microsoftedge.microsoft.com/addons/detail/kophadiajpobbfoobhclbobddkoindoi)
 
-插件已上架火狐 Firefox 扩展商店：[点击跳转至火狐 Firefox 扩展商店](https://addons.mozilla.org/zh-CN/firefox/addon/funds/)
+Firefox 扩展商店暂已下架 ~~插件已上架火狐 Firefox 扩展商店：[点击跳转至火狐 Firefox 扩展商店](https://addons.mozilla.org/zh-CN/firefox/addon/funds/)~~
 
 插件推出小程序版‘韭菜计算助手’欢迎使用！
 
@@ -106,12 +100,20 @@
 
 ## 更新说明
 
+### v3.3.1
+
+- 修复暗色模式样式问题。
+  
 ### v3.3.0
 
 - 增加分组功能。
 - 增加更多指数。
 - 增加最大可展示指数数量。
 - 增加总金额展示。
+
+<details>
+<summary>点击这里展开/折叠历史更新说明</summary>
+
 ### v3.0.3
 
 - 优化加仓功能的计算方式。
@@ -320,6 +322,18 @@
 ### v1.2.0
 
 - 修复个别基金数据无法正常获取的问题；
+
+</details>
+
+## Star History
+
+<a href="https://www.star-history.com/#x2rr/funds&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=x2rr/funds&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=x2rr/funds&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=x2rr/funds&type=date&legend=top-left" />
+ </picture>
+</a>
 
 ## 隐私协议
 
