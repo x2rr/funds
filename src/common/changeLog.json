@@ -6,21 +6,34 @@
     "htmlTip": "<div>插件小程序版“韭菜计算助手”已上线，欢迎使用！</div><div>本插件是一个开源项目，您的支持是我开发的动力，期待5星好评！</div>去商店评价→ <a target='_Blank' href='https://chrome.google.com/webstore/detail/dhdelcemeednchdmijiocipbjlknndff'>chrome商店</a>&nbsp;&nbsp;&nbsp;&nbsp;<a target='_Blank' href='https://microsoftedge.microsoft.com/addons/detail/kophadiajpobbfoobhclbobddkoindoi'>Microsoft Edge商店</a>",
     "list": [
         {
+            "version": "3.3.1",
+            "type": 1,
+            "content": [
+                {
+                    "type": 1,
+                    "content": "修复暗色模式样式问题。"
+                }
+            ]
+        },
+        {
             "version": "3.3.0",
             "type": 2,
             "content": [
                 {
                     "type": 2,
                     "content": "增加分组功能。"
-                },{
+                },
+                {
                     "type": 2,
                     "content": "增加更多指数，增加最大可展示指数数量。"
-                },{
+                },
+                {
                     "type": 1,
                     "content": "增加总金额展示。"
                 }
             ]
-        },{
+        },
+        {
             "version": "3.2.3",
             "type": 1,
             "content": [
@@ -29,7 +42,8 @@
                     "content": "优化代码，精简无关权限。"
                 }
             ]
-        },{
+        },
+        {
             "version": "3.2.2",
             "type": 1,
             "content": [
@@ -38,29 +52,34 @@
                     "content": "优化代码，精简无关权限与功能。"
                 }
             ]
-        },{
+        },
+        {
             "version": "3.2.1",
             "type": 2,
             "content": [
                 {
                     "type": 2,
                     "content": "升级插件至Manifest V3版本，提高安全性、性能、隐私。权限与API有变更，需重新授权。"
-                },{
+                },
+                {
                     "type": 2,
                     "content": "优化网络请求速度。"
-                },{
+                },
+                {
                     "type": 1,
                     "content": "修复使用Manifest V3后页面空白问题。"
                 }
             ]
-        },{
+        },
+        {
             "version": "3.2.0",
             "type": 2,
             "content": [
                 {
                     "type": 2,
                     "content": "升级插件至Manifest V3版本。"
-                },{
+                },
+                {
                     "type": 2,
                     "content": "优化网络请求速度。"
                 }
@@ -75,7 +94,8 @@
                     "content": "修复持有QDII基金导致的异常问题。"
                 }
             ]
-        },{
+        },
+        {
             "version": "3.1.1",
             "type": 1,
             "content": [
