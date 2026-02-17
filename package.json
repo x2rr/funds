@@ -24,7 +24,7 @@
     "qrcodejs2": "0.0.2",
     "vue": "^2.6.10",
     "vue-clipboard2": "^0.3.1",
-    "xlsx": "^0.16.9"
+    "xlsx": "^0.17.0"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
