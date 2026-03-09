@@ -6,6 +6,34 @@
     "htmlTip": "<div>插件小程序版“韭菜计算助手”已上线，欢迎使用！</div><div>本插件是一个开源项目，您的支持是我开发的动力，期待5星好评！</div>去商店评价→ <a target='_Blank' href='https://chrome.google.com/webstore/detail/dhdelcemeednchdmijiocipbjlknndff'>chrome商店</a>&nbsp;&nbsp;&nbsp;&nbsp;<a target='_Blank' href='https://microsoftedge.microsoft.com/addons/detail/kophadiajpobbfoobhclbobddkoindoi'>Microsoft Edge商店</a>",
     "list": [
         {
+            "version": "3.3.4",
+            "type": 1,
+            "content": [
+                {
+                    "type": 1,
+                    "content": "优化日收益计算方式。"
+                }
+            ]
+        },
+        {
+            "version": "3.3.3",
+            "type": 1,
+            "content": [
+                {
+                    "type": 1,
+                    "content": "修复休市后角标数值错误问题。"
+                },
+                {
+                    "type": 1,
+                    "content": "角标收益支持全部分组选项。"
+                },
+                {
+                    "type": 1,
+                    "content": "优化代码，精简无关权限。"
+                }
+            ]
+        },
+        {
             "version": "3.3.2",
             "type": 1,
             "content": [
