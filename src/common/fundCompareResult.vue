@@ -8,6 +8,7 @@
             <div class="time-range-selector">
               <span class="label">选择对比周期：</span>
               <el-radio-group v-model="selectedPeriod" @change="changePeriod">
+                <el-radio-button label="week">近一周</el-radio-button>
                 <el-radio-button label="month">近一月</el-radio-button>
                 <el-radio-button label="3month">近三月</el-radio-button>
                 <el-radio-button label="year">近一年</el-radio-button>
@@ -146,6 +147,7 @@
             <div class="time-range-selector">
               <span class="label">选择对比周期：</span>
               <el-radio-group v-model="selectedPeriod" @change="changePeriod">
+                <el-radio-button label="week">近一周</el-radio-button>
                 <el-radio-button label="month">近一月</el-radio-button>
                 <el-radio-button label="3month">近三月</el-radio-button>
                 <el-radio-button label="year">近一年</el-radio-button>
@@ -199,12 +201,14 @@ export default {
       myChart: null,
       hasMissingData: false,
       periodLabels: {
+        week: "近一周",
         month: "近一月",
         "3month": "近三月",
         year: "近一年",
         "3year": "近三年",
       },
       periodMap: {
+        week: "y",
         month: "y",
         "3month": "3y",
         year: "n",
@@ -322,10 +326,16 @@ export default {
         const range = this.periodMap[this.selectedPeriod];
         let url = `https://fundmobapi.eastmoney.com/FundMApi/FundYieldDiagramNew.ashx?FCODE=${fundcode}&RANGE=${range}&deviceid=Wap&plat=Wap&product=EFund&version=2.0.0&_=${new Date().getTime()}`;
         this.$axios.get(url).then((res) => {
-          const dataList = res.data.Datas;
+          let dataList = res.data.Datas;
           if (dataList && dataList.length > 0) {
-            const dates = dataList.map((item) => item.PDATE);
-            const yields = dataList.map((item) => +item.YIELD);
+            let dates = dataList.map((item) => item.PDATE);
+            let yields = dataList.map((item) => +item.YIELD);
+            
+            if (this.selectedPeriod === "week" && dataList.length > 7) {
+              const startIndex = dataList.length - 7;
+              dates = dates.slice(startIndex);
+              yields = yields.slice(startIndex);
+            }
             
             const firstYield = yields[0];
             const lastYield = yields[yields.length - 1];
