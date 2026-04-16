@@ -117,6 +117,7 @@ export default {
       selectedFunds: [],
       newFundCode: [],
       searchOptions: [],
+      allSearchOptions: [],
       loading: false,
     };
   },
@@ -126,6 +127,7 @@ export default {
       this.selectedFunds = [];
       this.newFundCode = [];
       this.searchOptions = [];
+      this.allSearchOptions = [];
     },
     close() {
       this.boxShadow = false;
@@ -162,7 +164,7 @@ export default {
           "&_=" +
           new Date().getTime();
         this.$axios.get(url).then((res) => {
-          this.searchOptions = res.data.Datas.filter((val) => {
+          const filteredOptions = res.data.Datas.filter((val) => {
             let hasCode = this.selectedFunds.some((currentValue) => {
               return currentValue.fundcode == val.CODE;
             });
@@ -172,6 +174,13 @@ export default {
               value: val.CODE,
               label: val.NAME,
             };
+          });
+          this.searchOptions = filteredOptions;
+          filteredOptions.forEach((item) => {
+            const existing = this.allSearchOptions.find((o) => o.value === item.value);
+            if (!existing) {
+              this.allSearchOptions.push(item);
+            }
           });
           this.loading = false;
         });
@@ -186,17 +195,23 @@ export default {
       }
       
       for (const code of this.newFundCode) {
-        const option = this.searchOptions.find((o) => o.value === code);
+        const option = this.allSearchOptions.find((o) => o.value === code);
         if (option) {
-          this.selectedFunds.push({
-            fundcode: code,
-            name: option.label,
-            isNew: true,
-          });
+          const alreadySelected = this.selectedFunds.some((f) => f.fundcode === code);
+          if (!alreadySelected) {
+            this.selectedFunds.push({
+              fundcode: code,
+              name: option.label,
+              isNew: true,
+            });
+          }
         }
       }
       this.newFundCode = [];
       this.searchOptions = [];
+      this.allSearchOptions = this.allSearchOptions.filter((item) => {
+        return !this.selectedFunds.some((f) => f.fundcode === item.value);
+      });
     },
     removeFund(index) {
       this.selectedFunds.splice(index, 1);
