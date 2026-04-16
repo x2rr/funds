@@ -388,6 +388,7 @@
 
     <div class="input-row">
       <input class="btn" type="button" @click="market" value="行情中心" />
+      <input class="btn" type="button" @click="fundCompare" value="基金对比" />
       <input
         class="btn"
         v-if="isDuringDate"
@@ -479,6 +480,20 @@
       ref="changelog"
       :top="30"
     ></change-log>
+    <fund-compare-select
+      @close="closeCompare"
+      @startCompare="startCompare"
+      :darkMode="darkMode"
+      :dataList="dataList"
+      :fundListM="fundListM"
+      ref="fundCompareSelect"
+    ></fund-compare-select>
+    <fund-compare-result
+      @close="closeCompare"
+      :darkMode="darkMode"
+      :selectedFunds="selectedFundsForCompare"
+      ref="fundCompareResult"
+    ></fund-compare-result>
   </div>
 </template>
 
@@ -489,6 +504,8 @@ import indDetail from "../common/indDetail";
 import fundDetail from "../common/fundDetail";
 import changeLog from "../common/changeLog";
 import market from "../common/market";
+import fundCompareSelect from "../common/fundCompareSelect";
+import fundCompareResult from "../common/fundCompareResult";
 //防抖
 let timeout = null;
 function debounce(fn, wait = 700) {
@@ -503,6 +520,8 @@ export default {
     indDetail,
     changeLog,
     market,
+    fundCompareSelect,
+    fundCompareResult,
   },
   data() {
     return {
@@ -613,6 +632,7 @@ export default {
       opacityValue: 0,
       isRefresh: false,
       marketShadow: false,
+      selectedFundsForCompare: [],
     };
   },
   mounted() {
@@ -862,6 +882,19 @@ export default {
     market() {
       this.detailShadow = true;
       this.$refs.marketShadow.init();
+    },
+    fundCompare() {
+      this.detailShadow = true;
+      this.$refs.fundCompareSelect.init();
+    },
+    closeCompare() {
+      this.detailShadow = false;
+    },
+    startCompare(funds) {
+      this.selectedFundsForCompare = [...funds];
+      this.$nextTick(() => {
+        this.$refs.fundCompareResult.init();
+      });
     },
     checkInterval(isFirst) {
       clearInterval(this.myVar);
