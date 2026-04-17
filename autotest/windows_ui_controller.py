@@ -1,13 +1,21 @@
-import time
-import subprocess
 import os
 import sys
+import time
 
 
 class WindowsUIController:
     """
-    使用 pywinauto 控制 Windows 原生 UI
-    用于操作浏览器菜单、扩展图标等
+    Windows UI 控制器 - 用于操作浏览器的原生 UI
+    
+    ⚠️  重要说明：
+    - pywinauto 在 Edge 浏览器的多进程架构下存在限制
+    - Edge、飞书、Trae CN 等应用都使用相同的类名 Chrome_WidgetWin_1
+    - 按钮没有明确的名称（如 "Settings" 或 "Extensions"）
+    
+    推荐方案：
+    1. 使用 Playwright 启动浏览器和加载扩展（已可靠实现）
+    2. 对于扩展弹窗的打开，提供清晰的手动操作指南
+    3. 脚本会等待用户操作并检测扩展弹窗
     """
     
     def __init__(self):
@@ -23,405 +31,279 @@ class WindowsUIController:
             self.send_keys = send_keys
             self.mouse = mouse
             self.pywinauto_available = True
-            print("✓ pywinauto 已加载，可以操作 Windows 原生 UI")
+            print("[OK] pywinauto 已加载")
         except ImportError as e:
-            print(f"✗ pywinauto 未安装: {e}")
+            print(f"[WARNING] pywinauto 未安装: {e}")
             print("  请运行: pip install pywinauto")
             self.pywinauto_available = False
     
     def is_available(self):
         return self.pywinauto_available
     
-    def connect_to_edge(self, process_id=None):
+    def print_manual_instructions(self):
         """
-        连接到 Edge 浏览器窗口
+        打印手动操作指南
+        """
+        print("\n" + "="*60)
+        print("📋 手动操作指南")
+        print("="*60)
+        print("""
+由于浏览器安全限制，无法完全自动化以下操作。
+请手动执行以下步骤：
+
+┌─────────────────────────────────────────────────────────────┐
+│  方法1: 点击扩展图标（推荐）                                  │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  步骤1: 找到浏览器工具栏中的扩展图标                          │
+│         位置：地址栏右侧，收藏夹图标旁边                      │
+│         图标：拼图形状                                        │
+│                                                              │
+│  步骤2: 点击扩展图标                                          │
+│         将弹出已安装的扩展列表                                │
+│                                                              │
+│  步骤3: 在列表中找到并点击：                                  │
+│         "自选基金助手 - 实时查看基金涨跌幅 2.5.2"            │
+│                                                              │
+│  步骤4: 扩展弹窗将打开，测试将自动继续执行                    │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│  方法2: 通过三点菜单（备选）                                  │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  步骤1: 点击浏览器右上角的三个点（设置及其他）                │
+│         位置：浏览器最右上角                                  │
+│                                                              │
+│  步骤2: 在弹出的菜单中找到"扩展"选项                         │
+│         注意："扩展"旁边有箭头，表示有子菜单                  │
+│                                                              │
+│  步骤3: 将鼠标悬停在"扩展"上，将显示子菜单                    │
+│                                                              │
+│  步骤4: 在子菜单中点击：                                      │
+│         "自选基金助手 - 实时查看基金涨跌幅 2.5.2"            │
+│         或者点击"管理扩展"查看所有扩展                        │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+
+⏳ 脚本将等待最多 120 秒，检测扩展弹窗是否打开。
+   检测到后，测试将自动继续执行。
+
+💡 提示：
+- 如果扩展列表中没有显示，请点击"管理扩展"
+- 在扩展管理页面确保"自选基金助手"开关已打开（蓝色）
+- 如果扩展未显示，请检查是否已正确加载
+
+""")
+        print("="*60)
+    
+    def try_open_extension_with_keyboard(self):
+        """
+        尝试使用键盘快捷键打开菜单
+        注意：这是备选方案，可能不完全可靠
         """
         if not self.pywinauto_available:
             return False
         
+        print("\n[尝试] 使用键盘快捷键打开菜单...")
+        print("  注意：这是备选方案，可能不完全可靠")
+        
         try:
-            print("\n正在连接到 Edge 浏览器...")
+            print("  发送 Alt+F 快捷键...")
+            self.send_keys('%{F}')
+            time.sleep(1)
+            print("  [OK] 已发送 Alt+F")
             
+            print("  尝试导航到'扩展'选项...")
+            print("  注意：需要知道'扩展'在菜单中的位置")
+            
+            for i in range(10):
+                self.send_keys('{DOWN}')
+                time.sleep(0.2)
+            
+            print("  [OK] 已导航")
+            print("  提示：如果菜单未正确打开，请使用手动操作")
+            
+            return True
+            
+        except Exception as e:
+            print(f"  [ERROR] 键盘操作失败: {e}")
+            return False
+    
+    def connect_to_browser(self, process_id=None):
+        """
+        尝试连接到浏览器
+        注意：由于 Edge 的多进程架构，这可能不完全可靠
+        """
+        if not self.pywinauto_available:
+            return False
+        
+        print("\n[尝试] 连接到 Edge 浏览器...")
+        print("  注意：由于 Edge 的多进程架构，这可能不完全可靠")
+        
+        try:
             if process_id:
+                print(f"  尝试连接到进程 ID: {process_id}")
                 self.app = self.Application(backend='uia').connect(process=process_id)
             else:
+                print("  尝试通过标题连接...")
                 try:
                     self.app = self.Application(backend='uia').connect(
-                        title_re=".*Microsoft Edge.*",
+                        title_re=".*Edge.*",
                         timeout=10
                     )
                 except Exception:
+                    print("  尝试通过类名连接...")
                     self.app = self.Application(backend='uia').connect(
                         class_name="Chrome_WidgetWin_1",
                         timeout=10
                     )
             
             self.main_window = self.app.top_window()
-            print(f"✓ 已连接到 Edge 浏览器: {self.main_window.window_text()}")
+            print(f"  [OK] 已连接到窗口: {self.main_window.window_text()}")
             return True
             
         except Exception as e:
-            print(f"✗ 连接到 Edge 浏览器失败: {e}")
+            print(f"  [ERROR] 连接失败: {e}")
+            print("  原因：Edge 使用多进程架构，多个应用使用相同类名")
+            print("  建议：使用手动操作")
             return False
     
     def click_settings_button(self):
         """
-        点击浏览器右上角的"设置及其他"按钮（三个点）
-        步骤1: 点击三个点
+        尝试点击设置按钮（三个点）
+        注意：Edge 的按钮没有明确名称，这可能不可靠
         """
         if not self.pywinauto_available or not self.main_window:
             return False
         
-        try:
-            print("\n步骤1: 点击'设置及其他'按钮（三个点）...")
-            
-            settings_btn = None
-            
-            try:
-                settings_btn = self.main_window.child_window(
-                    title="设置及其他",
-                    control_type="Button",
-                    timeout=5
-                )
-            except Exception:
-                pass
-            
-            if not settings_btn:
-                try:
-                    settings_btn = self.main_window.child_window(
-                        title="Settings and more",
-                        control_type="Button",
-                        timeout=5
-                    )
-                except Exception:
-                    pass
-            
-            if not settings_btn:
-                try:
-                    toolbar = self.main_window.child_window(
-                        control_type="ToolBar",
-                        timeout=5
-                    )
-                    buttons = toolbar.children(control_type="Button")
-                    for btn in buttons:
-                        try:
-                            btn_title = btn.window_text()
-                            if "设置" in btn_title or "Settings" in btn_title or "more" in btn_title.lower():
-                                settings_btn = btn
-                                break
-                        except:
-                            continue
-                except Exception:
-                    pass
-            
-            if settings_btn:
-                settings_btn.click_input()
-                print("✓ 已点击'设置及其他'按钮")
-                time.sleep(1)
-                return True
-            else:
-                print("  使用键盘快捷键 Alt+F...")
-                self.send_keys('%{F}')
-                time.sleep(1)
-                return True
-                
-        except Exception as e:
-            print(f"  点击'设置及其他'按钮失败: {e}")
-            print("  尝试使用键盘快捷键 Alt+F...")
-            self.send_keys('%{F}')
-            time.sleep(1)
-            return True
-    
-    def click_extensions_in_menu(self):
-        """
-        在菜单中点击"扩展"选项
-        步骤2: 点击"扩展"
-        """
-        if not self.pywinauto_available:
-            return False
+        print("\n[尝试] 点击设置按钮...")
+        print("  注意：Edge 的按钮没有明确名称，这可能不可靠")
         
         try:
-            print("\n步骤2: 在菜单中点击'扩展'选项...")
+            all_buttons = self.main_window.descendants(control_type="Button")
+            print(f"  找到 {len(all_buttons)} 个按钮")
             
-            time.sleep(0.5)
-            
-            menu_window = None
-            try:
-                menu_windows = self.app.windows(
-                    control_type="Menu",
-                    timeout=2
-                )
-                if menu_windows:
-                    menu_window = menu_windows[0]
-            except Exception:
-                pass
-            
-            if not menu_window:
+            for btn in all_buttons:
                 try:
-                    popup_windows = self.app.windows(
-                        control_type="Window",
-                        timeout=2
-                    )
-                    for win in popup_windows:
-                        try:
-                            win_title = win.window_text()
-                            if not win_title or "菜单" in win_title:
-                                menu_window = win
-                                break
-                        except:
-                            continue
-                except Exception:
-                    pass
-            
-            if menu_window:
-                print(f"  找到菜单窗口: {menu_window.window_text()}")
-                
-                menu_items = menu_window.children(control_type="MenuItem")
-                print(f"  找到 {len(menu_items)} 个菜单项")
-                
-                for item in menu_items:
+                    btn_name = btn.window_text()
+                    btn_automation_id = ""
                     try:
-                        item_text = item.window_text()
-                        print(f"    检查菜单项: '{item_text}'")
-                        
-                        if "扩展" in item_text or "Extensions" in item_text:
-                            print(f"  ✓ 找到'扩展'选项: {item_text}")
-                            item.click_input()
-                            time.sleep(0.5)
-                            return True
-                    except Exception as e:
-                        continue
-                
-                print("  未找到'扩展'选项，尝试使用键盘导航...")
-                self.send_keys('{DOWN}')
-                time.sleep(0.2)
-                self.send_keys('{DOWN}')
-                time.sleep(0.2)
-                self.send_keys('{DOWN}')
-                time.sleep(0.2)
-                self.send_keys('{ENTER}')
-                time.sleep(0.5)
-                return True
-            else:
-                print("  未找到菜单窗口，尝试使用键盘导航...")
-                self._navigate_menu_by_keyboard()
-                return True
-                
-        except Exception as e:
-            print(f"  点击'扩展'选项失败: {e}")
-            print("  尝试使用键盘导航...")
-            self._navigate_menu_by_keyboard()
-            return True
-    
-    def _navigate_menu_by_keyboard(self):
-        """
-        使用键盘导航菜单找到"扩展"选项
-        """
-        print("\n  使用键盘导航菜单...")
-        
-        for i in range(15):
-            try:
-                print(f"    按向下键 {i+1}...")
-                self.send_keys('{DOWN}')
-                time.sleep(0.3)
-                
-                self.send_keys('{RIGHT}')
-                time.sleep(0.3)
-                
-                self.send_keys('{ESC}')
-                time.sleep(0.2)
-                
-            except Exception:
-                continue
-        
-        print("  键盘导航完成")
-    
-    def click_extension_in_list(self, extension_name="自选基金助手"):
-        """
-        在扩展列表中点击目标扩展
-        """
-        if not self.pywinauto_available:
-            return False
-        
-        try:
-            print(f"\n在扩展列表中查找: {extension_name}...")
-            
-            time.sleep(1)
-            
-            popup_windows = self.app.windows(
-                control_type="Window",
-                timeout=2
-            )
-            
-            for win in popup_windows:
-                try:
-                    win_title = win.window_text()
-                    print(f"  检查窗口: {win_title}")
+                        btn_automation_id = btn.element_info.automation_id
+                    except:
+                        pass
                     
-                    list_items = win.children(control_type="ListItem")
-                    print(f"  找到 {len(list_items)} 个列表项")
-                    
-                    for item in list_items:
-                        try:
-                            item_text = item.window_text()
-                            print(f"    检查: '{item_text}'")
-                            
-                            if extension_name in item_text or "自选基金" in item_text:
-                                print(f"  ✓ 找到扩展: {item_text}")
-                                item.click_input()
-                                time.sleep(0.5)
-                                return True
-                        except Exception:
-                            continue
-                except Exception:
+                    if "Settings" in btn_name or "more" in btn_name.lower() or "more" in btn_automation_id.lower():
+                        print(f"  [找到] 可能的设置按钮: name='{btn_name}', automation_id='{btn_automation_id}'")
+                        btn.click_input()
+                        time.sleep(1)
+                        print("  [OK] 已点击")
+                        return True
+                except:
                     continue
             
-            print("  未找到扩展列表窗口")
+            print("  [WARNING] 未找到明确的设置按钮")
+            print("  建议：使用手动操作")
             return False
             
         except Exception as e:
-            print(f"  点击扩展失败: {e}")
+            print(f"  [ERROR] 查找按钮失败: {e}")
             return False
     
-    def click_extension_toolbar_icon(self):
+    def click_extensions_button(self):
         """
-        点击工具栏中的扩展图标（拼图形状）
+        尝试点击扩展按钮
+        注意：Edge 的按钮没有明确名称，这可能不可靠
         """
         if not self.pywinauto_available or not self.main_window:
             return False
         
+        print("\n[尝试] 点击扩展按钮...")
+        print("  注意：Edge 的按钮没有明确名称，这可能不可靠")
+        
         try:
-            print("\n点击工具栏中的扩展图标（拼图形状）...")
+            all_buttons = self.main_window.descendants(control_type="Button")
             
-            extension_icon = None
-            
-            try:
-                extension_icon = self.main_window.child_window(
-                    title="扩展",
-                    control_type="Button",
-                    timeout=5
-                )
-            except Exception:
-                pass
-            
-            if not extension_icon:
+            for btn in all_buttons:
                 try:
-                    extension_icon = self.main_window.child_window(
-                        title="Extensions",
-                        control_type="Button",
-                        timeout=5
-                    )
-                except Exception:
-                    pass
+                    btn_name = btn.window_text()
+                    btn_automation_id = ""
+                    try:
+                        btn_automation_id = btn.element_info.automation_id
+                    except:
+                        pass
+                    
+                    if "Extensions" in btn_name or "extension" in btn_automation_id.lower():
+                        print(f"  [找到] 可能的扩展按钮: name='{btn_name}', automation_id='{btn_automation_id}'")
+                        btn.click_input()
+                        time.sleep(1)
+                        print("  [OK] 已点击")
+                        return True
+                except:
+                    continue
             
-            if not extension_icon:
-                try:
-                    toolbar = self.main_window.child_window(
-                        control_type="ToolBar",
-                        timeout=5
-                    )
-                    buttons = toolbar.children(control_type="Button")
-                    for btn in buttons:
-                        try:
-                            btn_title = btn.window_text()
-                            if "扩展" in btn_title or "Extensions" in btn_title:
-                                extension_icon = btn
-                                break
-                        except:
-                            continue
-                except Exception:
-                    pass
+            print("  [WARNING] 未找到明确的扩展按钮")
+            print("  建议：使用手动操作")
+            return False
             
-            if extension_icon:
-                extension_icon.click_input()
-                print("✓ 已点击扩展图标")
-                time.sleep(1)
-                return True
-            else:
-                print("  未找到扩展图标，尝试使用键盘快捷键...")
-                return False
-                
         except Exception as e:
-            print(f"  点击扩展图标失败: {e}")
+            print(f"  [ERROR] 查找按钮失败: {e}")
             return False
     
-    def open_extension_full(self, extension_name="自选基金助手"):
+    def open_extension_automated(self, extension_name="自选基金助手"):
         """
-        完整的打开扩展流程：
-        1. 点击三个点（设置及其他）
-        2. 点击扩展
-        3. 在扩展列表中点击目标扩展
-        
-        或者：
-        1. 点击工具栏的扩展图标（拼图形状）
-        2. 在弹出的列表中点击目标扩展
+        尝试自动化打开扩展
+        注意：由于 Edge 的限制，这可能不完全可靠
+        建议使用手动操作
         """
-        if not self.pywinauto_available:
-            print("\n⚠️  pywinauto 不可用，无法自动化操作浏览器菜单")
-            print("    请手动执行以下操作：")
-            print("    1. 点击浏览器右上角的扩展图标（拼图形状）")
-            print(f"    2. 在列表中点击'{extension_name}'")
-            return False
-        
         print("\n" + "="*60)
-        print("使用 pywinauto 自动化打开扩展")
+        print("🔧 尝试自动化打开扩展")
         print("="*60)
+        print("""
+⚠️  重要提示：
+由于以下原因，自动化可能不完全可靠：
+1. Edge 浏览器使用多进程架构
+2. 多个应用使用相同的类名 (Chrome_WidgetWin_1)
+3. 按钮没有明确的名称（如 "Settings" 或 "Extensions"）
+
+如果自动化失败，请使用手动操作。
+""")
         
-        print("\n方法1: 点击工具栏扩展图标（拼图形状）...")
-        if self.click_extension_toolbar_icon():
-            time.sleep(0.5)
-            if self.click_extension_in_list(extension_name):
-                print("\n✓ 扩展已打开！")
-                return True
-        
-        print("\n方法2: 通过'设置及其他'菜单...")
-        
-        if not self.click_settings_button():
-            print("  点击三个点失败")
+        if not self.pywinauto_available:
+            print("\n[ERROR] pywinauto 不可用")
+            self.print_manual_instructions()
             return False
         
-        time.sleep(0.5)
-        
-        if not self.click_extensions_in_menu():
-            print("  点击扩展失败")
+        if not self.main_window:
+            print("\n[ERROR] 未连接到浏览器窗口")
+            self.print_manual_instructions()
             return False
         
-        time.sleep(0.5)
-        
-        if self.click_extension_in_list(extension_name):
-            print("\n✓ 扩展已打开！")
+        print("\n[方法1] 尝试点击工具栏扩展图标...")
+        if self.click_extensions_button():
+            print("  [OK] 扩展图标已点击")
+            print("  请在弹出的列表中选择目标扩展")
+            print("  脚本将等待扩展弹窗打开...")
             return True
         
-        print("\n⚠️  自动化操作可能已完成，请检查浏览器")
-        print("    如果扩展未打开，请手动操作：")
-        print("    1. 点击扩展图标")
-        print(f"    2. 选择'{extension_name}'")
+        print("\n[方法2] 尝试点击设置按钮...")
+        if self.click_settings_button():
+            print("  [OK] 设置按钮已点击")
+            print("  请在菜单中导航到'扩展'选项")
+            print("  脚本将等待扩展弹窗打开...")
+            return True
         
-        return True
-    
-    def take_screenshot(self, filename):
-        """
-        使用 pywinauto 截图
-        """
-        if not self.pywinauto_available:
-            return None
+        print("\n[方法3] 尝试使用键盘快捷键...")
+        if self.try_open_extension_with_keyboard():
+            print("  [OK] 键盘快捷键已发送")
+            print("  请在菜单中导航到'扩展'选项")
+            print("  脚本将等待扩展弹窗打开...")
+            return True
         
-        try:
-            from pywinauto import screenshot
-            
-            screenshots_dir = os.path.join(os.path.dirname(__file__), "screenshots")
-            os.makedirs(screenshots_dir, exist_ok=True)
-            
-            filepath = os.path.join(screenshots_dir, filename)
-            
-            if self.main_window:
-                self.main_window.capture_as_image().save(filepath)
-            else:
-                screenshot()
-            
-            print(f"  截图已保存: {filepath}")
-            return filepath
-            
-        except Exception as e:
-            print(f"  截图失败: {e}")
-            return None
+        print("\n" + "!"*60)
+        print("⚠️  所有自动化方法都失败了")
+        print("!"*60)
+        self.print_manual_instructions()
+        
+        return False
