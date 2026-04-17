@@ -67,14 +67,18 @@ class FundCompareTester:
     
     async def test_extension_loading(self):
         print("\n--- 测试: 扩展加载 ---")
+        print("\n步骤2: 验证扩展加载状态...")
         
         try:
+            print("  1. 导航到扩展管理页面...")
             await self.browser.navigate_to_extensions()
             await asyncio.sleep(2)
             
+            print("  2. 检查开发者模式...")
             await self.browser.enable_developer_mode()
             await asyncio.sleep(1)
             
+            print("  3. 验证扩展是否已加载...")
             loaded = await self.browser.check_extension_loaded()
             if loaded:
                 print("✓ 扩展已成功加载")
@@ -86,7 +90,7 @@ class FundCompareTester:
                     description="扩展未在扩展管理页面中正确显示",
                     steps=[
                         "打开浏览器",
-                        "导航到 edge://extensions/",
+                        "通过 Alt+F 菜单打开扩展管理",
                         "检查扩展列表"
                     ],
                     expected=f"应显示 '{EXTENSION_NAME}' 扩展",
@@ -102,14 +106,21 @@ class FundCompareTester:
     
     async def test_fund_compare_button(self):
         print("\n--- 测试: 基金对比按钮 ---")
+        print("\n步骤3: 通过菜单打开扩展并测试基金对比功能...")
         
         try:
-            opened = await self.browser.open_extension_popup()
+            print("  1. 通过菜单方式打开扩展...")
+            print("     - 按 Alt+F 打开'设置及其他'菜单")
+            print("     - 导航到'扩展'选项")
+            print("     - 选择'自选基金助手'扩展")
+            
+            opened = await self.browser.open_extension_via_menu()
             if not opened:
-                print("警告: 无法自动打开扩展弹窗，请手动操作")
+                print("  警告: 无法完全自动化打开扩展，可能需要手动操作")
             
             await asyncio.sleep(3)
             
+            print("  2. 查找并点击'基金对比'按钮...")
             clicked = await self.browser.click_fund_compare_button()
             if clicked:
                 await asyncio.sleep(2)
@@ -125,7 +136,7 @@ class FundCompareTester:
                         title="基金对比页面显示异常",
                         description="点击基金对比按钮后，页面未正确显示",
                         steps=[
-                            "打开扩展弹窗",
+                            "通过菜单打开扩展弹窗",
                             "点击'基金对比'按钮"
                         ],
                         expected="应显示基金对比选择页面",
@@ -140,7 +151,7 @@ class FundCompareTester:
                     title="基金对比按钮缺失",
                     description="主界面未找到'基金对比'按钮",
                     steps=[
-                        "打开扩展弹窗",
+                        "通过菜单打开扩展弹窗",
                         "检查工具栏按钮"
                     ],
                     expected="应显示'基金对比'按钮",
