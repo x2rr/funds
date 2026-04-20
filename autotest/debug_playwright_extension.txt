@@ -1,0 +1,177 @@
+
+Step 1: Checking if playwright is installed...
+[OK] playwright is installed
+
+Step 2: Finding Edge browser...
+[OK] Found Edge: C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe
+
+Step 3: Extension path: D:\fund_helper\funds\dist-zip\choose-funds-v2.5.2
+[OK] Extension path exists
+  Extension name: 自选基金助手 - 实时查看基金涨跌幅
+  Extension version: 2.5.2
+  Manifest version: 2
+  Popup page: popup/popup.html
+
+============================================================
+Starting browser with extension...
+============================================================
+
+Step 4: Launching browser with extension...
+  Launch arguments:
+    --disable-extensions-except=D:\fund_helper\funds\dist-zip\choose-funds-v2.5.2
+    --load-extension=D:\fund_helper\funds\dist-zip\choose-funds-v2.5.2
+[OK] Browser launched
+[OK] Context created
+[OK] Page created
+
+Step 5: Checking pages...
+  Found 1 pages
+    Page [0]: about:blank
+
+Step 6: Navigating to extensions page...
+[OK] Navigated to extensions page
+
+Step 7: Checking for extension pages...
+  Found 1 pages
+    Page [0]: edge://extensions/
+
+  Found 0 extension pages
+
+Step 8: Waiting and checking for new pages...
+  The extension may open pages automatically
+  We'll wait 5 seconds and check again...
+    After 1 second(s): 1 pages
+    After 2 second(s): 1 pages
+    After 3 second(s): 1 pages
+    After 4 second(s): 1 pages
+    After 5 second(s): 1 pages
+
+============================================================
+Analysis of Extension Access Methods
+============================================================
+
+Key Findings:
+1. The extension is loaded via --load-extension parameter
+2. The extension has a popup page: popup/popup.html
+3. We need to find a way to open this popup page
+
+Possible Methods to Open Extension Popup:
+
+Method 1: Direct URL Access (if we know the extension ID)
+  - URL format: chrome-extension://<extension-id>/popup/popup.html
+  - Problem: We don't know the extension ID
+
+Method 2: Find extension pages automatically
+  - Check all pages for chrome-extension:// URLs
+  - Problem: The popup page may not be open yet
+
+Method 3: Manual Operation (Most Reliable)
+  - Instruct the user to click the extension icon
+  - Script waits for the popup page to appear
+  - This is what we'll use
+
+Method 4: Use Playwright's Extension API
+  - Playwright has some extension support
+  - Let's check if we can get extension info
+
+
+Step 9: Checking browser contexts and background pages...
+  Found 1 contexts
+
+    Context [0]:
+      Pages: 1
+        Page [0]: edge://extensions/
+      Service Workers: 0
+
+============================================================
+Recommended Approach
+============================================================
+
+Based on this analysis, here's what we'll do:
+
+1. Use Playwright to launch the browser and load the extension
+   - This works reliably via --load-extension parameter
+
+2. For opening the extension popup:
+   - We cannot reliably automate clicking the extension icon
+   - pywinauto has issues with Edge's multi-process architecture
+   - We'll provide clear manual instructions
+
+3. The test script will:
+   - Launch the browser
+   - Navigate to extensions page to verify extension is loaded
+   - Instruct the user to click the extension icon
+   - Wait for the popup page to appear
+   - Continue with the tests
+
+4. Key insight:
+   - The extension's popup page is: popup/popup.html
+   - When the user clicks the extension icon, this page opens
+   - We can detect this page by its URL pattern:
+     * chrome-extension://*/popup/popup.html
+     * Contains "popup" or "fund" in the URL
+
+This approach is reliable and works with the limitations of:
+- Playwright's extension support
+- pywinauto's issues with Edge's multi-process architecture
+- Browser security restrictions
+
+
+============================================================
+Test Script Design
+============================================================
+
+The updated test script will:
+
+1. Setup Phase:
+   - Launch Edge browser
+   - Load extension via --load-extension parameter
+   - Connect pywinauto (but don't rely on it for critical operations)
+
+2. Verification Phase:
+   - Navigate to edge://extensions/
+   - Verify the extension is listed
+   - Take a screenshot
+
+3. Extension Opening Phase:
+   - Display clear instructions to the user
+   - Instruct to click the extension icon
+   - Wait for the popup page to appear (up to 120 seconds)
+   - Detect chrome-extension://*/popup/popup.html URLs
+
+4. Testing Phase:
+   - Once popup is detected, continue with tests
+   - Test fund comparison functionality
+   - Generate bug reports if issues found
+
+5. Cleanup Phase:
+   - Close browser
+   - Generate test summary
+
+This design is:
+- Reliable (works within known limitations)
+- User-friendly (clear instructions)
+- Robust (handles edge cases)
+
+
+============================================================
+Keeping Browser Open for Manual Inspection
+============================================================
+
+The browser will remain open for 30 seconds.
+You can manually test:
+1. Click the extension icon (puzzle shape) in the toolbar
+2. Select "自选基金助手" from the list
+3. Observe what happens
+
+After this, we'll update the test scripts with the recommended approach.
+
+  ... 10 seconds passed
+      Current pages: 1
+        [0]: edge://extensions/
+  ... 20 seconds passed
+      Current pages: 1
+        [0]: edge://extensions/
+
+Closing browser...
+[OK] Browser closed

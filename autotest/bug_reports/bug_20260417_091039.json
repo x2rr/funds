@@ -1,0 +1,17 @@
+{
+  "bug_id": "bug_20260417_091039",
+  "timestamp": "20260417_091039",
+  "title": "基金对比按钮缺失",
+  "description": "主界面未找到'基金对比'按钮",
+  "steps_to_reproduce": [
+    "打开扩展弹窗",
+    "检查工具栏按钮"
+  ],
+  "expected_result": "应显示'基金对比'按钮",
+  "actual_result": "按钮不存在",
+  "severity": "high",
+  "component": "UI界面",
+  "status": "open",
+  "fixed": false,
+  "fix_description": ""
+}

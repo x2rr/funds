@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自选基金助手 - Web版</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Microsoft YaHei", Arial, sans-serif; background-color: #f5f5f5; }
+        .app-header { background: linear-gradient(135deg, #409eff 0%, #67c23a 100%); padding: 15px 20px; color: white; box-shadow: 0 2px 12px rgba(0,0,0,0.1); }
+        .app-header h1 { margin: 0; font-size: 24px; font-weight: 500; }
+        .app-header p { margin: 5px 0 0; font-size: 14px; opacity: 0.9; }
+        .app-container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .app-main { background: white; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.05); overflow: hidden; }
+        .app-nav { display: flex; background: #fafafa; border-bottom: 1px solid #e4e7ed; }
+        .nav-item { padding: 12px 24px; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.3s; font-size: 14px; color: #606266; }
+        .nav-item:hover { color: #409eff; }
+        .nav-item.active { color: #409eff; border-bottom-color: #409eff; font-weight: 500; }
+        .content-area { padding: 20px; min-height: 400px; }
+        .section-card { margin-bottom: 20px; padding: 20px; background: #f5f7fa; border-radius: 8px; }
+        .section-title { font-size: 15px; font-weight: 500; margin-bottom: 15px; color: #303133; padding-bottom: 10px; border-bottom: 1px solid #e4e7ed; }
+        .action-bar { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e4e7ed; }
+        .btn { display: inline-block; line-height: 1; cursor: pointer; background: #fff; padding: 8px 16px; border-radius: 4px; font-size: 13px; color: #303133; border: 1px solid #dcdfe6; transition: all 0.3s; }
+        .btn:hover { color: #409eff; border-color: #c6e2ff; background-color: #ecf5ff; }
+        .btn.primary { color: #fff; background-color: #409eff; border-color: #409eff; }
+        .btn.primary:hover { background: #66b1ff; border-color: #66b1ff; color: #fff; }
+        .btn.success { color: #fff; background-color: #67c23a; border-color: #67c23a; }
+        .btn.success:hover { background: #85ce61; border-color: #85ce61; color: #fff; }
+        .btn.danger { color: #fff; background-color: #f56c6c; border-color: #f56c6c; }
+        .btn.danger:hover { background: #f78989; border-color: #f78989; color: #fff; }
+        .fund-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .fund-table th { background: #f5f7fa; padding: 12px 8px; text-align: right; font-weight: 500; color: #606266; border-bottom: 1px solid #e4e7ed; font-size: 13px; }
+        .fund-table th.align-left { text-align: left; }
+        .fund-table td { padding: 10px 8px; text-align: right; border-bottom: 1px solid #e4e7ed; font-size: 13px; color: #303133; }
+        .fund-table td.align-left { text-align: left; }
+        .fund-table tbody tr:hover { background: #f5fafe; }
+        .fund-name { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+        .fund-name:hover { color: #409eff; }
+        .up { color: #f56c6c; font-weight: bold; }
+        .down { color: #4eb61b; font-weight: bold; }
+        .empty-tip { text-align: center; padding: 50px 20px; color: #909399; font-size: 14px; }
+        .empty-tip .icon { font-size: 48px; margin-bottom: 15px; color: #c0c4cc; }
+        .tab-row { padding: 6px 0; display: flex; margin: 0 -3px; }
+        .tab-col { flex: 1; margin: 0 4px; text-align: center; padding: 10px; border-radius: 8px; background: #f5f7fa; }
+        .tab-col h5 { margin: 4px 0; font-size: 13px; color: #303133; font-weight: 500; }
+        .tab-col p { margin: 4px 0; font-size: 12px; }
+        .loading-mask { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.9); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+        .loading-spinner { width: 40px; height: 40px; border: 3px solid #e4e7ed; border-top-color: #409eff; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .refresh-btn { position: fixed; right: 30px; bottom: 30px; width: 50px; height: 50px; border-radius: 50%; background: #409eff; color: white; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(64,158,255,0.4); font-size: 20px; z-index: 100; }
+        .refresh-btn:hover { background: #66b1ff; }
+        .add-fund-section { margin-bottom: 20px; padding: 15px; background: #f5f7fa; border-radius: 8px; }
+        .add-fund-section .section-title { font-size: 14px; font-weight: 500; margin-bottom: 10px; color: #303133; }
+        .add-fund-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .setting-row { display: flex; align-items: center; margin-bottom: 15px; }
+        .setting-row .label { width: 120px; font-size: 14px; color: #606266; }
+        .dark-mode .app-header { background: linear-gradient(135deg, #1e3a5f 0%, #2d5a3f 100%); }
+        .dark-mode .app-main { background: #1e1e1e; }
+        .dark-mode .app-nav { background: #282828; border-bottom-color: #383838; }
+        .dark-mode .nav-item { color: rgba(255,255,255,0.6); }
+        .dark-mode .nav-item:hover, .dark-mode .nav-item.active { color: rgba(64,158,255,0.87); }
+        .dark-mode .content-area { background: #1e1e1e; }
+        .dark-mode .fund-table th { background: #282828; color: rgba(255,255,255,0.6); border-bottom-color: #383838; }
+        .dark-mode .fund-table td { color: rgba(255,255,255,0.87); border-bottom-color: #383838; }
+        .dark-mode .fund-table tbody tr:hover { background: rgba(255,255,255,0.08); }
+        .dark-mode .tab-col { background: #282828; }
+        .dark-mode .tab-col h5 { color: rgba(255,255,255,0.87); }
+        .dark-mode .section-card { background: #282828; }
+        .dark-mode .section-title { color: rgba(255,255,255,0.87); border-bottom-color: #383838; }
+        .dark-mode .setting-row .label { color: rgba(255,255,255,0.6); }
+        .dark-mode .btn { background-color: rgba(255,255,255,0.16); color: rgba(255,255,255,0.6); border-color: rgba(255,255,255,0.6); }
+        .dark-mode .add-fund-section { background: #282828; }
+        .dark-mode .loading-mask { background: rgba(30,30,30,0.9); }
+        .has-replace-tip { display: inline-block; padding: 0 4px; margin-right: 4px; border-radius: 2px; font-size: 10px; color: #409eff; border: 1px solid #409eff; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="loading-mask" v-if="loading">
+            <div class="loading-spinner"></div>
+        </div>
+        
+        <div :class="{ 'dark-mode': darkMode }">
+            <div class="app-header">
+                <h1>自选基金助手 <span style="font-size: 14px; opacity: 0.8;">Web版 v2.5.2</span></h1>
+                <p>实时查看您关注的基金，助您快速获取实时数据</p>
+            </div>
+            
+            <div class="app-container">
+                <div class="app-main">
+                    <div class="app-nav">
+                        <div class="nav-item" :class="{ active: activeTab === 'funds' }" @click="activeTab = 'funds'">基金管理</div>
+                        <div class="nav-item" :class="{ active: activeTab === 'market' }" @click="activeTab = 'market'">行情中心</div>
+                        <div class="nav-item" :class="{ active: activeTab === 'settings' }" @click="activeTab = 'settings'">设置</div>
+                        <div class="nav-item" :class="{ active: activeTab === 'about' }" @click="activeTab = 'about'">关于</div>
+                    </div>
+                    
+                    <div class="content-area">
+                        <div v-if="activeTab === 'funds'">
+                            <div class="add-fund-section" v-if="isEdit">
+                                <div class="section-title">添加新基金</div>
+                                <div class="add-fund-row">
+                                    <el-select
+                                        v-model="selectedFunds"
+                                        multiple
+                                        filterable
+                                        remote
+                                        reserve-keyword
+                                        placeholder="请输入基金编码，支持按名称或编码搜索"
+                                        :remote-method="searchFunds"
+                                        :loading="searching"
+                                        style="width: 400px;"
+                                    >
+                                        <el-option
+                                            v-for="item in searchResults"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value"
+                                        >
+                                            <span style="float: left">{{ item.label }}</span>
+                                            <span style="float: right; color: #8492a6; font-size: 13px;">{{ item.value }}</span>
+                                        </el-option>
+                                    </el-select>
+                                    <button class="btn primary" @click="addFunds" :disabled="selectedFunds.length === 0">添加基金</button>
+                                </div>
+                            </div>
+                            
+                            <div class="action-bar">
+                                <button class="btn" @click="toggleEdit">{{ isEdit ? '完成编辑' : '编辑' }}</button>
+                                <button class="btn" @click="refreshData" :disabled="refreshing">刷新数据</button>
+                                <button class="btn" @click="exportConfig">导出配置</button>
+                                <label class="btn">导入配置<input type="file" accept=".json" @change="importConfig" style="display: none;"></label>
+                            </div>
+                            
+                            <div v-if="indFundData.length > 0" style="margin-top: 20px;">
+                                <h4 style="margin-bottom: 10px; color: #606266;">指数行情</h4>
+                                <div class="tab-row">
+                                    <div class="tab-col" v-for="(item, index) in indFundData" :key="item.f12">
+                                        <h5>{{ item.f14 }}</h5>
+                                        <p>{{ item.f2 }}</p>
+                                        <p :class="item.f3 >= 0 ? 'up' : 'down'">{{ item.f4 }}&nbsp;&nbsp;{{ item.f3 }}%</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div v-if="fundList.length > 0">
+                                <table class="fund-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="align-left" style="width: 200px;">基金名称 ({{ fundList.length }})</th>
+                                            <th v-if="isEdit">基金代码</th>
+                                            <th @click="sortBy('gszzl')" style="cursor: pointer;">涨跌幅<span v-if="sortField === 'gszzl'">{{ sortOrder === 'asc' ? '↑' : '↓' }}</span></th>
+                                            <th>更新时间</th>
+                                            <th v-if="isEdit">操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(fund, index) in sortedFundList" :key="fund.fundcode">
+                                            <td class="align-left">
+                                                <span class="fund-name" @click="showFundDetail(fund)">
+                                                    <span class="has-replace-tip" v-if="fund.hasReplace">净</span>
+                                                    {{ fund.name }}
+                                                </span>
+                                            </td>
+                                            <td v-if="isEdit">{{ fund.fundcode }}</td>
+                                            <td :class="fund.gszzl >= 0 ? 'up' : 'down'"><strong>{{ fund.gszzl }}%</strong></td>
+                                            <td>{{ formatTime(fund.gztime) }}</td>
+                                            <td v-if="isEdit"><button class="btn danger" @click="removeFund(index)">删除</button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div v-else class="empty-tip">
+                                <div class="icon">📊</div>
+                                <p>暂无自选基金</p>
+                                <p style="margin-top: 10px;">点击"编辑"按钮添加您的自选基金</p>
+                            </div>
+                        </div>
+                        
+                        <div v-if="activeTab === 'market'">
+                            <div class="section-card">
+                                <div class="section-title">主要指数</div>
+                                <div class="tab-row" style="margin-bottom: 20px;">
+                                    <div class="tab-col" v-for="item in marketIndices" :key="item.code">
+                                        <h5>{{ item.name }}</h5>
+                                        <p>{{ item.value }}</p>
+                                        <p :class="item.change >= 0 ? 'up' : 'down'">{{ item.change }}%</p>
+                                    </div>
+                                </div>
+                                <p style="text-align: center; color: #909399; font-size: 13px;">数据来源：东方财富 | 更新时间：{{ lastUpdateTime }}</p>
+                            </div>
+                            <div class="section-card">
+                                <div class="section-title">行情说明</div>
+                                <ul style="color: #606266; font-size: 13px; line-height: 2;">
+                                    <li><span style="color: #f56c6c;">红色</span> 表示上涨，<span style="color: #4eb61b;">绿色</span> 表示下跌</li>
+                                    <li>数据每5秒自动刷新一次（交易时间）</li>
+                                    <li>交易时间：周一至周五 9:30-11:30, 13:00-15:00</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div v-if="activeTab === 'settings'">
+                            <div class="section-card">
+                                <div class="section-title">显示设置</div>
+                                <div class="setting-row">
+                                    <span class="label">深色模式</span>
+                                    <el-switch
+                                        v-model="darkMode"
+                                        active-color="#484848"
+                                        inactive-color="#13ce66"
+                                        inactive-text="标准模式"
+                                        active-text="暗色模式"
+                                        @change="saveSettings"
+                                    ></el-switch>
+                                </div>
+                            </div>
+                            <div class="section-card">
+                                <div class="section-title">数据管理</div>
+                                <div class="setting-row">
+                                    <span class="label">导出配置</span>
+                                    <button class="btn primary" @click="exportConfig">导出所有配置</button>
+                                </div>
+                                <div class="setting-row">
+                                    <span class="label">导入配置</span>
+                                    <label class="btn success">选择配置文件<input type="file" accept=".json" @change="importConfig" style="display: none;"></label>
+                                </div>
+                                <div class="setting-row">
+                                    <span class="label">重置数据</span>
+                                    <button class="btn danger" @click="resetData">清除所有数据</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div v-if="activeTab === 'about'">
+                            <div class="section-card">
+                                <div class="section-title">关于自选基金助手</div>
+                                <div style="color: #606266; line-height: 1.8;">
+                                    <p><strong>版本：</strong>v2.5.2 (Web版)</p>
+                                    <p><strong>作者：</strong>LiuRabt</p>
+                                    <p><strong>协议：</strong>GPL-3.0</p>
+                                    <p style="margin-top: 15px;">自选基金助手是一款完全开源的项目，可以用来查看您的自选基金的实时估值情况，可以自由的增减自选基金。您的自选基金数据保存在浏览器本地存储中。</p>
+                                </div>
+                            </div>
+                            <div class="section-card">
+                                <div class="section-title">与插件版的区别</div>
+                                <ul style="color: #606266; line-height: 2;">
+                                    <li>✅ 无需安装浏览器插件，直接在网页使用</li>
+                                    <li>✅ 支持所有现代浏览器</li>
+                                    <li>✅ 更方便的自动化测试（Playwright可直接操作）</li>
+                                    <li>⚠️ 无浏览器角标实时显示功能</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="refresh-btn" @click="refreshData" :class="{ refreshing: refreshing }" title="刷新数据">🔄</button>
+            
+            <a :href="exportLink" download="自选基金助手配置.json" class="hidden-export-link" ref="exportLink">导出</a>
+        </div>
+    </div>
+    
+    <script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                loading: true,
+                activeTab: 'funds',
+                isEdit: false,
+                darkMode: false,
+                refreshing: false,
+                searching: false,
+                
+                fundList: [],
+                fundListM: [],
+                indFundData: [],
+                searchResults: [],
+                selectedFunds: [],
+                
+                sortField: 'gszzl',
+                sortOrder: 'desc',
+                
+                exportLink: '',
+                lastUpdateTime: '-',
+                
+                defaultIndices: [
+                    { code: '1.000001', name: '上证指数' },
+                    { code: '1.000300', name: '沪深300' },
+                    { code: '0.399001', name: '深证成指' },
+                    { code: '0.399006', name: '创业板指' }
+                ],
+                
+                marketIndices: [
+                    { code: '1.000001', name: '上证指数', value: '-', change: 0 },
+                    { code: '1.000300', name: '沪深300', value: '-', change: 0 },
+                    { code: '0.399001', name: '深证成指', value: '-', change: 0 },
+                    { code: '0.399006', name: '创业板指', value: '-', change: 0 }
+                ],
+                
+                refreshInterval: null
+            },
+            computed: {
+                sortedFundList: function() {
+                    var self = this;
+                    return this.fundList.slice().sort(function(a, b) {
+                        var valA = a[self.sortField];
+                        var valB = b[self.sortField];
+                        if (self.sortOrder === 'asc') {
+                            return valA - valB;
+                        } else {
+                            return valB - valA;
+                        }
+                    });
+                }
+            },
+            mounted: function() {
+                this.init();
+            },
+            methods: {
+                init: function() {
+                    var self = this;
+                    this.loadSettings();
+                    setTimeout(function() {
+                        self.loading = false;
+                        self.loadData();
+                        self.startAutoRefresh();
+                    }, 500);
+                },
+                
+                loadSettings: function() {
+                    try {
+                        var settings = localStorage.getItem('funds_web_settings');
+                        if (settings) {
+                            var s = JSON.parse(settings);
+                            this.darkMode = s.darkMode || false;
+                        }
+                    } catch(e) {
+                        console.error('加载设置失败:', e);
+                    }
+                },
+                
+                saveSettings: function() {
+                    try {
+                        localStorage.setItem('funds_web_settings', JSON.stringify({
+                            darkMode: this.darkMode
+                        }));
+                    } catch(e) {
+                        console.error('保存设置失败:', e);
+                    }
+                },
+                
+                loadData: function() {
+                    try {
+                        var data = localStorage.getItem('funds_web_data');
+                        if (data) {
+                            var d = JSON.parse(data);
+                            this.fundListM = d.fundListM || [];
+                            if (this.fundListM.length > 0) {
+                                this.fetchFundData();
+                            }
+                        } else {
+                            this.fundListM = [
+                                { code: '000001', num: 0, cost: 0 },
+                                { code: '110022', num: 0, cost: 0 }
+                            ];
+                            this.saveData();
+                            this.fetchFundData();
+                        }
+                        this.fetchIndexData();
+                    } catch(e) {
+                        console.error('加载数据失败:', e);
+                        this.$message.error('加载数据失败');
+                    }
+                },
+                
+                saveData: function() {
+                    try {
+                        localStorage.setItem('funds_web_data', JSON.stringify({
+                            fundListM: this.fundListM
+                        }));
+                    } catch(e) {
+                        console.error('保存数据失败:', e);
+                    }
+                },
+                
+                fetchFundData: function() {
+                    var self = this;
+                    if (this.fundListM.length === 0) {
+                        this.fundList = [];
+                        return;
+                    }
+                    
+                    var fundCodes = this.fundListM.map(function(item) {
+                        return item.code;
+                    }).join(',');
+                    
+                    var url = 'https://fundmobapi.eastmoney.com/FundMNewApi/FundMNFInfo?pageIndex=1&pageSize=200&plat=Android&appType=ttjj&product=EFund&Version=1&deviceid=web&Fcodes=' + fundCodes;
+                    
+                    axios.get(url)
+                        .then(function(response) {
+                            if (response.data && response.data.Datas) {
+                                self.fundList = response.data.Datas.map(function(item) {
+                                    var data = {
+                                        fundcode: item.FCODE,
+                                        name: item.SHORTNAME,
+                                        dwjz: isNaN(item.NAV) ? null : item.NAV,
+                                        gsz: isNaN(item.GSZ) ? null : item.GSZ,
+                                        gszzl: isNaN(item.GSZZL) ? 0 : item.GSZZL,
+                                        gztime: item.GZTIME,
+                                        hasReplace: false
+                                    };
+                                    
+                                    if (item.PDATE != '--' && item.PDATE == item.GZTIME.substr(0, 10)) {
+                                        data.gsz = item.NAV;
+                                        data.gszzl = isNaN(item.NAVCHGRT) ? 0 : item.NAVCHGRT;
+                                        data.hasReplace = true;
+                                    }
+                                    
+                                    return data;
+                                });
+                                self.lastUpdateTime = new Date().toLocaleTimeString();
+                            }
+                        })
+                        .catch(function(error) {
+                            console.error('获取基金数据失败:', error);
+                        });
+                },
+                
+                fetchIndexData: function() {
+                    var self = this;
+                    var indexCodes = this.defaultIndices.map(function(item) {
+                        return item.code;
+                    }).join(',');
+                    
+                    var url = 'https://push2.eastmoney.com/api/qt/ulist.np/get?fltt=2&fields=f2,f3,f4,f12,f13,f14&secids=' + indexCodes + '&_=' + new Date().getTime();
+                    
+                    axios.get(url)
+                        .then(function(response) {
+                            if (response.data && response.data.data && response.data.data.diff) {
+                                self.indFundData = response.data.data.diff;
+                                
+                                self.marketIndices = response.data.data.diff.map(function(item) {
+                                    return {
+                                        code: item.f13 + '.' + item.f12,
+                                        name: item.f14,
+                                        value: item.f2,
+                                        change: item.f3
+                                    };
+                                });
+                            }
+                        })
+                        .catch(function(error) {
+                            console.error('获取指数数据失败:', error);
+                        });
+                },
+                
+                searchFunds: function(query) {
+                    var self = this;
+                    if (!query || query.trim() === '') {
+                        this.searchResults = [];
+                        return;
+                    }
+                    
+                    this.searching = true;
+                    var url = 'https://fundsuggest.eastmoney.com/FundSearch/api/FundSearchAPI.ashx?&m=9&key=' + encodeURIComponent(query) + '&_=' + new Date().getTime();
+                    
+                    axios.get(url)
+                        .then(function(response) {
+                            if (response.data && response.data.Datas) {
+                                self.searchResults = response.data.Datas.map(function(item) {
+                                    return {
+                                        value: item.CODE,
+                                        label: item.NAME
+                                    };
+                                });
+                            }
+                            self.searching = false;
+                        })
+                        .catch(function(error) {
+                            console.error('搜索基金失败:', error);
+                            self.searching = false;
+                        });
+                },
+                
+                addFunds: function() {
+                    var self = this;
+                    if (this.selectedFunds.length === 0) return;
+                    
+                    this.selectedFunds.forEach(function(code) {
+                        var exists = self.fundListM.some(function(item) {
+                            return item.code === code;
+                        });
+                        if (!exists) {
+                            self.fundListM.push({
+                                code: code,
+                                num: 0,
+                                cost: 0
+                            });
+                        }
+                    });
+                    
+                    this.selectedFunds = [];
+                    this.searchResults = [];
+                    this.saveData();
+                    this.fetchFundData();
+                    this.$message.success('添加成功！');
+                },
+                
+                removeFund: function(index) {
+                    var self = this;
+                    this.$confirm('确定要删除这个基金吗？', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(function() {
+                        var fundToRemove = self.fundList[index];
+                        self.fundListM = self.fundListM.filter(function(item) {
+                            return item.code !== fundToRemove.fundcode;
+                        });
+                        self.fundList.splice(index, 1);
+                        self.saveData();
+                        self.$message.success('删除成功！');
+                    }).catch(function() {});
+                },
+                
+                toggleEdit: function() {
+                    this.isEdit = !this.isEdit;
+                },
+                
+                sortBy: function(field) {
+                    if (this.sortField === field) {
+                        this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        this.sortField = field;
+                        this.sortOrder = 'desc';
+                    }
+                },
+                
+                refreshData: function() {
+                    this.refreshing = true;
+                    this.fetchFundData();
+                    this.fetchIndexData();
+                    var self = this;
+                    setTimeout(function() {
+                        self.refreshing = false;
+                        self.$message.success('刷新成功！');
+                    }, 500);
+                },
+                
+                startAutoRefresh: function() {
+                    var self = this;
+                    this.refreshInterval = setInterval(function() {
+                        self.fetchIndexData();
+                    }, 5000);
+                },
+                
+                exportConfig: function() {
+                    var config = {
+                        version: '2.5.2',
+                        exportTime: new Date().toISOString(),
+                        settings: {
+                            darkMode: this.darkMode
+                        },
+                        fundListM: this.fundListM
+                    };
+                    
+                    var jsonStr = JSON.stringify(config, null, 2);
+                    var blob = new Blob([jsonStr], { type: 'application/json' });
+                    this.exportLink = URL.createObjectURL(blob);
+                    
+                    var self = this;
+                    setTimeout(function() {
+                        self.$refs.exportLink.click();
+                        URL.revokeObjectURL(self.exportLink);
+                    }, 100);
+                    
+                    this.$message.success('配置已导出！');
+                },
+                
+                importConfig: function(event) {
+                    var self = this;
+                    var file = event.target.files[0];
+                    if (!file) return;
+                    
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            var config = JSON.parse(e.target.result);
+                            
+                            if (config.settings) {
+                                self.darkMode = config.settings.darkMode || false;
+                                self.saveSettings();
+                            }
+                            
+                            if (config.fundListM && config.fundListM.length > 0) {
+                                self.fundListM = config.fundListM;
+                                self.saveData();
+                                self.fetchFundData();
+                            }
+                            
+                            self.$message.success('导入成功！');
+                        } catch(err) {
+                            console.error('导入失败:', err);
+                            self.$message.error('配置文件格式错误！');
+                        }
+                    };
+                    reader.readAsText(file);
+                    event.target.value = '';
+                },
+                
+                resetData: function() {
+                    var self = this;
+                    this.$confirm('确定要清除所有数据吗？此操作不可恢复！', '警告', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'error'
+                    }).then(function() {
+                        localStorage.removeItem('funds_web_settings');
+                        localStorage.removeItem('funds_web_data');
+                        self.fundListM = [];
+                        self.fundList = [];
+                        self.darkMode = false;
+                        self.$message.success('数据已清除！');
+                    }).catch(function() {});
+                },
+                
+                formatTime: function(time) {
+                    if (!time) return '-';
+                    if (time.length >= 10) {
+                        return time.substr(10);
+                    }
+                    return time;
+                },
+                
+                showFundDetail: function(fund) {
+                    this.$message({
+                        message: '基金详情功能开发中...',
+                        type: 'info'
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

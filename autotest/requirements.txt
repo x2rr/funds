@@ -1,0 +1,3 @@
+playwright>=1.40.0
+pywinauto>=0.6.8
+comtypes>=1.1.14
