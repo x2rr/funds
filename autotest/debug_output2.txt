@@ -1,0 +1,89 @@
+============================================================
+pywinauto Debug Script - Using Process ID
+============================================================
+
+Step 1: Check if pywinauto is installed...
+[OK] pywinauto is installed
+
+Step 2: Find Edge browser path...
+[OK] Found Edge: C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe
+
+Step 3: List running Edge processes before starting new one...
+  Found Edge process: PID=1688, name=msedgewebview2.exe
+  Found Edge process: PID=2520, name=msedge.exe
+  Found Edge process: PID=4788, name=msedge.exe
+  Found Edge process: PID=6536, name=msedgewebview2.exe
+  Found Edge process: PID=7572, name=msedge.exe
+  Found Edge process: PID=7592, name=msedge.exe
+  Found Edge process: PID=7608, name=msedgewebview2.exe
+  Found Edge process: PID=7912, name=msedge.exe
+  Found Edge process: PID=8024, name=msedge.exe
+  Found Edge process: PID=8144, name=msedge.exe
+  Found Edge process: PID=8340, name=msedgewebview2.exe
+  Found Edge process: PID=9444, name=msedge.exe
+  Found Edge process: PID=9492, name=msedge.exe
+  Found Edge process: PID=9816, name=msedge.exe
+  Found Edge process: PID=10148, name=msedge.exe
+  Found Edge process: PID=10652, name=msedgewebview2.exe
+  Found Edge process: PID=10944, name=msedgewebview2.exe
+  Found Edge process: PID=11376, name=msedge.exe
+  Found Edge process: PID=11928, name=msedgewebview2.exe
+  Found Edge process: PID=11944, name=msedgewebview2.exe
+  Found Edge process: PID=13012, name=msedgewebview2.exe
+  Found Edge process: PID=13140, name=msedgewebview2.exe
+  Found Edge process: PID=13264, name=msedgewebview2.exe
+  Found Edge process: PID=13300, name=msedgewebview2.exe
+  Found Edge process: PID=13664, name=msedge.exe
+  Found Edge process: PID=14436, name=msedge.exe
+
+  Total Edge processes: 26
+
+Step 4: Start a NEW Edge browser with about:blank...
+[OK] New Edge browser started with PID: 16180
+
+  Waiting for browser to initialize...
+
+Step 5: List Edge processes again to find the new one...
+  Edge process: PID=1688, name=msedgewebview2.exe
+  Edge process: PID=2520, name=msedge.exe
+  Edge process: PID=4788, name=msedge.exe
+  Edge process: PID=6536, name=msedgewebview2.exe
+  Edge process: PID=7572, name=msedge.exe
+  Edge process: PID=7592, name=msedge.exe
+  Edge process: PID=7608, name=msedgewebview2.exe
+  Edge process: PID=7912, name=msedge.exe
+  Edge process: PID=8024, name=msedge.exe
+  Edge process: PID=8144, name=msedge.exe
+  Edge process: PID=8340, name=msedgewebview2.exe
+  Edge process: PID=9444, name=msedge.exe
+  Edge process: PID=9492, name=msedge.exe
+  Edge process: PID=9816, name=msedge.exe
+  Edge process: PID=10148, name=msedge.exe
+  Edge process: PID=10652, name=msedgewebview2.exe
+  Edge process: PID=10944, name=msedgewebview2.exe
+  Edge process: PID=11376, name=msedge.exe
+  Edge process: PID=11928, name=msedgewebview2.exe
+  Edge process: PID=11944, name=msedgewebview2.exe
+  Edge process: PID=13012, name=msedgewebview2.exe
+  Edge process: PID=13140, name=msedgewebview2.exe
+  Edge process: PID=13264, name=msedgewebview2.exe
+  Edge process: PID=13300, name=msedgewebview2.exe
+  Edge process: PID=13664, name=msedge.exe
+  Edge process: PID=14436, name=msedge.exe
+  Edge process: PID=17548, name=msedge.exe
+  Edge process: PID=18904, name=msedge.exe
+
+  Total Edge processes now: 28
+
+Step 6: Connect to the NEW Edge window using PID...
+  Attempt 1: Connecting to PID 16180...
+  Failed: Process with PID=16180 not found!
+  Attempt 2: Connecting to PID 16180...
+  Failed: Process with PID=16180 not found!
+  Attempt 3: Connecting to PID 16180...
+  Failed: Process with PID=16180 not found!
+  Attempt 4: Connecting to PID 16180...
+  Failed: Process with PID=16180 not found!
+  Attempt 5: Connecting to PID 16180...
+  Failed: Process with PID=16180 not found!
+[ERROR] Failed to connect to new Edge process
