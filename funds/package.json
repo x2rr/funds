@@ -17,13 +17,16 @@
     "watch:dev": "cross-env NODE_OPTIONS=--openssl-legacy-provider HMR=true npm run build:dev -- --watch",
     "build:web": "cross-env NODE_OPTIONS=--openssl-legacy-provider NODE_ENV=production webpack --config webpack.web.config.js --hide-modules",
     "build:web:dev": "cross-env NODE_OPTIONS=--openssl-legacy-provider NODE_ENV=development webpack --config webpack.web.config.js --hide-modules",
-    "dev:web": "cross-env NODE_OPTIONS=--openssl-legacy-provider NODE_ENV=development webpack-dev-server --config webpack.web.config.js --open"
+    "dev:web": "cross-env NODE_OPTIONS=--openssl-legacy-provider NODE_ENV=development webpack-dev-server --config webpack.web.config.js --open",
+    "serve:web": "node server.js"
   },
   "dependencies": {
     "axios": "^0.19.0",
     "echarts": "^4.9.0",
     "element-ui": "^2.13.2",
+    "express": "^4.18.2",
     "file-saver": "^2.0.5",
+    "http-proxy-middleware": "^2.0.6",
     "qrcodejs2": "0.0.2",
     "vue": "^2.6.10",
     "vue-clipboard2": "^0.3.1",
