@@ -14,7 +14,10 @@
     "build:dev": "cross-env NODE_ENV=development webpack --hide-modules",
     "build-zip": "node scripts/build-zip.js",
     "watch": "npm run build -- --watch",
-    "watch:dev": "cross-env HMR=true npm run build:dev -- --watch"
+    "watch:dev": "cross-env HMR=true npm run build:dev -- --watch",
+    "build:web": "cross-env NODE_ENV=production webpack --config webpack.web.config.js --hide-modules",
+    "build:web:dev": "cross-env NODE_ENV=development webpack --config webpack.web.config.js --hide-modules",
+    "dev:web": "cross-env NODE_ENV=development webpack-dev-server --config webpack.web.config.js --open"
   },
   "dependencies": {
     "axios": "^0.19.0",
