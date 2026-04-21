@@ -378,7 +378,7 @@ export default {
     },
     getData() {
       this.loading = true;
-      let url = `http://push2.eastmoney.com/api/qt/kamt.rtmin/get?fields1=f1,f2,f3,f4&fields2=f51,f52,f53,f54,f55,f56&ut=&?v=${new Date().getTime()}`;
+      let url = `/api/push2/api/qt/kamt.rtmin/get?fields1=f1,f2,f3,f4&fields2=f51,f52,f53,f54,f55,f56&ut=&?v=${new Date().getTime()}`;
       this.$axios.get(url).then((res) => {
         this.loading = false;
         let data = res.data.data;

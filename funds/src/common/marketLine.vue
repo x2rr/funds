@@ -369,7 +369,7 @@ export default {
       this.getData();
     },
     getTurnover() {
-      let url = `https://push2.eastmoney.com/api/qt/ulist.np/get?fltt=2&secids=1.000001,0.399001&fields=f1,f2,f3,f4,f6,f12,f13,f104,f105,f106&_=${new Date().getTime()}`;
+      let url = `/api/push2/api/qt/ulist.np/get?fltt=2&secids=1.000001,0.399001&fields=f1,f2,f3,f4,f6,f12,f13,f104,f105,f106&_=${new Date().getTime()}`;
       this.$axios.get(url).then((res) => {
         this.turnoverData = res.data.data.diff;
       });
@@ -377,7 +377,7 @@ export default {
 
     getData() {
       this.loading = true;
-      let url = `http://push2.eastmoney.com/api/qt/stock/fflow/kline/get?lmt=0&klt=1&secid=1.000001&secid2=0.399001&fields1=f1,f2,f3,f7&fields2=f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61,f62,f63&_=${new Date().getTime()}`;
+      let url = `/api/push2/api/qt/stock/fflow/kline/get?lmt=0&klt=1&secid=1.000001&secid2=0.399001&fields1=f1,f2,f3,f7&fields2=f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61,f62,f63&_=${new Date().getTime()}`;
       this.$axios.get(url).then((res) => {
         this.loading = false;
         let dataList = res.data.data.klines;

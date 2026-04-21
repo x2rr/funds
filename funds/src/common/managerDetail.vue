@@ -94,13 +94,13 @@ export default {
       this.getMangerDetail(val);
     },
     getManagerList(code) {
-      let url = `https://fundmobapi.eastmoney.com/FundMApi/FundManagerList.ashx?FCODE=${code}&deviceid=Wap&plat=Wap&product=EFund&version=2.0.0&Uid=&_=${new Date().getTime()}`;
+      let url = `/api/fundmobapi/FundMApi/FundManagerList.ashx?FCODE=${code}&deviceid=Wap&plat=Wap&product=EFund&version=2.0.0&Uid=&_=${new Date().getTime()}`;
       this.$axios.get(url).then((res) => {
         this.managerList = res.data.Datas;
       });
     },
     getMangerDetail(code) {
-      let url = `https://fundmobapi.eastmoney.com/FundMApi/FundMangerDetail.ashx?FCODE=${code}&deviceid=Wap&plat=Wap&product=EFund&version=2.0.0&Uid=&_=${new Date().getTime()}`;
+      let url = `/api/fundmobapi/FundMApi/FundMangerDetail.ashx?FCODE=${code}&deviceid=Wap&plat=Wap&product=EFund&version=2.0.0&Uid=&_=${new Date().getTime()}`;
       this.$axios.get(url).then((res) => {
         this.managerDetail = res.data.Datas;
       });

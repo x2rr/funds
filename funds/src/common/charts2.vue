@@ -148,7 +148,7 @@ export default {
     getData() {
       this.loading = true;
       if (this.chartType == "LJSY") {
-        let url = `https://fundmobapi.eastmoney.com/FundMApi/FundYieldDiagramNew.ashx?FCODE=${
+        let url = `/api/fundmobapi/FundMApi/FundYieldDiagramNew.ashx?FCODE=${
           this.fund.fundcode
         }&RANGE=${
           this.sltTimeRange
@@ -182,7 +182,7 @@ export default {
           }
         });
       } else {
-        let url = `https://fundmobapi.eastmoney.com/FundMApi/FundNetDiagram.ashx?FCODE=${
+        let url = `/api/fundmobapi/FundMApi/FundNetDiagram.ashx?FCODE=${
           this.fund.fundcode
         }&RANGE=${
           this.sltTimeRange

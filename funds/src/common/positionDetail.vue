@@ -81,7 +81,7 @@ export default {
 
     getData() {
       this.loading = true;
-      let url = `https://fundmobapi.eastmoney.com/FundMNewApi/FundMNInverstPosition?FCODE=${
+      let url = `/api/fundmobapi/FundMNewApi/FundMNInverstPosition?FCODE=${
         this.fund.fundcode
       }&deviceid=Wap&plat=Wap&product=EFund&version=2.0.0&Uid=&_=${new Date().getTime()}`;
       this.$axios.get(url).then((res) => {
@@ -93,7 +93,7 @@ export default {
             })
             .join(",");
 
-          let gpUrl = `https://push2.eastmoney.com/api/qt/ulist.np/get?fields=f1,f2,f3,f4,f12,f13,f14,f292&fltt=2&secids=${gpList}&deviceid=Wap&plat=Wap&product=EFund&version=2.0.0&Uid=`;
+          let gpUrl = `/api/push2/api/qt/ulist.np/get?fields=f1,f2,f3,f4,f12,f13,f14,f292&fltt=2&secids=${gpList}&deviceid=Wap&plat=Wap&product=EFund&version=2.0.0&Uid=`;
           this.$axios.get(gpUrl).then((resGp) => {
             this.loading = false;
             this.dataListGp = resGp.data.data.diff;

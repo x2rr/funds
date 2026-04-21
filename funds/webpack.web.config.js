@@ -96,6 +96,29 @@ const config = {
     compress: true,
     port: 8080,
     hot: true,
+    proxy: {
+      '/api/fundsuggest': {
+        target: 'https://fundsuggest.eastmoney.com',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api/fundsuggest': ''
+        }
+      },
+      '/api/push2': {
+        target: 'https://push2.eastmoney.com',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api/push2': ''
+        }
+      },
+      '/api/fundmobapi': {
+        target: 'https://fundmobapi.eastmoney.com',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api/fundmobapi': ''
+        }
+      }
+    }
   }
 };
 

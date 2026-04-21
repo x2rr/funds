@@ -1025,7 +1025,7 @@ export default {
       if (query !== "") {
         this.loading = true;
         let url =
-          "https://fundsuggest.eastmoney.com/FundSearch/api/FundSearchAPI.ashx?&m=9&key=" +
+          "/api/fundsuggest/FundSearch/api/FundSearchAPI.ashx?&m=9&key=" +
           query +
           "&_=" +
           new Date().getTime();
@@ -1150,7 +1150,7 @@ export default {
       }
       this.loadingInd = true;
       let seciListStr = this.seciList.join(",");
-      let url = "https://push2.eastmoney.com/api/qt/ulist.np/get?fltt=2&fields=f2,f3,f4,f12,f13,f14&secids=" + seciListStr + "&_=" + new Date().getTime();
+      let url = "/api/push2/api/qt/ulist.np/get?fltt=2&fields=f2,f3,f4,f12,f13,f14&secids=" + seciListStr + "&_=" + new Date().getTime();
       this.$axios.get(url).then((res) => {
         this.loadingInd = false;
         if (res.data && res.data.data && res.data.data.diff) {
@@ -1168,7 +1168,7 @@ export default {
       this.loadingList = true;
       let fundlist = this.fundListM.map((val) => val.code).join(",");
       let url =
-        "https://fundmobapi.eastmoney.com/FundMNewApi/FundMNFInfo?pageIndex=1&pageSize=200&plat=Android&appType=ttjj&product=EFund&Version=1&deviceid=" +
+        "/api/fundmobapi/FundMNewApi/FundMNFInfo?pageIndex=1&pageSize=200&plat=Android&appType=ttjj&product=EFund&Version=1&deviceid=" +
         this.userId +
         "&Fcodes=" +
         fundlist;

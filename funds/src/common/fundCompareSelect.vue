@@ -159,7 +159,7 @@ export default {
       if (query !== "") {
         this.loading = true;
         let url =
-          "https://fundsuggest.eastmoney.com/FundSearch/api/FundSearchAPI.ashx?&m=9&key=" +
+          "/api/fundsuggest/FundSearch/api/FundSearchAPI.ashx?&m=9&key=" +
           query +
           "&_=" +
           new Date().getTime();

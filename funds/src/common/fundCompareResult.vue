@@ -273,7 +273,7 @@ export default {
     },
     loadFundInfo(fundcode) {
       return new Promise((resolve) => {
-        let url = `https://fundmobapi.eastmoney.com/FundMApi/FundBaseTypeInformation.ashx?FCODE=${fundcode}&deviceid=Wap&plat=Wap&product=EFund&version=2.0.0&_=${new Date().getTime()}`;
+        let url = `/api/fundmobapi/FundMApi/FundBaseTypeInformation.ashx?FCODE=${fundcode}&deviceid=Wap&plat=Wap&product=EFund&version=2.0.0&_=${new Date().getTime()}`;
         this.$axios.get(url).then((res) => {
           const data = res.data.Datas;
           resolve({
@@ -300,7 +300,7 @@ export default {
     },
     loadFundYield(fundcode) {
       return new Promise((resolve) => {
-        let url = `https://fundmobapi.eastmoney.com/FundMApi/FundBaseTypeInformation.ashx?FCODE=${fundcode}&deviceid=Wap&plat=Wap&product=EFund&version=2.0.0&_=${new Date().getTime()}`;
+        let url = `/api/fundmobapi/FundMApi/FundBaseTypeInformation.ashx?FCODE=${fundcode}&deviceid=Wap&plat=Wap&product=EFund&version=2.0.0&_=${new Date().getTime()}`;
         this.$axios.get(url).then((res) => {
           const data = res.data.Datas;
           resolve({
@@ -324,7 +324,7 @@ export default {
     loadChartData(fundcode, index) {
       return new Promise((resolve) => {
         const range = this.periodMap[this.selectedPeriod];
-        let url = `https://fundmobapi.eastmoney.com/FundMApi/FundYieldDiagramNew.ashx?FCODE=${fundcode}&RANGE=${range}&deviceid=Wap&plat=Wap&product=EFund&version=2.0.0&_=${new Date().getTime()}`;
+        let url = `/api/fundmobapi/FundMApi/FundYieldDiagramNew.ashx?FCODE=${fundcode}&RANGE=${range}&deviceid=Wap&plat=Wap&product=EFund&version=2.0.0&_=${new Date().getTime()}`;
         this.$axios.get(url).then((res) => {
           let dataList = res.data.Datas;
           if (dataList && dataList.length > 0) {
