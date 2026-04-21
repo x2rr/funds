@@ -1,0 +1,69 @@
+============================================================
+pywinauto Debug Script - Find Windows via Desktop
+============================================================
+
+Step 1: Check if pywinauto is installed...
+[OK] pywinauto is installed
+
+Step 2: Find Edge browser path...
+[OK] Found Edge: C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe
+
+Step 3: List Edge windows before starting new one...
+  Found 16 windows on desktop
+    Edge Window [0]: title='', class='Chrome_WidgetWin_1'
+    Edge Window [5]: title='debug_pywinauto5.py - fund_helper - Trae CN', class='Chrome_WidgetWin_1'
+    Edge Window [6]: title='飞书', class='Chrome_WidgetWin_1'
+  Found 3 Edge windows before
+
+Step 4: Start a NEW Edge browser...
+  Starting: C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe about:blank --new-window
+[OK] Edge started
+
+  Waiting for new window to appear (up to 15 seconds)...
+    Attempt 1: Found 8 Edge windows
+      New window detected!
+
+Step 5: Get process ID from the new window...
+[OK] New window PID: 8024
+
+Step 6: Connect to the process...
+[OK] Connected to the process
+
+Step 7: Get main window from app...
+[OK] Main window title: 
+
+Step 8: Set focus to main window...
+[OK] Focus set
+
+Step 9: Find all buttons in main window...
+Found 0 buttons
+
+Listing all buttons (first 70):
+
+Step 10: Try Alt+F to open menu...
+  Setting focus...
+  Sending Alt+F...
+  [OK] Alt+F sent
+
+Step 11: Check for menu windows...
+  Found 17 windows on desktop
+  No menu windows found
+
+  Checking all windows for MenuItem children...
+
+============================================================
+Debug Complete!
+============================================================
+Output saved to: D:\fund_helper\autotest\debug_output4.txt
+
+Summary:
+1. We can start Edge and find its window via Desktop
+2. We can connect to the process using the window's PID
+3. We can find buttons in the window
+4. We can try Alt+F and look for menu windows
+
+Next Steps:
+- Review the button list to find the Settings button
+- Review the menu items to find Extensions
+- Based on this, we can fix the windows_ui_controller.py
+
