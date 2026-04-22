@@ -24,14 +24,14 @@
         <div 
           class="web-nav-item" 
           :class="{ active: activeTab === 'compare' }"
-          @click="activeTab = 'compare'"
+          @click="openFundCompare"
         >
           基金对比
         </div>
         <div 
           class="web-nav-item" 
           :class="{ active: activeTab === 'market' }"
-          @click="activeTab = 'market'"
+          @click="openMarket"
         >
           行情中心
         </div>
@@ -347,8 +347,6 @@
             </div>
 
             <div class="input-row">
-              <input class="btn" type="button" @click="openMarket" value="行情中心" />
-              <input class="btn" type="button" @click="openFundCompare" value="基金对比" />
               <input
                 class="btn"
                 v-if="isDuringDate"
@@ -366,7 +364,6 @@
                 :value="isEdit ? '完成编辑' : '编辑'"
                 @click="isEdit = !isEdit"
               />
-              <input class="btn" type="button" value="设置" @click="activeTab = 'settings'" />
               <input class="btn" type="button" value="日志" @click="changelog" />
               <input
                 class="btn primary"
