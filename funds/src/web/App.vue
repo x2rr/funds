@@ -12,28 +12,66 @@
           :class="{ active: activeTab === 'main' }"
           @click="activeTab = 'main'"
         >
-          基金管理
+          <i class="el-icon-menu"></i> 基金管理
         </div>
         <div 
           class="web-nav-item" 
           :class="{ active: activeTab === 'settings' }"
           @click="activeTab = 'settings'"
         >
-          设置
+          <i class="el-icon-setting"></i> 设置
         </div>
         <div 
           class="web-nav-item" 
           :class="{ active: activeTab === 'compare' }"
           @click="openFundCompare"
         >
-          基金对比
+          <i class="el-icon-s-data"></i> 基金对比
         </div>
         <div 
           class="web-nav-item" 
           :class="{ active: activeTab === 'market' }"
           @click="openMarket"
         >
-          行情中心
+          <i class="el-icon-data-line"></i> 行情中心
+        </div>
+        <div class="web-nav-divider"></div>
+        <div 
+          class="web-nav-btn" 
+          v-if="isDuringDate"
+          @click="changeLiveUpdate"
+          :title="isLiveUpdate ? '正在实时更新，点击暂停' : '已暂停，点击切换为实时更新'"
+        >
+          <i :class="isLiveUpdate ? 'el-icon-video-pause' : 'el-icon-video-play'"></i> 
+          {{ isLiveUpdate ? '暂停更新' : '实时更新' }}
+        </div>
+        <div 
+          class="web-nav-btn" 
+          v-else
+          title="当前非交易时间"
+        >
+          <i class="el-icon-time"></i> 休市中
+        </div>
+        <div 
+          class="web-nav-btn" 
+          :class="{ active: isEdit }"
+          @click="isEdit = !isEdit"
+        >
+          <i :class="isEdit ? 'el-icon-circle-check' : 'el-icon-edit'"></i> 
+          {{ isEdit ? '完成编辑' : '编辑' }}
+        </div>
+        <div 
+          class="web-nav-btn" 
+          @click="changelog"
+        >
+          <i class="el-icon-document"></i> 日志
+        </div>
+        <div 
+          class="web-nav-btn" 
+          @click="reward"
+          title="φ(>ω<*)"
+        >
+          <i class="el-icon-present"></i> 打赏
         </div>
       </div>
       
@@ -91,7 +129,7 @@
                     <div style="padding-top:2px">
                       <el-select
                         size="mini"
-                        :popper-append-to-body="false"
+                        :popper-append-to-body="true"
                         v-model="sltSeci"
                         style="width:110px"
                         placeholder="请选择"
@@ -123,7 +161,7 @@
                   v-model="fundcode"
                   multiple
                   filterable
-                  :popper-append-to-body="false"
+                  :popper-append-to-body="true"
                   remote
                   size="mini"
                   reserve-keyword
@@ -346,33 +384,6 @@
               ></el-slider>
             </div>
 
-            <div class="input-row">
-              <input
-                class="btn"
-                v-if="isDuringDate"
-                type="button"
-                :value="isLiveUpdate ? '暂停更新' : '实时更新'"
-                :title="
-                  isLiveUpdate ? '正在实时更新，点击暂停' : '已暂停，点击切换为实时更新'
-                "
-                @click="changeLiveUpdate"
-              />
-              <input class="btn" v-if="!isDuringDate" type="button" value="休市中" />
-              <input
-                class="btn"
-                type="button"
-                :value="isEdit ? '完成编辑' : '编辑'"
-                @click="isEdit = !isEdit"
-              />
-              <input class="btn" type="button" value="日志" @click="changelog" />
-              <input
-                class="btn primary"
-                type="button"
-                title="φ(>ω<*)"
-                value="打赏"
-                @click="reward"
-              />
-            </div>
             <div class="input-row" v-if="showCost || showGains">
               <input
                 v-if="showGains"
@@ -1961,6 +1972,43 @@ tbody tr:hover {
   color: #409eff;
   border-bottom-color: #409eff;
   font-weight: 500;
+}
+
+.web-nav-divider {
+  width: 1px;
+  background: #e4e7ed;
+  margin: 10px 8px;
+}
+
+.web-nav-btn {
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 13px;
+  color: #606266;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 4px;
+  margin: 6px 2px;
+  background: transparent;
+  border: 1px solid transparent;
+
+  &:hover {
+    color: #409eff;
+    background: rgba(64, 158, 255, 0.05);
+    border-color: rgba(64, 158, 255, 0.2);
+  }
+
+  &.active {
+    color: #409eff;
+    background: rgba(64, 158, 255, 0.1);
+    border-color: rgba(64, 158, 255, 0.3);
+  }
+
+  i {
+    font-size: 14px;
+  }
 }
 
 .tab-content {

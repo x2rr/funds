@@ -1,6 +1,7 @@
 import Vue from "vue";
 import App from "./App";
 import axios from "axios";
+import 'element-ui/lib/theme-chalk/index.css';
 import {
   Select,
   Option,
@@ -16,7 +17,9 @@ import {
   Icon,
   Message,
   Radio,
-  Input
+  Input,
+  Checkbox,
+  CheckboxGroup
 } from 'element-ui';
 
 import VueClipboard from "vue-clipboard2";
@@ -42,6 +45,8 @@ Vue.use(Loading)
 Vue.use(Icon)
 Vue.use(Radio)
 Vue.use(Input)
+Vue.use(Checkbox)
+Vue.use(CheckboxGroup)
 
 document.addEventListener('DOMContentLoaded', function() {
   const loadingMask = document.getElementById('app-loading');
