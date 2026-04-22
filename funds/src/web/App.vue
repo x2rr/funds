@@ -129,7 +129,7 @@
                     <div style="padding-top:2px">
                       <el-select
                         size="mini"
-                        :popper-append-to-body="true"
+                        :popper-append-to-body="false"
                         v-model="sltSeci"
                         style="width:110px"
                         placeholder="请选择"
@@ -161,7 +161,7 @@
                   v-model="fundcode"
                   multiple
                   filterable
-                  :popper-append-to-body="true"
+                  :popper-append-to-body="false"
                   remote
                   size="mini"
                   reserve-keyword
@@ -1951,59 +1951,70 @@ tbody tr:hover {
 
 .web-nav {
   display: flex;
+  align-items: center;
   background: #fafafa;
   border-bottom: 1px solid #e4e7ed;
+  padding: 0 8px;
 }
 
 .web-nav-item {
-  padding: 12px 24px;
+  padding: 14px 20px;
   cursor: pointer;
   border-bottom: 2px solid transparent;
   transition: all 0.3s;
   font-size: 14px;
   color: #606266;
-}
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: -1px;
 
-.web-nav-item:hover {
-  color: #409eff;
-}
+  &:hover {
+    color: #409eff;
+  }
 
-.web-nav-item.active {
-  color: #409eff;
-  border-bottom-color: #409eff;
-  font-weight: 500;
+  &.active {
+    color: #409eff;
+    border-bottom-color: #409eff;
+    font-weight: 500;
+  }
+
+  i {
+    font-size: 14px;
+  }
 }
 
 .web-nav-divider {
   width: 1px;
   background: #e4e7ed;
-  margin: 10px 8px;
+  height: 20px;
+  margin: 0 12px;
 }
 
 .web-nav-btn {
   padding: 8px 16px;
   cursor: pointer;
   transition: all 0.3s;
-  font-size: 13px;
+  font-size: 14px;
   color: #606266;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   border-radius: 4px;
-  margin: 6px 2px;
   background: transparent;
-  border: 1px solid transparent;
+  border: 1px solid #dcdfe6;
+  margin: 0 4px;
+  height: 32px;
 
   &:hover {
     color: #409eff;
-    background: rgba(64, 158, 255, 0.05);
-    border-color: rgba(64, 158, 255, 0.2);
+    border-color: #409eff;
   }
 
   &.active {
-    color: #409eff;
-    background: rgba(64, 158, 255, 0.1);
-    border-color: rgba(64, 158, 255, 0.3);
+    color: #fff;
+    background: #409eff;
+    border-color: #409eff;
   }
 
   i {
@@ -2132,6 +2143,27 @@ tbody tr:hover {
 .darkMode .web-nav-item:hover,
 .darkMode .web-nav-item.active {
   color: rgba(64, 158, 255, 0.87);
+}
+
+.darkMode .web-nav-divider {
+  background: #383838;
+}
+
+.darkMode .web-nav-btn {
+  color: rgba(255, 255, 255, 0.6);
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.3);
+
+  &:hover {
+    color: rgba(64, 158, 255, 0.87);
+    border-color: rgba(64, 158, 255, 0.6);
+  }
+
+  &.active {
+    color: #fff;
+    background: rgba(64, 158, 255, 0.6);
+    border-color: rgba(64, 158, 255, 0.6);
+  }
 }
 
 .darkMode .container {
