@@ -132,7 +132,7 @@ export default {
     padding: 13px;
   }
 
-  /deep/ .el-tabs__item {
+  :deep(.el-tabs__item) {
     padding: 0 15px;
     height: 34px;
     line-height: 34px;
@@ -176,7 +176,7 @@ export default {
     border: 1px solid rgba($color: #ffffff, $alpha: 0.6);
   }
 
-  /deep/ .el-tabs--border-card {
+  :deep(.el-tabs--border-card) {
     background-color: #373737;
     border: 1px solid rgba($color: #ffffff, $alpha: 0.37);
     .el-tabs__header {
@@ -192,13 +192,13 @@ export default {
     }
   }
 
-  /deep/ .el-radio-button--mini .el-radio-button__inner {
+  :deep(.el-radio-button--mini .el-radio-button__inner) {
     background-color: rgba($color: #ffffff, $alpha: 0.16);
     color: rgba($color: #ffffff, $alpha: 0.6);
     border: 1px solid rgba($color: #ffffff, $alpha: 0.37);
   }
 
-  /deep/ .el-radio-button__orig-radio:checked + .el-radio-button__inner {
+  :deep(.el-radio-button__orig-radio:checked + .el-radio-button__inner) {
     background-color: rgba($color: #409eff, $alpha: 0.6);
     color: rgba($color: #ffffff, $alpha: 0.6);
     border-color: rgba($color: #409eff, $alpha: 0.37);

@@ -43,11 +43,32 @@ const config = {
       },
       {
         test: /\.scss$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
+        use: [
+          MiniCssExtractPlugin.loader, 
+          'css-loader', 
+          {
+            loader: 'sass-loader',
+            options: {
+              implementation: require('sass'),
+            }
+          }
+        ],
       },
       {
         test: /\.sass$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader?indentedSyntax'],
+        use: [
+          MiniCssExtractPlugin.loader, 
+          'css-loader', 
+          {
+            loader: 'sass-loader',
+            options: {
+              implementation: require('sass'),
+              sassOptions: {
+                indentedSyntax: true,
+              }
+            }
+          }
+        ],
       },
       {
         test: /\.(png|jpg|jpeg|gif|svg|ico)$/,

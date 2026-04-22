@@ -5,7 +5,19 @@ const path = require('path');
 const app = express();
 const PORT = 8080;
 
-app.use(express.static(path.join(__dirname, 'web')));
+const distWebPath = path.join(__dirname, 'dist-web');
+const simpleWebPath = path.join(__dirname, 'web');
+
+let staticPath = distWebPath;
+
+if (!require('fs').existsSync(distWebPath)) {
+    console.log('提示: dist-web 目录不存在，使用 web 目录（简化版本）');
+    staticPath = simpleWebPath;
+} else {
+    console.log('使用 dist-web 目录（完整版本）');
+}
+
+app.use(express.static(staticPath));
 
 app.use('/api/fundsuggest', createProxyMiddleware({
     target: 'https://fundsuggest.eastmoney.com',

@@ -255,7 +255,7 @@ export default {
     padding: 13px;
   }
 
-  /deep/ .el-tabs__item {
+  :deep(.el-tabs__item) {
     padding: 0 15px;
     height: 34px;
     line-height: 34px;
@@ -430,7 +430,7 @@ export default {
     color: #fff;
   }
 
-  /deep/ .el-tabs--border-card {
+  :deep(.el-tabs--border-card) {
     background-color: #373737;
     border: 1px solid rgba($color: #ffffff, $alpha: 0.37);
     .el-tabs__header {
@@ -446,12 +446,12 @@ export default {
     }
   }
 
-  /deep/ .el-input__inner {
+  :deep(.el-input__inner) {
     background-color: rgba($color: #ffffff, $alpha: 0.16);
     color: rgba($color: #ffffff, $alpha: 0.6);
   }
 
-  /deep/ .el-select__input {
+  :deep(.el-select__input) {
     color: rgba($color: #ffffff, $alpha: 0.6);
   }
 

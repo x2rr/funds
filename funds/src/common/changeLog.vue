@@ -147,7 +147,7 @@ export default {
 
 <style lang="scss" scoped>
 .changelog {
-  /deep/ &.el-dialog {
+  &.el-dialog {
     margin-bottom: 15px;
     border-radius: 15px;
   }
@@ -229,21 +229,21 @@ export default {
       border-color: #409eff;
     }
   }
-  /deep/ &.el-dialog--center .el-dialog__header {
+  &.el-dialog--center .el-dialog__header {
     border-bottom: 1px solid #eee;
     padding: 15px 20px 10px;
   }
-  /deep/ &.el-dialog--center .el-dialog__footer {
+  &.el-dialog--center .el-dialog__footer {
     border-top: 1px solid #eee;
     padding: 10px 20px 10px;
   }
-  /deep/ &.el-dialog--center .el-dialog__body {
+  &.el-dialog--center .el-dialog__body {
     padding: 10px 12px;
   }
 }
 
 .changelog.darkMode {
-  /deep/ &.el-dialog {
+  &.el-dialog {
     background-color: #373737;
     .el-dialog__header .el-dialog__title {
       color: rgba($color: #ffffff, $alpha: 0.6);

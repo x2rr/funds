@@ -2007,15 +2007,15 @@ tbody tr:hover {
     border: 1px solid rgba($color: #409eff, $alpha: 0.6);
     background-color: rgba($color: #409eff, $alpha: 0.6);
   }
-  /deep/ .el-input__inner {
+  :deep(.el-input__inner) {
     background-color: rgba($color: #ffffff, $alpha: 0.16);
     color: rgba($color: #ffffff, $alpha: 0.6);
   }
-  /deep/ .el-select__input {
+  :deep(.el-select__input) {
     color: rgba($color: #ffffff, $alpha: 0.6);
   }
 
-  /deep/ tbody tr:hover {
+  :deep(tbody tr:hover) {
     background-color: rgba($color: #ffffff, $alpha: 0.12);
   }
 
@@ -2053,16 +2053,16 @@ tbody tr:hover {
     color: rgba($color: #ffffff, $alpha: 0.38);
   }
 
-  /deep/ .el-select .el-input.is-focus .el-input__inner {
+  :deep(.el-select .el-input.is-focus .el-input__inner) {
     border-color: rgba($color: #409eff, $alpha: 0.6);
   }
 
-  /deep/ .el-select .el-tag {
+  :deep(.el-select .el-tag) {
     background-color: rgba($color: #ffffff, $alpha: 0.14);
     color: rgba($color: #ffffff, $alpha: 0.6);
   }
 
-  /deep/ .el-select-dropdown {
+  :deep(.el-select-dropdown) {
     background-color: #383838;
     border: 1px solid rgba($color: #ffffff, $alpha: 0.38);
     .popper__arrow::after {
@@ -2088,14 +2088,14 @@ tbody tr:hover {
     }
   }
 
-  /deep/ .el-switch__label.is-active {
+  :deep(.el-switch__label.is-active) {
     color: rgba($color: #409eff, $alpha: 0.87);
   }
-  /deep/ .el-switch__label {
+  :deep(.el-switch__label) {
     color: rgba($color: #ffffff, $alpha: 0.6);
   }
 
-  /deep/ .hasReplace-tip {
+  :deep(.hasReplace-tip) {
     color: rgba($color: #ffffff, $alpha: 0.6);
     border: 1px solid rgba($color: #409eff, $alpha: 0.6);
     background-color: rgba($color: #409eff, $alpha: 0.6);
