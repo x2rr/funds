@@ -1671,39 +1671,106 @@ tbody tr:hover {
   text-align: center;
   margin-top: 10px;
 }
+
 .add-fund-row {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 16px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e4e7ed;
+  margin: 16px 0;
+  flex-wrap: wrap;
+  span {
+    font-weight: 500;
+    color: #303133;
+    font-size: 14px;
+  }
+  .btn {
+    padding: 8px 20px;
+    font-size: 14px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    &:hover {
+      border-color: #409eff;
+      color: #409eff;
+    }
+  }
 }
+
 .gear-input-row {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e4e7ed;
+  margin: 12px 0;
   .slider-title {
     font-size: 14px;
-    margin: 0 5px 0 15px;
+    margin: 0 8px;
+    color: #606266;
   }
   .slider {
     display: inline-block;
-    width: 20%;
+    width: 150px;
   }
+}
+
+.tips {
+  color: #909399;
+  font-size: 13px;
+  padding: 8px 0;
+  &.center {
+    text-align: center;
+  }
+}
+
+.tab-row {
+  padding: 12px 0;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: stretch;
+  margin: 0;
+  gap: 12px;
+  position: relative;
 }
 
 .tab-col {
   flex: 1;
-  margin: 0 4px;
+  min-width: 0;
   text-align: center;
+  padding: 12px 8px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e4e7ed;
+  transition: all 0.3s ease;
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-color: #409eff;
+  }
   h5 {
-    margin: 4px 0;
-    font-size: 12px;
+    margin: 0 0 8px 0;
+    font-size: 13px;
+    font-weight: 500;
+    color: #303133;
     .dltBtn {
-      margin-left: 3px;
+      margin-left: 6px;
     }
   }
   p {
     margin: 4px 0;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .addSeci {
     margin: 10px auto;
@@ -1713,26 +1780,19 @@ tbody tr:hover {
     line-height: 40px;
     border: 1px solid #dcdfe6;
     border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #909399;
+    &:hover {
+      border-color: #409eff;
+      color: #409eff;
+    }
   }
 }
+
 .indFund {
   cursor: pointer;
-}
-
-.tab-row:after,
-.tab-row:before {
-  display: table;
-  content: "";
-}
-
-.tab-row:after {
-  clear: both;
-}
-
-.tab-row {
-  padding: 6px 0;
-  display: flex;
-  margin: 0 -3px;
 }
 
 .primary {
@@ -1920,30 +1980,67 @@ tbody tr:hover {
   li {
     list-style: none;
     font-size: 16px;
-    border-bottom: 1px solid #dddddd;
-    padding: 15px 0;
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid #e4e7ed;
+    transition: all 0.3s ease;
+    &:last-child {
+      margin-bottom: 0;
+    }
+    &:hover {
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
   }
 }
 
 .list-title {
   min-height: 34px;
   line-height: 34px;
-  font-weight: bold;
-  margin-bottom: 10px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #303133;
+  font-size: 15px;
+  border-bottom: 1px solid #ebeef5;
+  padding-bottom: 12px;
 }
 
 .select-row {
-  line-height: 35px;
-  padding-left: 20px;
-  margin-bottom: 10px;
+  line-height: 40px;
+  padding-left: 8px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
   .slider-title {
     display: inline-block;
     width: 80px;
+    color: #606266;
+    font-size: 14px;
   }
   .slider {
     display: inline-block;
-    width: 200px;
+    width: 250px;
     margin: 0 10px;
+  }
+}
+
+.setting-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+  .btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    &:hover {
+      border-color: #409eff;
+      color: #409eff;
+    }
   }
 }
 
@@ -2037,8 +2134,25 @@ tbody tr:hover {
   }
 
   .tab-col {
-    background-color: rgba($color: #ffffff, $alpha: 0.09);
-    border-radius: 5px;
+    background-color: rgba($color: #ffffff, $alpha: 0.08);
+    border-radius: 8px;
+    border: 1px solid rgba($color: #ffffff, $alpha: 0.15);
+    transition: all 0.3s ease;
+    &:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      border-color: rgba($color: #409eff, $alpha: 0.6);
+    }
+    h5 {
+      color: rgba($color: #ffffff, $alpha: 0.8);
+    }
+    .addSeci {
+      border-color: rgba($color: #ffffff, $alpha: 0.3);
+      color: rgba($color: #ffffff, $alpha: 0.6);
+      &:hover {
+        border-color: rgba($color: #409eff, $alpha: 0.6);
+        color: rgba($color: #409eff, $alpha: 0.8);
+      }
+    }
   }
 
   table {
@@ -2096,6 +2210,56 @@ tbody tr:hover {
     color: rgba($color: #ffffff, $alpha: 0.6);
     border: 1px solid rgba($color: #409eff, $alpha: 0.6);
     background-color: rgba($color: #409eff, $alpha: 0.6);
+  }
+
+  .setting-list {
+    li {
+      background: rgba($color: #ffffff, $alpha: 0.08);
+      border-color: rgba($color: #ffffff, $alpha: 0.12);
+      &:hover {
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+      }
+    }
+  }
+
+  .list-title {
+    color: rgba($color: #ffffff, $alpha: 0.87);
+    border-bottom-color: rgba($color: #ffffff, $alpha: 0.12);
+  }
+
+  .select-row {
+    .slider-title {
+      color: rgba($color: #ffffff, $alpha: 0.6);
+    }
+  }
+
+  .add-fund-row {
+    background: rgba($color: #ffffff, $alpha: 0.08);
+    border-color: rgba($color: #ffffff, $alpha: 0.12);
+    span {
+      color: rgba($color: #ffffff, $alpha: 0.87);
+    }
+    .btn {
+      background-color: rgba($color: #ffffff, $alpha: 0.16);
+      color: rgba($color: #ffffff, $alpha: 0.6);
+      border-color: rgba($color: #ffffff, $alpha: 0.3);
+      &:hover {
+        border-color: rgba($color: #409eff, $alpha: 0.6);
+        color: rgba($color: #409eff, $alpha: 0.87);
+      }
+    }
+  }
+
+  .gear-input-row {
+    background: rgba($color: #ffffff, $alpha: 0.08);
+    border-color: rgba($color: #ffffff, $alpha: 0.12);
+    .slider-title {
+      color: rgba($color: #ffffff, $alpha: 0.6);
+    }
+  }
+
+  .tips {
+    color: rgba($color: #ffffff, $alpha: 0.5);
   }
 }
 </style>
