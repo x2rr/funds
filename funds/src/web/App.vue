@@ -129,7 +129,7 @@
                     <div style="padding-top:2px">
                       <el-select
                         size="mini"
-                        :popper-append-to-body="false"
+                        :popper-append-to-body="true"
                         v-model="sltSeci"
                         style="width:110px"
                         placeholder="请选择"
@@ -161,7 +161,7 @@
                   v-model="fundcode"
                   multiple
                   filterable
-                  :popper-append-to-body="false"
+                  :popper-append-to-body="true"
                   remote
                   size="mini"
                   reserve-keyword

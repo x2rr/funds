@@ -401,7 +401,7 @@
                         return item.code;
                     }).join(',');
                     
-                    var url = '/api/fundmobapi/FundMNewApi/FundMNFInfo?pageIndex=1&pageSize=200&plat=Android&appType=ttjj&product=EFund&Version=1&deviceid=web&Fcodes=' + fundCodes;
+                    var url = 'https://fundmobapi.eastmoney.com/FundMNewApi/FundMNFInfo?pageIndex=1&pageSize=200&plat=Android&appType=ttjj&product=EFund&Version=1&deviceid=web&Fcodes=' + fundCodes;
                     
                     axios.get(url)
                         .then(function(response) {
@@ -439,7 +439,7 @@
                         return item.code;
                     }).join(',');
                     
-                    var url = '/api/push2/api/qt/ulist.np/get?fltt=2&fields=f2,f3,f4,f12,f13,f14&secids=' + indexCodes + '&_=' + new Date().getTime();
+                    var url = 'https://push2.eastmoney.com/api/qt/ulist.np/get?fltt=2&fields=f2,f3,f4,f12,f13,f14&secids=' + indexCodes + '&_=' + new Date().getTime();
                     
                     axios.get(url)
                         .then(function(response) {
@@ -469,7 +469,7 @@
                     }
                     
                     this.searching = true;
-                    var url = '/api/fundsuggest/FundSearch/api/FundSearchAPI.ashx?&m=9&key=' + encodeURIComponent(query) + '&_=' + new Date().getTime();
+                    var url = 'https://fundsuggest.eastmoney.com/FundSearch/api/FundSearchAPI.ashx?&m=9&key=' + encodeURIComponent(query) + '&_=' + new Date().getTime();
                     
                     axios.get(url)
                         .then(function(response) {
