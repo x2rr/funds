@@ -561,7 +561,7 @@ export default {
     return {
       activeTab: 'main',
       isEdit: false,
-      fundcode: "",
+      fundcode: [],
       isAdd: false,
       indFundData: [],
       isLiveUpdate: false,

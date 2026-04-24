@@ -453,10 +453,30 @@ export default {
         },
         legend: {
           show: true,
+          type: "scroll",
+          orient: "horizontal",
+          top: 10,
+          left: "center",
+          width: "80%",
           data: this.compareData.map((fund) => `${fund.name}(${fund.fundcode})`),
+          tooltip: {
+            show: true,
+          },
+          itemWidth: 10,
+          itemHeight: 10,
+          textStyle: {
+            fontSize: 12,
+          },
+          pageButtonItemGap: 5,
+          pageButtonGap: 5,
+          pageIconColor: "#333",
+          pageIconInactiveColor: "#aaa",
+          pageTextStyle: {
+            color: "#333",
+          },
         },
         grid: {
-          top: 50,
+          top: 60,
           bottom: 50,
           left: 60,
           right: 30,
