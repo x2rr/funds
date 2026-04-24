@@ -76,9 +76,9 @@ export default {
           data: [],
           axisLabel: {
             rotate: 45,
-            interval: 0,
             align: "right",
           },
+          boundaryGap: true,
         },
         yAxis: {
           type: "value",

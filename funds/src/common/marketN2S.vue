@@ -482,6 +482,7 @@ export default {
           axisLine: {
             onZero: false,
           },
+          boundaryGap: false,
         },
         yAxis: {
           type: "value",
