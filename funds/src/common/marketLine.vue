@@ -331,6 +331,8 @@ export default {
           top: 55,
           bottom: 30,
           right: 30,
+          left: 60,
+          containLabel: true,
         },
         xAxis: {
           type: "category",

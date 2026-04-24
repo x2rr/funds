@@ -66,16 +66,18 @@ export default {
         },
         grid: {
           top: 30,
-          bottom: 110,
+          bottom: 120,
           right: 30,
+          left: 60,
+          containLabel: true,
         },
         xAxis: {
           type: "category",
           data: [],
           axisLabel: {
-            formatter: (value) => {
-              return value.split("").join("\n");
-            },
+            rotate: 45,
+            interval: 0,
+            align: "right",
           },
         },
         yAxis: {
@@ -103,13 +105,13 @@ export default {
             show: true,
             xAxisIndex: [0],
             start: 0,
-            end: 30,
+            end: 100,
           },
           {
             type: "inside",
             xAxisIndex: [0],
-            start: 1,
-            end: 30,
+            start: 0,
+            end: 100,
           },
         ],
         series: [

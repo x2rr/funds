@@ -3,7 +3,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const path = require('path');
 
 const app = express();
-const PORT = 8080;
+const PORT = 9000;
 
 const distWebPath = path.join(__dirname, 'dist-web');
 const simpleWebPath = path.join(__dirname, 'web');
