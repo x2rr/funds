@@ -54,6 +54,20 @@ export default {
   methods: {
     handleClick(tab, event) {
       this.activeName = tab.name;
+      this.$nextTick(() => {
+        this.initChartByTab(tab.name);
+      });
+    },
+    initChartByTab(tabName) {
+      if (tabName === 'first' && this.$refs.first && this.$refs.first.init) {
+        this.$refs.first.init();
+      } else if (tabName === 'second' && this.$refs.second && this.$refs.second.init) {
+        this.$refs.second.init();
+      } else if (tabName === 'third' && this.$refs.third && this.$refs.third.init) {
+        this.$refs.third.init();
+      } else if (tabName === 'fourth' && this.$refs.fourth && this.$refs.fourth.init) {
+        this.$refs.fourth.init();
+      }
     },
     init() {
       if (this.isInitialized) return;
@@ -61,18 +75,7 @@ export default {
       this.activeName = 'first';
       this.isInitialized = true;
       this.$nextTick(() => {
-        if (this.$refs.first && this.$refs.first.init) {
-          this.$refs.first.init();
-        }
-        if (this.$refs.second && this.$refs.second.init) {
-          this.$refs.second.init();
-        }
-        if (this.$refs.third && this.$refs.third.init) {
-          this.$refs.third.init();
-        }
-        if (this.$refs.fourth && this.$refs.fourth.init) {
-          this.$refs.fourth.init();
-        }
+        this.initChartByTab(this.activeName);
       });
     },
     close() {

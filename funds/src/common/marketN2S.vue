@@ -61,6 +61,7 @@ export default {
       minVal: null,
       option: {},
       loading: false,
+      isInitialized: false,
       timeData: [
         "09:00",
         "09:01",
@@ -451,11 +452,16 @@ export default {
   },
   methods: {
     init() {
+      if (this.isInitialized) {
+        this.resize();
+        return;
+      }
       this.chartEL = this.$refs.mainCharts;
       this.myChart = echarts.init(
         this.chartEL,
         this.darkMode ? "dark" : "customed"
       );
+      this.isInitialized = true;
       this.option = {
         tooltip: {
           trigger: "axis",
@@ -571,6 +577,13 @@ export default {
         return true;
       } else {
         return false;
+      }
+    },
+    resize() {
+      if (this.myChart) {
+        this.$nextTick(() => {
+          this.myChart.resize();
+        });
       }
     },
   },
