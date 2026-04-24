@@ -779,11 +779,14 @@ export default {
     },
   },
   methods: {
-    setStorage(data) {
+    setStorage(data, callback) {
       try {
         const existing = this.getStorage();
         const merged = { ...existing, ...data };
         localStorage.setItem('funds_helper', JSON.stringify(merged));
+        if (typeof callback === 'function') {
+          callback();
+        }
       } catch (e) {
         console.error('保存数据失败:', e);
       }

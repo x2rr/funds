@@ -223,6 +223,7 @@ export default {
       this.activeName = "overview";
       this.selectedPeriod = "month";
       this.compareData = [];
+      this.chartData = {};
       this.hasMissingData = false;
       this.loadAllData();
     },
@@ -365,6 +366,10 @@ export default {
             periodYield: null,
             isPartialData: false,
           });
+          this.$set(this.chartData, index, {
+            dates: [],
+            yields: [],
+          });
           resolve();
         });
       });
@@ -457,22 +462,32 @@ export default {
           orient: "horizontal",
           top: 10,
           left: "center",
-          width: "80%",
+          width: "90%",
           data: this.compareData.map((fund) => `${fund.name}(${fund.fundcode})`),
           tooltip: {
             show: true,
           },
           itemWidth: 10,
           itemHeight: 10,
+          itemGap: 15,
           textStyle: {
             fontSize: 12,
+            width: 80,
+            overflow: "truncate",
           },
-          pageButtonItemGap: 5,
-          pageButtonGap: 5,
+          pageButtonItemGap: 10,
+          pageButtonGap: 10,
           pageIconColor: "#333",
           pageIconInactiveColor: "#aaa",
           pageTextStyle: {
             color: "#333",
+            fontSize: 11,
+          },
+          formatter: (name) => {
+            if (name.length > 12) {
+              return name.substring(0, 10) + "...";
+            }
+            return name;
           },
         },
         grid: {
