@@ -161,10 +161,10 @@
                   v-model="fundcode"
                   multiple
                   filterable
+                  collapse-tags
                   :popper-append-to-body="true"
                   remote
                   size="mini"
-                  reserve-keyword
                   @visible-change="selectChange"
                   placeholder="请输入基金编码，支持按名称或编码搜索"
                   :remote-method="remoteMethod"

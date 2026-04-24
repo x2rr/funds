@@ -501,8 +501,15 @@ export default {
           data: sortedDates,
           axisLabel: {
             rotate: 45,
-            interval: Math.floor(sortedDates.length / 10),
+            interval: sortedDates.length > 10 ? Math.floor(sortedDates.length / 10) : 0,
+            formatter: (value) => {
+              if (value && value.length >= 10) {
+                return value.substring(5);
+              }
+              return value;
+            },
           },
+          boundaryGap: true,
         },
         yAxis: {
           type: "value",
