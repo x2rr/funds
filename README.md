@@ -358,9 +358,9 @@ Firefox 扩展商店暂已下架 ~~插件已上架火狐 Firefox 扩展商店：
 
 <a href="https://www.star-history.com/?repos=x2rr%2Ffunds&type=date&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=x2rr/funds&type=date&theme=dark&legend=top-left&sealed_token=EBB3bYQR9c-HjuqS7pAC91rLcgpiwqx9YG-HCHeHJT_1E6hTzOLlOAS9GNzI7EFhnO4hchJO69IhXkys7BThsj0r8JmB_AoZ16ZfKuO3QJe7Woy1K1gb8w" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=x2rr/funds&type=date&legend=top-left&sealed_token=EBB3bYQR9c-HjuqS7pAC91rLcgpiwqx9YG-HCHeHJT_1E6hTzOLlOAS9GNzI7EFhnO4hchJO69IhXkys7BThsj0r8JmB_AoZ16ZfKuO3QJe7Woy1K1gb8w" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=x2rr/funds&type=date&legend=top-left&sealed_token=EBB3bYQR9c-HjuqS7pAC91rLcgpiwqx9YG-HCHeHJT_1E6hTzOLlOAS9GNzI7EFhnO4hchJO69IhXkys7BThsj0r8JmB_AoZ16ZfKuO3QJe7Woy1K1gb8w" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=x2rr/funds&type=date&theme=dark&legend=top-left&sealed_token=xCbn1I5l4LeVMVBieCN634X0EaiW7Wge7-SKC2OyCWei4rUZjIe1O0Ze9YNK4n09theKw8MKdOH9SRVFpYGPhJdUK7UmCyVhbiE2uduxBmwgDvnKCrVU4A" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=x2rr/funds&type=date&legend=top-left&sealed_token=xCbn1I5l4LeVMVBieCN634X0EaiW7Wge7-SKC2OyCWei4rUZjIe1O0Ze9YNK4n09theKw8MKdOH9SRVFpYGPhJdUK7UmCyVhbiE2uduxBmwgDvnKCrVU4A" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=x2rr/funds&type=date&legend=top-left&sealed_token=xCbn1I5l4LeVMVBieCN634X0EaiW7Wge7-SKC2OyCWei4rUZjIe1O0Ze9YNK4n09theKw8MKdOH9SRVFpYGPhJdUK7UmCyVhbiE2uduxBmwgDvnKCrVU4A" />
  </picture>
 </a>
 
