@@ -13,13 +13,15 @@ import {
   Dialog,
   Button,
   Loading,
-  Icon
+  Icon,
+  Message
 } from 'element-ui';
 
 Vue.prototype.$axios = axios;
 Vue.prototype.$ELEMENT = { size: 'mini' };
 Vue.use(Loading.directive);
 Vue.prototype.$loading = Loading.service;
+Vue.prototype.$message = Message;
 
 Vue.use(Select)
 Vue.use(Option)
