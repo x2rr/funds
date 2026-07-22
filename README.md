@@ -49,9 +49,10 @@
 
 Firefox 扩展商店暂已下架 ~~插件已上架火狐 Firefox 扩展商店：[点击跳转至火狐 Firefox 扩展商店](https://addons.mozilla.org/zh-CN/firefox/addon/funds/)~~
 
-插件推出小程序版‘韭菜计算助手’欢迎使用！
+请使用新小程序~~插件推出小程序版‘韭菜计算助手’欢迎使用！~~
+插件推出小程序版‘韭菜计算助手 - 实时养基神器’欢迎使用！
 
-![小程序](https://github.com/x2rr/Picture/raw/master/img/mp.jpg)
+![小程序](https://github.com/x2rr/Picture/raw/master/img/mp2.jpg)
 
 ![主界面1](https://github.com/x2rr/Picture/raw/master/img/20200717165330.png)
 
